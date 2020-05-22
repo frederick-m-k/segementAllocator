@@ -1,0 +1,54 @@
+
+.dropzone {
+    width: 60%;
+    height: 20%;
+    padding: 16px;
+    text-align: center;
+    border: dashed 3px #38424c;
+    position: relative;
+    margin: 0 auto;
+}
+
+.metaInformation {
+    width: 60%;
+    height: 15%;
+    padding: 16px;
+    text-align: center;
+    position: relative;
+    margin: 0 auto;
+    color: red;
+}
+
+.dropzone #fileDrop {
+    opacity: 0;
+    position: absolute;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.dropzone #fileBrowse {
+    color: #38424c;
+    width: 30%;
+    height: 50px;
+    border-radius: 12px;
+    background-color: #0aff1f;
+    padding: 8px 16px;
+}
+
+.dropzone h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #38424c;
+}
+
+#uploadImage {
+    width: 120px;
+    height: 120px;
+}
+
+.hidden {
+    display: none;
+}
