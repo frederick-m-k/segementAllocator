@@ -1,5 +1,5 @@
 
-import { Component, OnInit, HostListener, Host } from '@angular/core';
+import { Component, OnInit, HostListener, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-drag-n-drop',
@@ -8,19 +8,44 @@ import { Component, OnInit, HostListener, Host } from '@angular/core';
 })
 export class DragNDropComponent implements OnInit {
 
+  @Output() TextGridFile = new EventEmitter();
+
   private fileName:string;
   private file;
+  private reader = new FileReader();
+  private text:string | ArrayBuffer;
 
-  constructor() { }
+  private metaDataElements = document.getElementsByClassName("metaData");
+
+  private firstLayer:string;
+  private secondLayer:string;
+
+  constructor() {
+  }
 
   ngOnInit(): void {
-  } 
+  }
+
+  transferFileContent = () => {
+    let firstLayer = (document.getElementById("firstLayer") as HTMLInputElement).value;
+    let secondLayer = (document.getElementById("secondLayer") as HTMLInputElement).value;
+
+    let loggingElement = document.getElementById("logging");
+    if (firstLayer === "" || secondLayer === "") {
+      loggingElement.innerText = "Both layers should be provided!"
+    } else {
+      loggingElement.innerText = "";
+      this.TextGridFile.emit(this.text);
+    }
+  }
 
   @HostListener('drop', ['$event'])
   onDrop(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
 
+    let filenameElement = document.getElementById("filename");
+    let startButton = document.getElementById("startGame");
     let loggingElement = document.getElementById("logging");
 
     const { dataTransfer } = event;
@@ -36,7 +61,19 @@ export class DragNDropComponent implements OnInit {
         if (!this.fileName.endsWith("TextGrid")) {
           loggingElement.innerText = "Provide a .TextGrid file!"
         } else {
-          loggingElement.innerText = this.fileName;
+          filenameElement.innerText = this.fileName;
+          loggingElement.innerText = "";
+
+          for (let i = 0; i < this.metaDataElements.length; i ++) {
+            this.metaDataElements[i].classList.add("visibleMetaData");
+          }
+          startButton.classList.add("visibleStartGame");
+
+          // read the file
+          this.reader.onload = () => {
+            this.text = this.reader.result;
+          }
+          this.reader.readAsText(this.file);
         }
       }
     }

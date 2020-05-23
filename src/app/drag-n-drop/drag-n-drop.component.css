@@ -1,4 +1,5 @@
 
+/* For the dropzone */
 .dropzone {
     width: 60%;
     height: 20%;
@@ -8,17 +9,6 @@
     position: relative;
     margin: 0 auto;
 }
-
-.metaInformation {
-    width: 60%;
-    height: 15%;
-    padding: 16px;
-    text-align: center;
-    position: relative;
-    margin: 0 auto;
-    color: red;
-}
-
 .dropzone #fileDrop {
     opacity: 0;
     position: absolute;
@@ -28,7 +18,6 @@
     top: 0;
     left: 0;
 }
-
 .dropzone #fileBrowse {
     color: #38424c;
     width: 30%;
@@ -37,18 +26,68 @@
     background-color: #0aff1f;
     padding: 8px 16px;
 }
-
 .dropzone h3 {
     font-size: 20px;
     font-weight: 600;
     color: #38424c;
 }
-
 #uploadImage {
     width: 120px;
     height: 120px;
 }
 
-.hidden {
+/* For error logging */
+.metaInformation #logging {
+    color: red;
+}
+
+/* For the text input fields for some more information neede for the game */
+.metaInformation {
+    width: 60%;
+    height: 15%;
+    padding: 16px;
+    text-align: center;
+    position: relative;
+    margin: 0 auto;
+}
+.metaInformation #filename {
+    color: #000;
+}
+.metaInformation .metaData {
     display: none;
+    border: solid 2px #38424c;
+    background-color: #0aff1f;
+    position: relative;
+}
+.metaInformation .layerContainer {
+    text-align: center;
+    padding: 6px;
+    display: block;
+}
+.metaInformation .layerInput {
+    width: 100px;
+    height: 20px;
+    border-radius: 3px;
+    margin: 10px;
+}
+.metaInformation .visibleMetaData { /* Only visible when provided by correct filetype */
+    display: inline;
+}
+.metaInformation .buttonContainer {
+    text-align: center;
+    padding: 6px;
+    display: block;
+}
+.metaInformation .button {
+    display: none;
+    border: solid 2px #38424c;
+    border-radius: 4px;;
+    background-color: #0aff1f;
+    width: 100px;
+    height: 30px;
+    font-size: 15px;
+    font-weight: bold;
+}
+.metaInformation .visibleStartGame {
+    display: inline;
 }

@@ -10,7 +10,17 @@
         Browse for file
     </label>
 </div>
+
 <div class="metaInformation">
     <!-- TODO Here a page could come with information about the files which can be used -->
-    <h2 id="logging"></h2>
+    <h2 id="logging" class="logging"></h2>
+    <h2 id="filename"></h2>
+
+    <div class="layerContainer">
+        <input type="text" id="firstLayer" class="metaData layerInput" placeholder="First layer"/>
+        <input type="text" id="secondLayer" class="metaData layerInput" placeholder="Second layer"/>
+    </div>
+    <div class="buttonContainer">
+        <button value="Start game" type="button" id="startGame" class="button" (click)="transferFileContent()">Start Game</button>
+    </div>
 </div>

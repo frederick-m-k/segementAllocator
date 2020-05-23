@@ -7,4 +7,14 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'ba-phonetics';
+
+  constructor() {}
+
+  displayFile = (fileText:string) => {
+    let lines = fileText.split('\n');
+
+    for (let i = 0; i < lines.length; i ++) {
+      console.log(lines[i]);
+    }
+  }
 }
