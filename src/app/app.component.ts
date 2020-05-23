@@ -9,14 +9,21 @@ export class AppComponent {
 
   fileContent:string;
   fileType:string;
+  firstLayer: string;
+  secondLayer: string;
 
   constructor() {}
 
   getFile = (fileText:string) => {
     this.fileContent = fileText;
   }
-
   getFileType = (fileType: string) => {
     this.fileType = fileType;
+  }
+  getFirstLayer = (firstLayer:string) => {
+    this.firstLayer = firstLayer;
+  }
+  getSecondLayer = (secondLayer:string) => {
+    this.secondLayer = secondLayer;
   }
 }

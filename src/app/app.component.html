@@ -3,9 +3,11 @@
 
 
 <!-- Drag'n'Drop & Upload Zone -->
-<app-drag-n-drop (filecontent) = "getFile($event)" (fileType)="getFileType($event)"></app-drag-n-drop>
+<app-drag-n-drop (fileContent) = "getFile($event)" (fileType)="getFileType($event)"
+                (firstLayer)="getFirstLayer($event)" (secondLayer)="getSecondLayer($event)">
+</app-drag-n-drop>
 
-<p appFileChecking [fileType] = "fileType" [fileContent] = "fileContent" ></p>
+<app-parse-files [type] = "fileType" [content] = "fileContent" [firstLayer]="firstLayer" [secondLayer]="secondLayer"></app-parse-files>
 
 <app-game></app-game>
 

@@ -5,16 +5,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DragNDropComponent } from './drag-n-drop/drag-n-drop.component';
 import { GameComponent } from './game/game.component';
-import { FileCheckingDirective } from './file-checking/file-checking.directive';
-import { ParseFilesDirective } from './file-parsing/parse-files.directive';
+import { ParseFilesComponent } from './parse-files/parse-files.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DragNDropComponent,
     GameComponent,
-    FileCheckingDirective,
-    ParseFilesDirective
+    ParseFilesComponent
   ],
   imports: [
     BrowserModule,

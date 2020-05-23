@@ -9,21 +9,20 @@ import { Component, OnInit, HostListener, Output, EventEmitter } from '@angular/
 export class DragNDropComponent implements OnInit {
 
   @Output() fileContent = new EventEmitter();
-  @Output() filetype = new EventEmitter();
+  @Output() fileType = new EventEmitter();
+  @Output() firstLayer = new EventEmitter();
+  @Output() secondLayer = new EventEmitter();
 
   private fileName:string;
   private file;
-  private fileType:string;
+  private privFileType:string;
   private reader = new FileReader();
   private text:string | ArrayBuffer;
 
   private metaDataElements = document.getElementsByClassName("metaData");
 
-  private firstLayer:string;
-  private secondLayer:string;
 
-  constructor() {
-  }
+  constructor() {}
 
   ngOnInit(): void {
   }
@@ -38,7 +37,9 @@ export class DragNDropComponent implements OnInit {
     } else {
       loggingElement.innerText = "";
       this.fileContent.emit(this.text);
-      this.filetype.emit(this.fileType);
+      this.fileType.emit(this.privFileType);
+      this.firstLayer.emit(firstLayer);
+      this.secondLayer.emit(secondLayer);
 
       let startScreen = document.getElementsByClassName("hiddenWhenGameStarts");
       for (let i = 0; i < startScreen.length; i ++) {
@@ -69,7 +70,7 @@ export class DragNDropComponent implements OnInit {
         if (!this.fileName.endsWith("TextGrid")) {
           loggingElement.innerText = "Provide a .TextGrid file!"
         } else {
-          this.fileType = "TextGrid";
+          this.privFileType = "TextGrid";
           filenameElement.innerText = this.fileName;
           loggingElement.innerText = "";
 
