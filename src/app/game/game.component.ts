@@ -8,7 +8,7 @@ import { Component, OnInit, Input } from '@angular/core';
 export class GameComponent implements OnInit {
 
   @Input() firstLayer: [[number, number, string]];
-  @Input() secondLayer: [[number, number, string]];
+  @Input() secondLayer: [[number, number, string]]; 
 
   constructor() { }
 
