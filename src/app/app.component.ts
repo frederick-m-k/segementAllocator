@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -6,15 +6,17 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'ba-phonetics';
+
+  fileContent:string;
+  fileType:string;
 
   constructor() {}
 
-  displayFile = (fileText:string) => {
-    let lines = fileText.split('\n');
+  getFile = (fileText:string) => {
+    this.fileContent = fileText;
+  }
 
-    for (let i = 0; i < lines.length; i ++) {
-      console.log(lines[i]);
-    }
+  getFileType = (fileType: string) => {
+    this.fileType = fileType;
   }
 }

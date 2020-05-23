@@ -8,10 +8,12 @@ import { Component, OnInit, HostListener, Output, EventEmitter } from '@angular/
 })
 export class DragNDropComponent implements OnInit {
 
-  @Output() TextGridFile = new EventEmitter();
+  @Output() fileContent = new EventEmitter();
+  @Output() filetype = new EventEmitter();
 
   private fileName:string;
   private file;
+  private fileType:string;
   private reader = new FileReader();
   private text:string | ArrayBuffer;
 
@@ -35,7 +37,13 @@ export class DragNDropComponent implements OnInit {
       loggingElement.innerText = "Both layers should be provided!"
     } else {
       loggingElement.innerText = "";
-      this.TextGridFile.emit(this.text);
+      this.fileContent.emit(this.text);
+      this.filetype.emit(this.fileType);
+
+      let startScreen = document.getElementsByClassName("hiddenWhenGameStarts");
+      for (let i = 0; i < startScreen.length; i ++) {
+        startScreen[i].classList.add("hidden");
+      }
     }
   }
 
@@ -61,6 +69,7 @@ export class DragNDropComponent implements OnInit {
         if (!this.fileName.endsWith("TextGrid")) {
           loggingElement.innerText = "Provide a .TextGrid file!"
         } else {
+          this.fileType = "TextGrid";
           filenameElement.innerText = this.fileName;
           loggingElement.innerText = "";
 

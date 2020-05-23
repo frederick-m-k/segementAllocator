@@ -1,2 +1,10 @@
 
-<app-drag-n-drop (TextGridFile) = "displayFile($event)"></app-drag-n-drop>
+<!-- Header -->
+
+
+<!-- Drag'n'Drop & Upload Zone -->
+<app-drag-n-drop (filecontent) = "getFile($event)" (fileType)="getFileType($event)"></app-drag-n-drop>
+
+<p appFileChecking [fileType] = "fileType" [fileContent] = "fileContent" ></p>
+
+<!-- Footer -->

@@ -91,3 +91,7 @@
 .metaInformation .visibleStartGame {
     display: inline;
 }
+
+.hidden {
+    display: none;
+}
