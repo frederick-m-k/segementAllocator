@@ -3,18 +3,18 @@
 
 
 <!-- Drag'n'Drop & Upload Zone -->
-<app-drag-n-drop (fileContent) = "getFile($event)" (fileType)="getFileType($event)"
+<app-drag-n-drop (fileContent)="getFile($event)" (fileType)="getFileType($event)"
         (firstLayer)="getFirstLayer($event)" (secondLayer)="getSecondLayer($event)"
-        (errorLogging)="getError($event)">
+        (errorLogging)="getError($event)" [startGame]="startGame">
 </app-drag-n-drop>
 
 <app-error-logging [errorLogging]="errorLogging" [tiers]="tiers"></app-error-logging>
 
-<app-parse-files [type] = "fileType" [content] = "fileContent" [firstLayer]="firstLayer"
+<app-parse-files [type]="fileType" [content]="fileContent" [firstLayer]="firstLayer"
         [secondLayer]="secondLayer" (errorLogging)="getError($event)"
-        (tiers)="getTiers($event)"
-></app-parse-files>
+        (tiers)="getTiers($event)" (data)="getData($event)">
+</app-parse-files>
 
-<app-game></app-game>
+<app-game [startGame]="startGame"></app-game>
 
 <!-- Footer -->

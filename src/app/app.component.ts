@@ -1,3 +1,4 @@
+
 import { Component } from '@angular/core';
 import { Errors } from './errors'
 
@@ -15,6 +16,9 @@ export class AppComponent {
 
   tiers:Array<string>;
   errorLogging:Errors;
+
+  data:Map<string, Array<Array<string | number>>>;
+  startGame:boolean;
 
   constructor() {}
 
@@ -36,5 +40,10 @@ export class AppComponent {
   }
   getTiers = (tiers:Array<string>) => {
     this.tiers = tiers;
+  }
+
+  getData = (data:Map<string, Array<Array<string | number>>>) => {
+    this.data = data;
+    this.startGame = true;
   }
 }

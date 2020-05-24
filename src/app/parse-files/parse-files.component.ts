@@ -20,8 +20,9 @@ export class ParseFilesComponent {
   private foundFirst:boolean;
   private foundSecond:boolean;
 
-  @Output() errorLogging:EventEmitter<Errors> = new EventEmitter(true)
+  @Output() errorLogging:EventEmitter<Errors> = new EventEmitter(true);
   @Output() tiers:EventEmitter<Array<string>> = new EventEmitter(true);
+  @Output() data:EventEmitter<Map<string, Array<Array<number | string>>>> = new EventEmitter(true);
 
   private allTiers:Array<string> = new Array();
 
@@ -178,7 +179,8 @@ export class ParseFilesComponent {
     if (!this.foundFirst || !this.foundSecond) {
       this.errorLogging.emit(Errors.TIER_ERROR);
     } else {
-      this.errorLogging.emit(Errors.NO_ERROR); 
+      this.errorLogging.emit(Errors.NO_ERROR);
+      this.data.emit(new Map<string, Array<Array<string | number>>>(this.dataStructure));
     }
     this.tiers.emit(this.allTiers);
   }

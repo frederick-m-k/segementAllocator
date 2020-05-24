@@ -1,5 +1,5 @@
 
-import { Component, Input, SimpleChanges } from '@angular/core';
+import { Component, Input, SimpleChanges, Output } from '@angular/core';
 import { Errors, ErrorMessages } from './../errors'
 
 /**
@@ -15,8 +15,6 @@ export class ErrorLoggingComponent {
   @Input() private errorLogging:Errors;
   @Input() private tiers:Array<string>;
 
-  private displayTiers:HTMLElement = document.createElement("p");
-
   constructor() { }
 
   /**
@@ -29,27 +27,37 @@ export class ErrorLoggingComponent {
         if (!changes[propName].isFirstChange()) { // First change is always on init
           switch (propName) {
             case "tiers":
-              this.displayTiers.innerText = this.createStringOfTiers();
+              if (this.errorLogging === Errors.TIER_ERROR) {
+                this.logTiers(this.createStringOfTiers());
+              }
               break;
             case "errorLogging":
               switch (this.errorLogging) {
                 case Errors.NO_ERROR:
-                  this.log(ErrorMessages.NO_ERROR.toString());
+                  this.logError(ErrorMessages.NO_ERROR.toString());
+                  this.logTiers("");
                   break;
                 case Errors.TIER_ERROR:
-                  this.log(ErrorMessages.TIER_ERROR.toString());
+                  this.logError(ErrorMessages.TIER_ERROR.toString());
                   break;
                 case Errors.FILE_ERROR:
-                  this.log(ErrorMessages.FILE_ERROR.toString());
+                  this.logError(ErrorMessages.FILE_ERROR.toString());
+                  this.logTiers("");
                   break;
                 case Errors.TOO_MANY_FILES_ERROR:
-                  this.log(ErrorMessages.TOO_MANY_FILES_ERROR.toString());
+                  this.logError(ErrorMessages.TOO_MANY_FILES_ERROR.toString());
                   break;
                 case Errors.WRONG_FILE_TYPE_ERROR:
-                  this.log(ErrorMessages.WRONG_FILE_TYPE_ERROR.toString());
+                  this.logError(ErrorMessages.WRONG_FILE_TYPE_ERROR.toString());
+                  this.logTiers("");
+                  break;
+                case Errors.PROVIDE_BOTH_TIERS_ERROR:
+                  this.logError(ErrorMessages.PROVIDE_BOTH_TIERS_ERROR.toString());
+                  this.logTiers("");
                   break;
                 case Errors.UNHANDLED_ERROR:
-                  this.log(ErrorMessages.UNHANDLED_ERROR.toString());
+                  this.logError(ErrorMessages.UNHANDLED_ERROR.toString());
+                  this.logTiers("");
                   break;
               }
               break;
@@ -71,8 +79,12 @@ export class ErrorLoggingComponent {
     return returnString;
   }
 
-  private log = (message:string) => {
+  private logError = (message:string) => {
     document.getElementById("logging").innerText = message;
+  }
+
+  private logTiers = (msg:string) => {
+    document.getElementById("tierLogging").innerText = msg;
   }
 
 }

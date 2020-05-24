@@ -1,0 +1,14 @@
+
+#loggingArea {
+    text-align: center;
+    position: relative;
+    display: inline;
+    color: #8c1212;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+#logging {
+    font-size: 20px;
+    font-weight: 600;
+}

@@ -8,7 +8,8 @@ export enum Errors {
     FILE_ERROR = 3,
     TOO_MANY_FILES_ERROR = 4,
     WRONG_FILE_TYPE_ERROR = 5,
-    UNHANDLED_ERROR = 6
+    PROVIDE_BOTH_TIERS_ERROR = 6,
+    UNHANDLED_ERROR = 7
 }
 
 /**
@@ -20,5 +21,6 @@ export enum ErrorMessages {
     FILE_ERROR = "",
     TOO_MANY_FILES_ERROR = "Provide only one file!",
     WRONG_FILE_TYPE_ERROR = "File format is not supported!",
+    PROVIDE_BOTH_TIERS_ERROR = "Provide both tier names!",
     UNHANDLED_ERROR = "Unhandled error!"
 }
