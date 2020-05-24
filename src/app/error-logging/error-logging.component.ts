@@ -3,7 +3,7 @@ import { Component, Input, SimpleChanges, Output } from '@angular/core';
 import { Errors, ErrorMessages } from './../errors'
 
 /**
- * Component
+ * Responsible for gathering and displaying errors
  */
 @Component({
   selector: 'app-error-logging',
@@ -18,7 +18,7 @@ export class ErrorLoggingComponent {
   constructor() { }
 
   /**
-   * on changes
+   * get errors passed by parent component
    * @param changes 
    */
   ngOnChanges (changes:SimpleChanges) {
