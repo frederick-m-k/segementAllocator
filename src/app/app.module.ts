@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DragNDropComponent } from './drag-n-drop/drag-n-drop.component';
 import { GameComponent } from './game/game.component';
-import { ParseFilesComponent } from './parse-files/parse-files.component';
+import { PrepFileComponent } from './prep-file/prep-file.component';
 import { ErrorLoggingComponent } from './error-logging/error-logging.component';
 
 @NgModule({
@@ -13,7 +13,7 @@ import { ErrorLoggingComponent } from './error-logging/error-logging.component';
     AppComponent,
     DragNDropComponent,
     GameComponent,
-    ParseFilesComponent,
+    PrepFileComponent,
     ErrorLoggingComponent
   ],
   imports: [

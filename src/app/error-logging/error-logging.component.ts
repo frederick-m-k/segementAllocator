@@ -40,10 +40,6 @@ export class ErrorLoggingComponent {
                 case Errors.TIER_ERROR:
                   this.logError(ErrorMessages.TIER_ERROR.toString());
                   break;
-                case Errors.FILE_ERROR:
-                  this.logError(ErrorMessages.FILE_ERROR.toString());
-                  this.logTiers("");
-                  break;
                 case Errors.TOO_MANY_FILES_ERROR:
                   this.logError(ErrorMessages.TOO_MANY_FILES_ERROR.toString());
                   break;

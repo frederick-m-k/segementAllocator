@@ -10,6 +10,7 @@
 
 <app-error-logging [errorLogging]="errorLogging" [tiers]="tiers"></app-error-logging>
 
+<!-- Maybe for a loading zone-->
 <app-parse-files [type]="fileType" [content]="fileContent" [firstLayer]="firstLayer"
         [secondLayer]="secondLayer" (errorLogging)="getError($event)"
         (tiers)="getTiers($event)" (data)="getData($event)">
