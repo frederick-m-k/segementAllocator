@@ -78,25 +78,21 @@ export class ParseFilesComponent implements OnInit {
         }
         // ...then the actual data comes through
         if ( lines[first].includes("item []:") ) {
-          console.log("Found the start");
           let startPoint:number;
           let endPoint:number;
           let label:string;
           tier: for (let tier = 1; tier <= amountOfTiers; tier ++) { // search for tier data as often as amountOfTiers
-            console.log(lines[first]);
-            console.log(first);
             let layerOnThisRun:number = 0;
             let borderInformation:number = 0;
             if (lines[first + 1].includes("item [" + tier + "]:")) {
               for (let second = first + 2; second < lines.length; second ++) {
-                // TODO what happens when metadata is written in label
                 // Read some metadata first ...
-                if (lines[second].includes("class = ")) {
+                if (lines[second].includes("class = ") && !watchForNextSegment) { // Just to make sure, the metadata is not written in the labels
                   // Only works for Interval tiers so far
                   if (lines[second].includes("IntervalTier")) {
                     pointTier = false;
                   }
-                } else if (lines[second].includes("name = ")) { // Check if the tier is relevant
+                } else if (lines[second].includes("name = ") && !watchForNextSegment) { // Check if the tier is relevant
                   if (lines[second].includes(this.firstLayer)) {
                     this.dataStructure.set(this.firstLayer, new Array());
                     this.foundFirst = true;
@@ -108,10 +104,10 @@ export class ParseFilesComponent implements OnInit {
                   } else {
                     continue tier;
                   }
-                } else if (lines[second].includes("intervals [")) { // Start searching for the actual data
+                } else if (lines[second].includes("intervals [") && !watchForNextSegment) { // Start searching for the actual data
                   watchForNextSegment = true;
                   borderInformation = 0;
-                } else if (lines[second].includes("item [")) {  // Cycle is done
+                } else if (lines[second].includes("item [") && !watchForNextSegment) {  // Cycle is done
                   first = second - 1;
                   break;
                 }
@@ -172,7 +168,6 @@ export class ParseFilesComponent implements OnInit {
         }
       }
     }
-    console.log(this.dataStructure);
   }
 
 
