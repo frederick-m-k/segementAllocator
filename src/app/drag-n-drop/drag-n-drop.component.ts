@@ -75,8 +75,14 @@ export class DragNDropComponent {
   }
 
   /**
+   * Get file when browsed for
+   */
+  getBrowsedFile = (event) => {
+    this.readFile(event.target.files);
+  }
+
+  /**
    * Get file when dropped
-   * Write found errors to parent component (e.g. too many files dropped)
    * @param event 
    */
   @HostListener('drop', ['$event'])
@@ -84,19 +90,24 @@ export class DragNDropComponent {
     event.preventDefault();
     event.stopPropagation();
 
+    const { dataTransfer } = event;
+    this.readFile(dataTransfer.files);
+  }
+
+  /**
+   * Check if file is of correct type
+   * Write found errors to parent component (e.g. too many files dropped)
+   */
+  private readFile = (files: FileList) => {
     let startButton = document.getElementById("startGame");
 
-    const { dataTransfer } = event;
-
-    if (dataTransfer.items) {
-      if (dataTransfer.items.length > 1) {
+    if (files) {
+      if (files.length > 1) {
         this.errorLogging.emit(Errors.TOO_MANY_FILES_ERROR);
         this.writeFilename("");
       } else {
-        if (dataTransfer.items[0].kind === 'file') {
-          this.file = dataTransfer.items[0].getAsFile();
-          this.fileName = this.file.name;
-        }
+        this.file = files[0];
+        this.fileName = this.file.name;
         if (!this.fileName.endsWith("TextGrid")) {
           this.errorLogging.emit(Errors.WRONG_FILE_TYPE_ERROR);
           this.writeFilename("");

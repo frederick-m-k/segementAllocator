@@ -1,6 +1,6 @@
 
 <div class="dropzone hiddenWhenGameStarts" id="dropzone">
-    <input type="file" id="fileDrop"/>
+    <input type="file" id="fileDrop" (change)="getBrowsedFile($event)"/>
 
     <img src="/assets/images/file-upload.png" alt="Drop your TextGrid file here" id="uploadImage">
 
