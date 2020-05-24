@@ -6,13 +6,15 @@ import { AppComponent } from './app.component';
 import { DragNDropComponent } from './drag-n-drop/drag-n-drop.component';
 import { GameComponent } from './game/game.component';
 import { ParseFilesComponent } from './parse-files/parse-files.component';
+import { ErrorLoggingComponent } from './error-logging/error-logging.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DragNDropComponent,
     GameComponent,
-    ParseFilesComponent
+    ParseFilesComponent,
+    ErrorLoggingComponent
   ],
   imports: [
     BrowserModule,

@@ -1,4 +1,6 @@
-import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
+
+import { Component, Input, SimpleChanges, Output, EventEmitter } from '@angular/core';
+import { Errors } from './../errors';
 
 /**
  * 
@@ -8,7 +10,7 @@ import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
   templateUrl: './parse-files.component.html',
   styleUrls: ['./parse-files.component.css']
 })
-export class ParseFilesComponent implements OnInit {
+export class ParseFilesComponent {
 
   @Input() private type: string;
   @Input() private content: string;
@@ -18,12 +20,14 @@ export class ParseFilesComponent implements OnInit {
   private foundFirst:boolean;
   private foundSecond:boolean;
 
+  @Output() errorLogging:EventEmitter<Errors> = new EventEmitter(true)
+  @Output() tiers:EventEmitter<Array<string>> = new EventEmitter(true);
+
+  private allTiers:Array<string> = new Array();
+
   dataStructure:Map<string, Array<Array<number | string>>> = new Map();
 
   constructor() { }
-
-  ngOnInit(): void {
-  }
 
   ngOnChanges(changes: SimpleChanges) {
     let counter = 0;
@@ -49,11 +53,15 @@ export class ParseFilesComponent implements OnInit {
     }
   }
 
+  /**
+   * Parse file of parse files component
+   */
   private parseFile = () => {
     if (this.type === "TextGrid") {
       this.parseTextGrid();
     } else {
       // Write to logfile
+      console.log("Maybe you provided a not provided file type " + this.type);
     }
   }
 
@@ -81,7 +89,7 @@ export class ParseFilesComponent implements OnInit {
           let startPoint:number;
           let endPoint:number;
           let label:string;
-          tier: for (let tier = 1; tier <= amountOfTiers; tier ++) { // search for tier data as often as amountOfTiers
+          for (let tier = 1; tier <= amountOfTiers; tier ++) { // search for tier data as often as amountOfTiers
             let layerOnThisRun:number = 0;
             let borderInformation:number = 0;
             if (lines[first + 1].includes("item [" + tier + "]:")) {
@@ -93,6 +101,7 @@ export class ParseFilesComponent implements OnInit {
                     pointTier = false;
                   }
                 } else if (lines[second].includes("name = ") && !watchForNextSegment) { // Check if the tier is relevant
+                  this.allTiers.push(lines[second].split("=")[1].toString().trim());
                   if (lines[second].includes(this.firstLayer)) {
                     this.dataStructure.set(this.firstLayer, new Array());
                     this.foundFirst = true;
@@ -101,8 +110,6 @@ export class ParseFilesComponent implements OnInit {
                     this.dataStructure.set(this.secondLayer, new Array());
                     this.foundSecond = true;
                     layerOnThisRun = 2;
-                  } else {
-                    continue tier;
                   }
                 } else if (lines[second].includes("intervals [") && !watchForNextSegment) { // Start searching for the actual data
                   watchForNextSegment = true;
@@ -168,6 +175,12 @@ export class ParseFilesComponent implements OnInit {
         }
       }
     }
+    if (!this.foundFirst || !this.foundSecond) {
+      this.errorLogging.emit(Errors.TIER_ERROR);
+    } else {
+      this.errorLogging.emit(Errors.NO_ERROR); 
+    }
+    this.tiers.emit(this.allTiers);
   }
 
 

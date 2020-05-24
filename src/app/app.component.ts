@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Errors } from './errors'
 
 @Component({
   selector: 'app-root',
@@ -11,6 +12,9 @@ export class AppComponent {
   fileType:string;
   firstLayer: string;
   secondLayer: string;
+
+  tiers:Array<string>;
+  errorLogging:Errors;
 
   constructor() {}
 
@@ -25,5 +29,12 @@ export class AppComponent {
   }
   getSecondLayer = (secondLayer:string) => {
     this.secondLayer = secondLayer;
+  }
+
+  getError = (errorLogging:Errors) => {
+    this.errorLogging = errorLogging;
+  }
+  getTiers = (tiers:Array<string>) => {
+    this.tiers = tiers;
   }
 }

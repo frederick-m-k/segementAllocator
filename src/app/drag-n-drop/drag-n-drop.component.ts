@@ -1,17 +1,22 @@
 
-import { Component, OnInit, HostListener, Output, EventEmitter } from '@angular/core';
+import { Component, HostListener, Output, EventEmitter } from '@angular/core';
+import { Errors } from './../errors';
 
+/**
+ * 
+ */
 @Component({
   selector: 'app-drag-n-drop',
   templateUrl: './drag-n-drop.component.html',
   styleUrls: ['./drag-n-drop.component.css']
 })
-export class DragNDropComponent implements OnInit {
+export class DragNDropComponent {
 
   @Output() fileContent = new EventEmitter();
   @Output() fileType = new EventEmitter();
   @Output() firstLayer = new EventEmitter();
   @Output() secondLayer = new EventEmitter();
+  @Output() errorLogging:EventEmitter<Errors> = new EventEmitter()
 
   private fileName:string;
   private file;
@@ -21,21 +26,17 @@ export class DragNDropComponent implements OnInit {
 
   private metaDataElements = document.getElementsByClassName("metaData");
 
-
   constructor() {}
 
-  ngOnInit(): void {
-  }
-
+  /**
+   * Transfer file content of drag ndrop component
+   */
   transferFileContent = () => {
     let firstLayer = (document.getElementById("firstLayer") as HTMLInputElement).value;
     let secondLayer = (document.getElementById("secondLayer") as HTMLInputElement).value;
 
-    let loggingElement = document.getElementById("logging");
     if (firstLayer === "" || secondLayer === "") {
-      loggingElement.innerText = "Both layers should be provided!"
     } else {
-      loggingElement.innerText = "";
       this.fileContent.emit(this.text);
       this.fileType.emit(this.privFileType);
       this.firstLayer.emit(firstLayer);
@@ -48,6 +49,10 @@ export class DragNDropComponent implements OnInit {
     }
   }
 
+  /**
+   * Hosts listener
+   * @param event 
+   */
   @HostListener('drop', ['$event'])
   onDrop(event: DragEvent) {
     event.preventDefault();
@@ -55,24 +60,24 @@ export class DragNDropComponent implements OnInit {
 
     let filenameElement = document.getElementById("filename");
     let startButton = document.getElementById("startGame");
-    let loggingElement = document.getElementById("logging");
 
     const { dataTransfer } = event;
 
     if (dataTransfer.items) {
       if (dataTransfer.items.length > 1) {
-        loggingElement.innerText = "Provide only one file!";
+        this.errorLogging.emit(Errors.TOO_MANY_FILES_ERROR);
+        this.writeFilename("");
       } else {
         if (dataTransfer.items[0].kind === 'file') {
           this.file = dataTransfer.items[0].getAsFile();
           this.fileName = this.file.name;
         }
         if (!this.fileName.endsWith("TextGrid")) {
-          loggingElement.innerText = "Provide a .TextGrid file!"
+          this.errorLogging.emit(Errors.WRONG_FILE_TYPE_ERROR);
+          this.writeFilename("");
         } else {
           this.privFileType = "TextGrid";
-          filenameElement.innerText = this.fileName;
-          loggingElement.innerText = "";
+          this.writeFilename(this.fileName);
 
           for (let i = 0; i < this.metaDataElements.length; i ++) {
             this.metaDataElements[i].classList.add("visibleMetaData");
@@ -111,6 +116,9 @@ export class DragNDropComponent implements OnInit {
   onBodyDragOver(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
-  }
+    }
 
+    private writeFilename = (msg:string) => {
+      document.getElementById("filename").innerText = msg;
+    }
 }
