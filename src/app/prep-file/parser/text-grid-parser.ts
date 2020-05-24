@@ -1,12 +1,20 @@
 
 import { Errors } from './../../errors';
 
+/**
+ * Parses a TextGrid file
+ * TODOs
+ *  - add Point tiers
+ */
 export class TextGridParser {
 
     private allTiers:Array<string>;
-
     private dataStructure:Map<string, Array<Array<string | number>>>;
 
+    /**
+     * Iterate over each line of a TextGrid file
+     * and save the correct information about the segment boundaries in the dataStructure
+     */
     parseTextGrid = (content:string, firstLayer:string, secondLayer:string) => {
         let foundFirst:boolean;
         let foundSecond:boolean;
@@ -117,9 +125,9 @@ export class TextGridParser {
         }
         }
         if (!foundFirst || !foundSecond) {
-        return(Errors.TIER_ERROR);
+            return(Errors.TIER_ERROR);
         } else {
-        return(Errors.NO_ERROR);
+            return(Errors.NO_ERROR);
         }
     }
 

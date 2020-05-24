@@ -2,6 +2,9 @@
 import { Component } from '@angular/core';
 import { Errors } from './errors'
 
+/**
+ * This class is only for passing information between its childs
+ */
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',

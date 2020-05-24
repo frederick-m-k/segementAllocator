@@ -31,7 +31,7 @@ export class DragNDropComponent {
   constructor() {}
 
   /**
-   * Transfer file content of drag ndrop component
+   * Pass file content and metadata to the parent component via EventEmitters
    */
   transferFileContent = () => {
     let firstLayer = (document.getElementById("firstLayer") as HTMLInputElement).value;
@@ -47,6 +47,11 @@ export class DragNDropComponent {
     }
   }
 
+  /**
+   * check if game can start (i.e. startGame property changed)
+   * if that's the case, hide the components template
+   * @param changes 
+   */
   ngOnChanges(changes: SimpleChanges) {
     for (const propName in changes) {
       if (changes.hasOwnProperty(propName)) {
@@ -70,7 +75,8 @@ export class DragNDropComponent {
   }
 
   /**
-   * Hosts listener
+   * Get file when dropped
+   * Write found errors to parent component (e.g. too many files dropped)
    * @param event 
    */
   @HostListener('drop', ['$event'])
@@ -78,7 +84,6 @@ export class DragNDropComponent {
     event.preventDefault();
     event.stopPropagation();
 
-    let filenameElement = document.getElementById("filename");
     let startButton = document.getElementById("startGame");
 
     const { dataTransfer } = event;
@@ -121,7 +126,6 @@ export class DragNDropComponent {
     event.preventDefault();
     event.stopPropagation();
   }
-
   @HostListener('dragleave', ['$event'])
   onDragLeave(event: DragEvent) {
     event.preventDefault();
@@ -138,7 +142,7 @@ export class DragNDropComponent {
   onBodyDragOver(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
-    }
+  }
 
     private writeFilename = (msg:string) => {
       document.getElementById("filename").innerText = msg;

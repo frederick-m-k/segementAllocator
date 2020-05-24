@@ -4,7 +4,8 @@ import { Errors } from '../errors';
 import { TextGridParser } from './parser/text-grid-parser';
 
 /**
- * 
+ * Processed for parsing a file into a Map<string, Array<Array<string | number>>> structure
+ * with an id
  */
 @Component({
   selector: 'app-parse-files',
@@ -31,7 +32,7 @@ export class PrepFileComponent {
 
   /**
    * check if the Input variables got updated.
-   * If they are, parse the file
+   * If they are, parse the file and prepare it for the game
    * @param changes 
    */
   ngOnChanges(changes: SimpleChanges) {
@@ -59,7 +60,7 @@ export class PrepFileComponent {
   }
 
   /**
-   * Parse file of parse files component
+   * Parse the content of the file in a Map<string, Array<Array<string | number>>>
    */
   private parseFile = () => {
     let parserReturn:Errors;
@@ -77,5 +78,7 @@ export class PrepFileComponent {
       console.log("Maybe you provided a not provided file type " + this.type);
     }
   }
+
+  
 
 }
