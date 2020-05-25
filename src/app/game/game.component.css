@@ -3,15 +3,13 @@
     padding: 16px;
     margin: 10px;
     text-align: center;
-}
-
-
-.gamingArea #gamingAreaCanvas {
     width: 80%; 
     height: 40%;
-    border: solid 4px #000;
 }
 
+.gamingArea #gamingAreaCanvas {
+    border: solid 4px #000;
+}
 
 .hiddenGame {
     display: none;

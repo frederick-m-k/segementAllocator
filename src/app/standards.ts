@@ -25,14 +25,23 @@ export class DrawingStandards {
     readonly segmentHeight:number;
     readonly segmentBorderThickness:number;
 
+    readonly scaling:number;
+
     constructor () {
         this.firstLayerStart = 10;
-        this.secondLayerStart = 60;
+        this.secondLayerStart = 100;
         this.layerMargin = 10;
         this.layerSeparator = 3;
 
-        this.segmentHeight = 40;
+        this.segmentHeight = 80;
         this.segmentBorderThickness = 4;
+
+        this.scaling = 100;
+    }
+
+    canvasHeight = ():number => {
+        let returnVal:number = this.secondLayerStart + this.segmentHeight + this.layerMargin;
+        return returnVal;
     }
 }
 

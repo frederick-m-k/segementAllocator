@@ -154,9 +154,6 @@ export class PrepFileComponent {
         });
       }
     });
-
-    console.log(this.links);
-    console.log(this.dataStructure);
   }
 
 }
