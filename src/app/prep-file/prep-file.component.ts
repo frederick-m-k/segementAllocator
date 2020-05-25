@@ -24,7 +24,12 @@ export class PrepFileComponent {
   @Output() data:EventEmitter<Map<string, Array<Array<number | string>>>> = new EventEmitter(true);
 
   private allLayers:Array<string> = new Array();
-  dataStructure:Map<string, Array<Array<number | string>>> = new Map();
+
+  /**
+   * This structure holds start and end time, content, own id
+   * and the linked-segment id of segments of two layers
+   */
+  private dataStructure:Map<string, Array<Array<number | string>>> = new Map();
 
   private textGridParser = new TextGridParser();
 
@@ -68,7 +73,10 @@ export class PrepFileComponent {
       parserReturn = this.textGridParser.parseTextGrid(this.content, this.firstLayer, this.secondLayer);
       switch (parserReturn) {
         case Errors.NO_ERROR:
+          this.dataStructure = this.textGridParser.getDataStructure();
           this.errorLogging.emit(Errors.NO_ERROR);
+          this.addID();
+          this.establishLinks();
           this.data.emit(new Map<string, Array<Array<string | number>>>(this.dataStructure));
           break;
       }
@@ -79,6 +87,22 @@ export class PrepFileComponent {
     }
   }
 
-  
+  /**
+   * Add an id to every boundary in the dataStructure
+   */
+  private addID = () => {
+    let id = 1;
+    this.dataStructure.forEach((value: Array<Array<string | number>>, key:string) => {
+      for (let i = 0; i < value.length; i ++) {
+        value[i].push(id)
+        id ++;
+      }
+    });
+  }
+
+  private establishLinks = () => {
+    let firstLayer = this.dataStructure.get(this.firstLayer);
+    let secondLayer = this.dataStructure.get(this.secondLayer);
+  }
 
 }

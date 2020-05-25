@@ -131,5 +131,5 @@ export class TextGridParser {
     }
 
     getAllTiers = () => { return this.allTiers; }
-    getDataStructure = () => { return this.dataStructure; }
+    getDataStructure = () => { return new Map<string, Array<Array<string | number>>>(this.dataStructure); }
 }
