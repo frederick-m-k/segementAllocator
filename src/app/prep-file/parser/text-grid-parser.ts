@@ -4,7 +4,7 @@ import { Errors } from './../../errors';
 /**
  * Parses a TextGrid file
  * TODOs
- *  - add Point tiers
+ *  - test Point tiers
  */
 export class TextGridParser {
 
@@ -43,66 +43,91 @@ export class TextGridParser {
                         let borderInformation:number = 0;
                         if (lines[first + 1].includes("item [" + tier + "]:")) {
                             for (let second = first + 2; second < lines.length; second ++) {
+                                let currentLine = lines[second];
                                 // Read some metadata first ...
-                                if (lines[second].includes("class = ") && !watchForNextSegment) { // Just to make sure, the metadata is not written in the labels
+                                if (currentLine.includes("class = ") && !watchForNextSegment) { // Just to make sure, the metadata is not written in the labels
                                     // Only works for Interval tiers so far
-                                    if (lines[second].includes("IntervalTier")) {
+                                    if (currentLine.includes("IntervalTier")) {
                                         pointTier = false;
+                                    } else if (currentLine.includes("TextTier")) {
+                                        pointTier = true;
                                     }
-                                } else if (lines[second].includes("name = ") && !watchForNextSegment) { // Check if the tier is relevant
-                                    this.allTiers.push(lines[second].split("=")[1].toString().trim());
-                                    if (lines[second].includes(firstLayer)) {
+                                } else if (currentLine.includes("name = ") && !watchForNextSegment) { // Check if the tier is relevant
+                                    this.allTiers.push(currentLine.split("=")[1].toString().trim());
+                                    if (currentLine.includes(firstLayer)) {
                                         this.dataStructure.set(firstLayer, new Array());
                                         foundFirst = true;
                                         layerOnThisRun = 1;
-                                    } else if (lines[second].includes(secondLayer)) {
+                                    } else if (currentLine.includes(secondLayer)) {
                                         this.dataStructure.set(secondLayer, new Array());
                                         foundSecond = true;
                                         layerOnThisRun = 2;
                                     }
-                                } else if (lines[second].includes("intervals [") && !watchForNextSegment) { // Start searching for the actual data
+                                } else if ( (currentLine.includes("intervals [") || currentLine.includes("points [")) && !watchForNextSegment) { // Start searching for the actual data
                                     watchForNextSegment = true;
                                     borderInformation = 0;
-                                } else if (lines[second].includes("item [") && !watchForNextSegment) {  // Cycle is done
+                                } else if (currentLine.includes("item [") && !watchForNextSegment) {  // Cycle is done
                                     first = second - 1;
                                     break;
                                 }
                                 // ...and the the actual data
                                 if (watchForNextSegment) {
                                     if (!pointTier) {
-                                        if (lines[second].includes("xmin =")) {
-                                        startPoint = parseFloat(lines[second].split("=")[1].toString().trim());
-                                        borderInformation++;
-                                        if (isNaN(startPoint) || startPoint == null) { // Reset
-                                            watchForNextSegment = false;
-                                            borderInformation = 0;
-                                            // Write to logfile
-                                            console.log("parseFloat didn't work");
-                                            console.log(startPoint);
-                                        }
-                                        } else if (lines[second].includes("xmax =")) {
-                                        endPoint = parseFloat(lines[second].split("=")[1].toString().trim());
-                                        borderInformation++;
-                                        if (isNaN(endPoint) || endPoint == null) {  // Reset
-                                            watchForNextSegment = false;
-                                            borderInformation = 0;
-                                            // Write to logfile
-                                            console.log("parseFloat didn't work");
-                                            console.log(endPoint);
-                                        }
-                                        } else if (lines[second].includes("text =")) {
-                                        label = lines[second].split("=")[1].toString();
-                                        borderInformation++;
-                                        if (label == null) {  // Reset
-                                            watchForNextSegment = false;
-                                            borderInformation = 0;
-                                            // Write to logfile
-                                            console.log(lines[second] + " should contain the label");
-                                            console.log(label);
-                                        }
+                                        if (currentLine.includes("xmin =")) {
+                                            startPoint = parseFloat(currentLine.split("=")[1].toString().trim());
+                                            borderInformation++;
+                                            if (isNaN(startPoint) || startPoint == null) { // Reset
+                                                watchForNextSegment = false;
+                                                borderInformation = 0;
+                                                // Write to logfile
+                                                console.log("parseFloat didn't work");
+                                                console.log(startPoint);
+                                            }
+                                        } else if (currentLine.includes("xmax =")) {
+                                            endPoint = parseFloat(currentLine.split("=")[1].toString().trim());
+                                            borderInformation++;
+                                            if (isNaN(endPoint) || endPoint == null) {  // Reset
+                                                watchForNextSegment = false;
+                                                borderInformation = 0;
+                                                // Write to logfile
+                                                console.log("parseFloat didn't work");
+                                                console.log(endPoint);
+                                            }
+                                        } else if (currentLine.includes("text =")) {
+                                            label = currentLine.split("=")[1].toString();
+                                            borderInformation++;
+                                            if (label == null) {  // Reset
+                                                watchForNextSegment = false;
+                                                borderInformation = 0;
+                                                // Write to logfile
+                                                console.log(currentLine + " should contain the label");
+                                                console.log(label);
+                                            }
                                         }
                                     } else {
-                                        // Found a point tier
+                                        if (currentLine.includes("number =")) {
+                                            startPoint = parseFloat(currentLine.split("=")[1].toString().toString().trim());
+                                            endPoint = parseFloat(currentLine.split("=")[1].toString().trim());
+                                            borderInformation += 2;
+                                            if ( isNaN(startPoint) || startPoint == null || isNaN(endPoint) || startPoint == null) {
+                                                watchForNextSegment = false;
+                                                borderInformation = 0;
+                                                // Write to logfile
+                                                console.log("parseFloat didn't work");
+                                                console.log(startPoint);
+                                                console.log(startPoint);
+                                            }
+                                        } else if (currentLine.includes("mark =")) {
+                                            label = currentLine.split("=")[1].toString().trim();
+                                            borderInformation ++;
+                                            if (label == null) {
+                                                watchForNextSegment = false;
+                                                borderInformation = 0;
+                                                // Write to logfile
+                                                console.log(currentLine + " should contain the label");
+                                                console.log(label);
+                                            }
+                                        }
                                     }
                                     if (borderInformation == 3) {
                                         watchForNextSegment = false;
