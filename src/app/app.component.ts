@@ -21,6 +21,7 @@ export class AppComponent {
   errorLogging:Errors;
 
   data:Map<string, Array<Array<string | number>>>;
+  links:Map<number, Array<number>>;
   startGame:boolean;
 
   constructor() {}
@@ -48,5 +49,8 @@ export class AppComponent {
   getData = (data:Map<string, Array<Array<string | number>>>) => {
     this.data = data;
     this.startGame = true;
+  }
+  getLinks = (links:Map<number, Array<number>>) => {
+    this.links = links;
   }
 }

@@ -3,21 +3,48 @@
  * Define some standards like the scope on which the program still thinks
  * a segment from one layer could correspond to another one
  */
-export class Standards {
+export class LinkingStandards {
 
-    private scopeForSegmentalLinks:number;
+    readonly scopeForSegmentalLinks:number;
 
     constructor () {
         this.scopeForSegmentalLinks = 0.5;
     }
+}
 
-    scopeForSegmentLinks = () => {
-        return this.scopeForSegmentalLinks;
+/**
+ * Some standards for drawing the game on the canvas
+ */
+export class DrawingStandards {
+    
+    readonly firstLayerStart:number;
+    readonly secondLayerStart:number;
+    readonly layerMargin:number;
+    readonly layerSeparator:number;
+
+    readonly segmentHeight:number;
+    readonly segmentBorderThickness:number;
+
+    constructor () {
+        this.firstLayerStart = 10;
+        this.secondLayerStart = 60;
+        this.layerMargin = 10;
+        this.layerSeparator = 3;
+
+        this.segmentHeight = 40;
+        this.segmentBorderThickness = 4;
     }
 }
 
 /**
- * Providing states for 
+ * Colors for drawing the game on the canvas
+ */
+export enum DrawingColors {
+    BORDERS = "#3b3c3d"
+}
+
+/**
+ * Providing states for linking the 
  */
 export enum LinkingID {
     UNASSIGNED = 0,

@@ -11,11 +11,13 @@
 <app-error-logging [errorLogging]="errorLogging" [tiers]="tiers"></app-error-logging>
 
 <!-- Maybe for a loading zone-->
-<app-parse-files [type]="fileType" [content]="fileContent" [firstLayer]="firstLayer"
+<app-prep-file [type]="fileType" [content]="fileContent" [firstLayer]="firstLayer"
         [secondLayer]="secondLayer" (errorLogging)="getError($event)"
-        (tiers)="getTiers($event)" (data)="getData($event)">
-</app-parse-files>
+        (tiers)="getTiers($event)" (data)="getData($event)" (segmentLinks)="getLinks($event)">
+</app-prep-file>
 
-<app-game [startGame]="startGame"></app-game>
+<app-game [startGame]="startGame" [firstLayer]="firstLayer" [secondLayer]="secondLayer"
+        [data]="data" [links]="links">
+</app-game>
 
 <!-- Footer -->
