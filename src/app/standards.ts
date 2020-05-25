@@ -15,3 +15,12 @@ export class Standards {
         return this.scopeForSegmentalLinks;
     }
 }
+
+/**
+ * Providing states for 
+ */
+export enum LinkingID {
+    UNASSIGNED = 0,
+    ASSIGNED = 1,
+    NOT_ASSIGNABLE = 2
+}

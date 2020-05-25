@@ -2,6 +2,7 @@
 import { Component, Input, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import { Errors } from '../errors';
 import { TextGridParser } from './parser/text-grid-parser';
+import { Standards, LinkingID } from './../standards';
 
 /**
  * Processed for parsing a file into a Map<string, Array<Array<string | number>>> structure
@@ -14,6 +15,9 @@ import { TextGridParser } from './parser/text-grid-parser';
 })
 export class PrepFileComponent {
 
+  ////////////////////
+  // Input & Output //
+  ////////////////////
   @Input() private type: string;
   @Input() private content: string;
   @Input() private firstLayer: string;
@@ -23,15 +27,18 @@ export class PrepFileComponent {
   @Output() tiers:EventEmitter<Array<string>> = new EventEmitter(true);
   @Output() data:EventEmitter<Map<string, Array<Array<number | string>>>> = new EventEmitter(true);
 
-  private allLayers:Array<string> = new Array();
-
   /**
-   * This structure holds start and end time, content, own id
-   * and the linked-segment id of segments of two layers
+   * This structure holds start and end time, content and own id of segments of two layers
    */
   private dataStructure:Map<string, Array<Array<number | string>>> = new Map();
+  private links:Map<number, Array<number>> = new Map();
+  private allLayers:Array<string> = new Array();
 
+  ////////////////////////
+  // All custom objects //
+  ////////////////////////
   private textGridParser = new TextGridParser();
+  private standards = new Standards();
 
   constructor() { }
 
@@ -87,22 +94,69 @@ export class PrepFileComponent {
     }
   }
 
+
+  ////////////////////
+  // Alter the data //
+  ////////////////////
   /**
-   * Add an id to every boundary in the dataStructure
+   * Add the own id and a dummy linked-segment id to every segment in the dataStructure
    */
   private addID = () => {
     let id = 1;
     this.dataStructure.forEach((value: Array<Array<string | number>>, key:string) => {
       for (let i = 0; i < value.length; i ++) {
-        value[i].push(id)
+        value[i].push(id);    // The own id
+        value[i].push(LinkingID.UNASSIGNED);  // The linked-segment-state
+        this.links.set(id, new Array<number>());
         id ++;
       }
     });
   }
 
+  /**
+   * Establish links of prep file component
+   */
   private establishLinks = () => {
     let firstLayer = this.dataStructure.get(this.firstLayer);
     let secondLayer = this.dataStructure.get(this.secondLayer);
+
+    let scopeForLinking:number = this.standards.scopeForSegmentLinks();
+
+    firstLayer.forEach( (segment_first:Array<string | number>) => {
+      let startPoint_first = segment_first[0];
+      let endPoint_first = segment_first[1];
+      let ownID_first = segment_first[3];
+      let linkedID_first = segment_first[4];
+      console.log(startPoint_first, endPoint_first, ownID_first, linkedID_first);
+      
+      if (linkedID_first === LinkingID.UNASSIGNED) {
+        secondLayer.forEach( (segment_second:Array<string | number>) => {
+          let startPoint_second = segment_second[0];
+          let endPoint_second = segment_second[1];
+          let ownID_second = segment_second[3];
+          let linkedID_second = segment_second[4];
+          console.log(startPoint_second, endPoint_second, ownID_second, linkedID_second);
+
+          if (linkedID_second === LinkingID.UNASSIGNED) { // Best case: both UNASSIGNED
+            let firstStart_in_second:boolean; // startPoint of first segment between startPoint (minus scope) and endPoint of second segment (minus scope)
+            firstStart_in_second = ((startPoint_first as number) <= ((endPoint_second as number) - scopeForLinking)) &&
+                                   ((startPoint_first as number) >= ((startPoint_second as number) - scopeForLinking));
+            let firstEnd_in_second:boolean; // endPoint of first segment between startPoint (plus scope) and endPoint of second segment  (plus scope)
+            firstEnd_in_second = ((endPoint_first as number) <= ((endPoint_second as number) + scopeForLinking)) &&
+                                 ((endPoint_first as number) >= ((startPoint_second as number) + scopeForLinking));
+            console.log(firstEnd_in_second, firstEnd_in_second);
+            if (firstStart_in_second && firstEnd_in_second) {
+              this.links.get((ownID_first as number)).push((ownID_second as number));
+              linkedID_second = LinkingID.ASSIGNED;
+              this.links.get((ownID_second as number)).push((ownID_first as number));
+            }
+          }
+        });
+      }
+    });
+
+    console.log(this.links);
+    console.log(this.dataStructure);
   }
 
 }
