@@ -19,19 +19,24 @@ export class DrawingStandards {
 	readonly layerSeparator: number;
 
 	readonly segmentHeight: number;
-	readonly segmentBorderThickness: number;
 
+	readonly text: string;
+
+	/**
+	 * Horzizontal scaling
+	 */
 	readonly scaling: number;
 
 	constructor() {
-		this.firstLayerStart = 10;
-		this.layerMargin = 10;
+		this.firstLayerStart = 20;
+		this.layerMargin = 20;
 		this.layerSeparator = 3;
 
-		this.segmentHeight = 80;
-		this.segmentBorderThickness = 4;
+		this.segmentHeight = 180;
 
-		this.scaling = 100;
+		this.scaling = 300;
+
+		this.text = "15px Arial";
 	}
 
 	canvasHeight = (): number => {
@@ -58,8 +63,9 @@ export class DrawingStandards {
  */
 export enum DrawingColors {
 	BORDERS = '#3b3c3d',
-	RED_BACKGROUND = "#ff6666",
-	BLUE_BACKGROUND = "#6699ff"
+	LIGHT_BACKGROUND = "#bfbfbf",
+	DARK_BACKGROUND = "#666666",
+	TEXT = "#FFFFFF"
 }
 
 /**

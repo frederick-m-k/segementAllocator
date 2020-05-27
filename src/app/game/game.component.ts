@@ -48,7 +48,7 @@ export class GameComponent {
     if (this.counter == 4 && this.startGame) {
       this.initCanvas();
       this.drawContent();
-
+      this.drawText();
       this.makeVisible();
     }
   }
@@ -63,7 +63,6 @@ export class GameComponent {
     let height: number = this.standards.canvasHeight();
     this.canvas.height = height;
     this.areaToDraw = this.canvas.getContext("2d");
-    console.log(width, height);
   }
 
   private drawContent = () => {
@@ -81,16 +80,38 @@ export class GameComponent {
       }
       value.forEach((segment: Array<string | number>) => {
         if (counter == 0) {
-          color = DrawingColors.BLUE_BACKGROUND;
+          color = DrawingColors.DARK_BACKGROUND;
           counter = 1;
         } else {
-          color = DrawingColors.RED_BACKGROUND;
+          color = DrawingColors.LIGHT_BACKGROUND;
           counter = 0;
         }
         let segmentStart = <number>segment[0];
         let segmentEnd = <number>segment[1];
+        this.drawSegment(segmentStart, segmentEnd, startY, color);
+      });
+    });
+  }
+
+  /**
+   * 
+   */
+  private drawText = () => {
+    let startY: number;
+    this.data.forEach((value: Array<Array<string | number>>, key: string) => {
+      switch (key) {
+        case this.firstLayer:
+          startY = this.standards.firstLayerStart;
+          break;
+        case this.secondLayer:
+          startY = this.standards.secondLayerStart();
+          break;
+      }
+      value.forEach((segment: Array<string | number>) => {
+        let segmentStart = <number>segment[0];
+        let segmentEnd = <number>segment[1];
         let content = <string>segment[2];
-        this.drawSegment(segmentStart, segmentEnd, content, startY, color);
+        this.text(segmentStart, segmentEnd, content, startY);
       });
     });
   }
@@ -98,11 +119,22 @@ export class GameComponent {
   /////////////////////////
   // Helpers for drawing //
   /////////////////////////
-  private drawSegment = (segmentStart: number, segmentEnd: number, content: string, startY: number, color: string) => {
+  private text = (segmentStart: number, segmentEnd: number, content: string, startY: number) => {
     let startX: number = (segmentStart * this.standards.scaling);
     let endY: number = startY + this.standards.segmentHeight;
     let endX: number = (segmentEnd * this.standards.scaling);
-    console.log(startX, endX, startY, endY);
+    let textX: number = startX + ((endX - startX) / 2);
+    let textY: number = startY + ((endY - startY) / 2);
+    this.areaToDraw.fillStyle = DrawingColors.TEXT;
+    this.areaToDraw.font = this.standards.text;
+    this.areaToDraw.textAlign = "center";
+    this.areaToDraw.fillText(content, textX, textY);
+  }
+
+  private drawSegment = (segmentStart: number, segmentEnd: number, startY: number, color: string) => {
+    let startX: number = (segmentStart * this.standards.scaling);
+    let endY: number = startY + this.standards.segmentHeight;
+    let endX: number = (segmentEnd * this.standards.scaling);
     // Draw the first boundary ...
     this.areaToDraw.moveTo(startX, startY);
     this.areaToDraw.lineTo(startX, endY);
@@ -111,13 +143,7 @@ export class GameComponent {
     this.areaToDraw.moveTo(endX, startY);
     this.areaToDraw.lineTo(endX, endY);
     this.areaToDraw.stroke();
-    // ... and the text
-    // let textX: number = startX + ((endX - startX) / 2);
-    // let textY: number = startY + ((endY - startY) / 2);
-    // this.areaToDraw.font = "12px Arial";
-    // this.areaToDraw.textAlign = "center";
-    // this.areaToDraw.fillText(content, textX, textY);
-    // the background
+    // ... the background
     let rectWidth: number = endX - startX;
     let rectHeight: number = endY - startY;
     this.areaToDraw.fillStyle = color;
