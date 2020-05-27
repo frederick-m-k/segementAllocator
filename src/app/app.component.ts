@@ -3,7 +3,9 @@ import { Component } from '@angular/core';
 import { Errors } from './errors'
 
 /**
- * This class is only for passing information between its childs
+ * This component holds the main body
+ * It is also responsible for passing information between its childs
+ * Lastly it gathers error log messages
  */
 @Component({
   selector: 'app-root',
@@ -23,6 +25,9 @@ export class AppComponent {
   data:Map<string, Array<Array<string | number>>>;
   links:Map<number, Array<number>>;
   startGame:boolean;
+
+  private errorLog:Array<string> = new Array<string>();
+  private nextError:string;
 
   constructor() {}
 
@@ -52,5 +57,9 @@ export class AppComponent {
   }
   getLinks = (links:Map<number, Array<number>>) => {
     this.links = links;
+  }
+
+  getNextLoggedError = (nextError:string) => {
+    this.nextError = nextError;
   }
 }

@@ -1,14 +1,13 @@
 .gamingArea {
+    margin: auto;
     position: relative;
-    padding: 16px;
-    margin: 10px;
     text-align: center;
-    width: 80%; 
-    height: 40%;
+    width: 80%;
+    height: 60%;
 }
 
-.gamingArea #gamingAreaCanvas {
-    border: solid 4px #000;
+.gamingArea .gamingAreaCanvas {
+    position: absolute;
 }
 
 .hiddenGame {

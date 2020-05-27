@@ -12,11 +12,16 @@ import { Errors } from './../errors';
 })
 export class DragNDropComponent {
 
-  @Output() fileContent = new EventEmitter();
-  @Output() fileType = new EventEmitter();
-  @Output() firstLayer = new EventEmitter();
-  @Output() secondLayer = new EventEmitter();
-  @Output() errorLogging:EventEmitter<Errors> = new EventEmitter()
+  //////////////////////
+  // Input and Output //
+  //////////////////////
+  @Output() fileContent:EventEmitter<string> = new EventEmitter();
+  @Output() fileType:EventEmitter<string> = new EventEmitter();
+  @Output() firstLayer:EventEmitter<string> = new EventEmitter();
+  @Output() secondLayer :EventEmitter<string>= new EventEmitter();
+  @Output() errorLogging:EventEmitter<Errors> = new EventEmitter();
+
+  @Input() startGame:boolean;
 
   private fileName:string;
   private file;
@@ -25,8 +30,6 @@ export class DragNDropComponent {
   private text:string | ArrayBuffer;
 
   private metaDataElements = document.getElementsByClassName("metaData");
-
-  @Input() startGame:boolean;
 
   constructor() {}
 
@@ -40,7 +43,7 @@ export class DragNDropComponent {
     if (firstLayer === "" || secondLayer === "") {
       this.errorLogging.emit(Errors.PROVIDE_BOTH_TIERS_ERROR);
     } else {
-      this.fileContent.emit(this.text);
+      this.fileContent.emit((this.text as string));
       this.fileType.emit(this.privFileType);
       this.firstLayer.emit(firstLayer);
       this.secondLayer.emit(secondLayer);
