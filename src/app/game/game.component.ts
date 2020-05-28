@@ -50,6 +50,14 @@ export class GameComponent {
       this.drawContent();
       this.drawText();
       this.makeVisible();
+      this.initButton();
+    }
+  }
+
+  private initButton = () => {
+    let button = document.getElementById("test");
+    button.onclick = () => {
+      document.getElementById("test2").scrollLeft += 30;
     }
   }
 
