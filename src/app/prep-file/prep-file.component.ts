@@ -3,6 +3,7 @@ import { Component, Input, SimpleChanges, Output, EventEmitter } from '@angular/
 import { Errors } from '../errors';
 import { TextGridParser } from './parser/text-grid-parser';
 import { LinkingStandards, LinkingID } from './../standards';
+import { Segment } from '../game/Segment';
 
 /**
  * Processed for parsing a file into a Map<string, Array<Array<string | number>>> structure
@@ -23,17 +24,17 @@ export class PrepFileComponent {
   @Input() private firstLayer: string;
   @Input() private secondLayer: string;
 
-  @Output() errorLogging:EventEmitter<Errors> = new EventEmitter(true);
-  @Output() tiers:EventEmitter<Array<string>> = new EventEmitter(true);
-  @Output() data:EventEmitter<Map<string, Array<Array<number | string>>>> = new EventEmitter(true);
-  @Output() segmentLinks:EventEmitter<Map<number, Array<number>>> = new EventEmitter();
+  @Output() errorLogging: EventEmitter<Errors> = new EventEmitter(true);
+  @Output() tiers: EventEmitter<Array<string>> = new EventEmitter(true);
+  @Output() data: EventEmitter<Map<string, Array<Segment>>> = new EventEmitter(true);
+  @Output() segmentLinks: EventEmitter<Map<number, Array<number>>> = new EventEmitter();
 
   /**
    * This structure holds start and end time, content and own id of segments of two layers
    */
-  private dataStructure:Map<string, Array<Array<number | string>>> = new Map();
-  private links:Map<number, Array<number>> = new Map();
-  private allLayers:Array<string> = new Array();
+  private dataStructure: Map<string, Array<Segment>> = new Map();
+  private links: Map<number, Array<number>> = new Map();
+  private allLayers: Array<string> = new Array();
 
   ////////////////////////
   // All custom objects //
@@ -73,10 +74,10 @@ export class PrepFileComponent {
   }
 
   /**
-   * Parse the content of the file in a Map<string, Array<Array<string | number>>>
+   * Parse the content of the file in a Map<string, Array<Segment>>
    */
   private parseFile = () => {
-    let parserReturn:Errors;
+    let parserReturn: Errors;
     if (this.type === "TextGrid") {
       parserReturn = this.textGridParser.parseTextGrid(this.content, this.firstLayer, this.secondLayer);
       this.errorLogging.emit(parserReturn);
@@ -87,7 +88,7 @@ export class PrepFileComponent {
           this.errorLogging.emit();
           this.addID();
           this.establishLinks();
-          this.data.emit(new Map<string, Array<Array<string | number>>>(this.dataStructure));
+          this.data.emit(new Map<string, Array<Segment>>(this.dataStructure));
           this.segmentLinks.emit(new Map<number, Array<number>>(this.links));
           break;
       }
@@ -106,12 +107,12 @@ export class PrepFileComponent {
    */
   private addID = () => {
     let id = 1;
-    this.dataStructure.forEach((value: Array<Array<string | number>>, key:string) => {
-      for (let i = 0; i < value.length; i ++) {
-        value[i].push(id);    // The own id
-        value[i].push(LinkingID.UNASSIGNED);  // The linked-segment-state
+    this.dataStructure.forEach((value: Array<Segment>, key: string) => {
+      for (let i = 0; i < value.length; i++) {
+        value[i].setID(id);    // The own id
+        //value[i].push(LinkingID.UNASSIGNED);  // The linked-segment-state
         this.links.set(id, new Array<number>());
-        id ++;
+        id++;
       }
     });
   }
@@ -123,28 +124,28 @@ export class PrepFileComponent {
     let firstLayer = this.dataStructure.get(this.firstLayer);
     let secondLayer = this.dataStructure.get(this.secondLayer);
 
-    let scopeForLinking:number = this.standards.scopeForSegmentalLinks;
+    let scopeForLinking: number = this.standards.scopeForSegmentalLinks;
 
-    firstLayer.forEach( (segment_first:Array<string | number>) => {
-      let startPoint_first = <number> segment_first[0];
-      let endPoint_first = <number> segment_first[1];
-      let ownID_first = <number> segment_first[3];
-      let linkedID_first = <number> segment_first[4];
-      
+    firstLayer.forEach((segment_first: Segment) => {
+      let startPoint_first = <number>segment_first[0];
+      let endPoint_first = <number>segment_first[1];
+      let ownID_first = <number>segment_first[3];
+      let linkedID_first = <number>segment_first[4];
+
       if (linkedID_first === LinkingID.UNASSIGNED) {
-        secondLayer.forEach( (segment_second:Array<string | number>) => {
-          let startPoint_second = <number> segment_second[0];
-          let endPoint_second = <number> segment_second[1];
-          let ownID_second = <number> segment_second[3];
-          let linkedID_second = <number> segment_second[4];
+        secondLayer.forEach((segment_second: Segment) => {
+          let startPoint_second = <number>segment_second[0];
+          let endPoint_second = <number>segment_second[1];
+          let ownID_second = <number>segment_second[3];
+          let linkedID_second = <number>segment_second[4];
 
           if (linkedID_second === LinkingID.UNASSIGNED) { // Best case: both UNASSIGNED
-            let firstStart_in_second:boolean; // startPoint of first segment between startPoint (minus scope) and endPoint of second segment (minus scope)
+            let firstStart_in_second: boolean; // startPoint of first segment between startPoint (minus scope) and endPoint of second segment (minus scope)
             firstStart_in_second = (startPoint_first <= (endPoint_second - scopeForLinking)) &&
-                                   (startPoint_first >= (startPoint_second - scopeForLinking));
-            let firstEnd_in_second:boolean; // endPoint of first segment between startPoint (plus scope) and endPoint of second segment  (plus scope)
+              (startPoint_first >= (startPoint_second - scopeForLinking));
+            let firstEnd_in_second: boolean; // endPoint of first segment between startPoint (plus scope) and endPoint of second segment  (plus scope)
             firstEnd_in_second = (endPoint_first <= (endPoint_second + scopeForLinking)) &&
-                                 (endPoint_first >= (startPoint_second + scopeForLinking));
+              (endPoint_first >= (startPoint_second + scopeForLinking));
             if (firstStart_in_second && firstEnd_in_second) {
               this.links.get(ownID_first).push(ownID_second);
               linkedID_second = LinkingID.ASSIGNED;

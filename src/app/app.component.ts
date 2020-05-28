@@ -1,6 +1,7 @@
 
 import { Component } from '@angular/core';
 import { Errors } from './errors'
+import { Segment } from './game/Segment';
 
 /**
  * This component holds the main body
@@ -14,52 +15,52 @@ import { Errors } from './errors'
 })
 export class AppComponent {
 
-  fileContent:string;
-  fileType:string;
+  fileContent: string;
+  fileType: string;
   firstLayer: string;
   secondLayer: string;
 
-  tiers:Array<string>;
-  errorLogging:Errors;
+  tiers: Array<string>;
+  errorLogging: Errors;
 
-  data:Map<string, Array<Array<string | number>>>;
-  links:Map<number, Array<number>>;
-  startGame:boolean;
+  data: Map<string, Array<Segment>>;
+  links: Map<number, Array<number>>;
+  startGame: boolean;
 
-  private errorLog:Array<string> = new Array<string>();
-  private nextError:string;
+  private errorLog: Array<string> = new Array<string>();
+  private nextError: string;
 
-  constructor() {}
+  constructor() { }
 
-  getFile = (fileText:string) => {
+  getFile = (fileText: string) => {
     this.fileContent = fileText;
   }
   getFileType = (fileType: string) => {
     this.fileType = fileType;
   }
-  getFirstLayer = (firstLayer:string) => {
+  getFirstLayer = (firstLayer: string) => {
     this.firstLayer = firstLayer;
   }
-  getSecondLayer = (secondLayer:string) => {
+  getSecondLayer = (secondLayer: string) => {
     this.secondLayer = secondLayer;
   }
 
-  getError = (errorLogging:Errors) => {
+  getError = (errorLogging: Errors) => {
     this.errorLogging = errorLogging;
   }
-  getTiers = (tiers:Array<string>) => {
+  getTiers = (tiers: Array<string>) => {
     this.tiers = tiers;
   }
 
-  getData = (data:Map<string, Array<Array<string | number>>>) => {
+  getData = (data: Map<string, Array<Segment>>) => {
     this.data = data;
     this.startGame = true;
   }
-  getLinks = (links:Map<number, Array<number>>) => {
+  getLinks = (links: Map<number, Array<number>>) => {
     this.links = links;
   }
 
-  getNextLoggedError = (nextError:string) => {
+  getNextLoggedError = (nextError: string) => {
     this.nextError = nextError;
   }
 }

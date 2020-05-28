@@ -1,3 +1,5 @@
+
+import { Segment } from './../../game/Segment';
 import { Errors } from "./../../errors";
 
 /**
@@ -9,7 +11,7 @@ export class TextGridParser {
 	private allTiers: Array<string> = new Array<string>();
 	private dataStructure: Map<
 		string,
-		Array<Array<string | number>>
+		Array<Segment>
 	> = new Map();
 
 	/**
@@ -140,10 +142,11 @@ export class TextGridParser {
 									}
 									if (borderInformation == 3) {
 										watchForNextSegment = false;
+										let segment: Segment = new Segment(startPoint, endPoint, label);
 										if (layerOnThisRun === 1) {
-											this.dataStructure.get(firstLayer).push([startPoint, endPoint, label]);
+											this.dataStructure.get(firstLayer).push(segment);
 										} else if (layerOnThisRun === 2) {
-											this.dataStructure.get(secondLayer).push([startPoint, endPoint, label]);
+											this.dataStructure.get(secondLayer).push(segment);
 										}
 									}
 								}
@@ -168,8 +171,6 @@ export class TextGridParser {
 		return this.allTiers;
 	};
 	getDataStructure = () => {
-		return new Map<string, Array<Array<string | number>>>(
-			this.dataStructure
-		);
+		return new Map<string, Array<Segment>>(this.dataStructure);
 	};
 }
