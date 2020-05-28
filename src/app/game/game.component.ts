@@ -94,7 +94,7 @@ export class GameComponent {
   }
 
   /**
-   * 
+   * Draw the content on the canvas
    */
   private drawText = () => {
     let startY: number;

@@ -34,9 +34,9 @@ export class DrawingStandards {
 
 		this.segmentHeight = 180;
 
-		this.scaling = 300;
+		this.scaling = 400;
 
-		this.text = "15px Arial";
+		this.text = "20px Arial";
 	}
 
 	canvasHeight = (): number => {

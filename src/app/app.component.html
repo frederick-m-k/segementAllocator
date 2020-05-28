@@ -1,23 +1,20 @@
-
 <!-- Header -->
 
 
 <!-- Drag'n'Drop & Upload Zone -->
-<app-drag-n-drop (fileContent)="getFile($event)" (fileType)="getFileType($event)"
-        (firstLayer)="getFirstLayer($event)" (secondLayer)="getSecondLayer($event)"
-        (errorLogging)="getError($event)" [startGame]="startGame">
+<app-drag-n-drop (fileContent)="getFile($event)" (fileType)="getFileType($event)" (firstLayer)="getFirstLayer($event)"
+        (secondLayer)="getSecondLayer($event)" (errorLogging)="getError($event)" [startGame]="startGame">
 </app-drag-n-drop>
 
 <app-error-logging [errorLogging]="errorLogging" [tiers]="tiers"></app-error-logging>
 
-<!-- Maybe for a loading zone-->
-<app-prep-file [type]="fileType" [content]="fileContent" [firstLayer]="firstLayer"
-        [secondLayer]="secondLayer" (errorLogging)="getError($event)"
-        (tiers)="getTiers($event)" (data)="getData($event)" (segmentLinks)="getLinks($event)">
-</app-prep-file> 
+<!-- Maybe for a loading zone -->
+<app-prep-file [type]="fileType" [content]="fileContent" [firstLayer]="firstLayer" [secondLayer]="secondLayer"
+        (errorLogging)="getError($event)" (tiers)="getTiers($event)" (data)="getData($event)"
+        (segmentLinks)="getLinks($event)">
+</app-prep-file>
 
-<app-game [startGame]="startGame" [firstLayer]="firstLayer" [secondLayer]="secondLayer"
-        [data]="data" [links]="links">
+<app-game [startGame]="startGame" [firstLayer]="firstLayer" [secondLayer]="secondLayer" [data]="data" [links]="links">
 </app-game>
 
 <!-- Footer -->

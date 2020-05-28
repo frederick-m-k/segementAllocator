@@ -1,18 +1,27 @@
-.gamingArea {
-    margin: auto;
+
+ .innerWrapper {
+    display: flex;
+    flex-direction: row;
+    width: 100vw;
+    height: 100%;
     position: relative;
-    text-align: center;
-    width: 80%;
-    height: 60%;
 }
 
-.gamingArea .gamingAreaCanvas {
-    position: absolute;
+.outerWrapper {
+    margin: auto;
+    width: 60vw;
+    height: 60vh;
+    overflow-y: hidden;
+    overflow-x: scroll;
+    position: relative;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+::-webkit-scrollbar {
+    display: none;
 }
 
 .hiddenGame {
     display: none;
-}
-.gamingArea .visibleGame {
-    display: block;
 }
