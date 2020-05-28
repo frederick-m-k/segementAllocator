@@ -1,3 +1,4 @@
+import { element } from 'protractor';
 
 import { Component, Input, SimpleChanges } from '@angular/core';
 
@@ -23,10 +24,10 @@ export class GameComponent {
   @Input() private links: Map<number, Array<number>>;
   @Input() private startGame: boolean;
 
-  private segments: Map<string, Array<Segment>>;
   private counter: number = 0;
   private canvas: HTMLCanvasElement;
   private areaToDraw: CanvasRenderingContext2D;
+  private pixelRepresentation: Array<Array<number>>;
 
   private standards = new DrawingStandards();
 
@@ -52,9 +53,16 @@ export class GameComponent {
       this.drawBoundaries();
       this.drawText();
       this.makeVisible();
+      this.slide();
     }
   }
-
+  private slide = () => {
+    let button: HTMLElement = document.getElementById("test");
+    button.addEventListener("click", (event) => {
+      let slidingElement = document.getElementById("test2");
+      slidingElement.scrollLeft += 30;
+    });
+  }
   /**
    * Init the area to draw on
    */
@@ -66,16 +74,45 @@ export class GameComponent {
     this.canvas.height = height;
     this.areaToDraw = this.canvas.getContext("2d");
 
+    this.initPixelRepresentation();
+
     // Event handling
     this.canvas.addEventListener('mousedown', (event: MouseEvent) => {
-      this.logPos(event);
+      const rect = this.canvas.getBoundingClientRect();
+      let x = event.clientX - rect.left;
+      let y = event.clientY - rect.top;
+      this.logPos(x, y);
     });
   }
-  private logPos = (event: MouseEvent) => {
-    const rect = this.canvas.getBoundingClientRect();
-    let x = event.clientX - rect.left;
-    let y = event.clientY - rect.top;
-    console.log(x, y);
+  private logPos = (xPos: number, yPos: number) => {
+    xPos = Math.floor(xPos);
+    yPos = Math.floor(yPos);
+    let segment_id: number = this.pixelRepresentation[xPos][yPos];
+    let segment: Segment = this.findSegment(segment_id);
+    if (segment != null) {
+      segment.selectSegment(this.areaToDraw);
+    }
+  }
+  private findSegment = (id: number): Segment => {
+    for (const [key, value] of this.data) {
+      for (let i = 0; i < value.length; i++) {
+        let segment: Segment = value[i];
+        if (segment.getID() == id) {
+          return segment;
+        }
+      }
+    }
+    return null;
+  }
+
+  private initPixelRepresentation = () => {
+    this.pixelRepresentation = new Array();
+    for (let i = 0; i < this.canvas.width; i++) {
+      this.pixelRepresentation[i] = new Array();
+      for (let j = 0; j < this.canvas.height; j++) {
+        this.pixelRepresentation[i][j] = 0;
+      }
+    }
   }
 
   /**
@@ -139,17 +176,17 @@ export class GameComponent {
   }
 
   private drawSegment = (segment: Segment) => {
-    let startX: number = (segment.getXStart() * this.standards.scaling);
+    let startX: number = Math.floor(segment.getXStart() * this.standards.scaling);
     segment.setPixelXStart(startX);
     let startY: number = segment.getPixelYStart();
-    let endY: number = startY + this.standards.segmentHeight;
+    let endY: number = Math.floor(startY + this.standards.segmentHeight);
     segment.setPixelYEnd(endY);
-    let endX: number = (segment.getXEnd() * this.standards.scaling);
+    let endX: number = Math.floor(segment.getXEnd() * this.standards.scaling);
     segment.setPixelXEnd(endX);
+
     // Draw the first boundary ...
     this.areaToDraw.moveTo(startX, startY);
     this.areaToDraw.lineTo(startX, endY);
-    this.areaToDraw.stroke();
     // ... and the second one ...
     this.areaToDraw.moveTo(endX, startY);
     this.areaToDraw.lineTo(endX, endY);
@@ -161,6 +198,14 @@ export class GameComponent {
     segment.setPixelHeight(rectHeight);
     this.areaToDraw.fillStyle = segment.getColor();
     this.areaToDraw.fillRect(startX, startY, rectWidth, rectHeight);
+
+    // Fill pixel representation
+    let segment_id: number = segment.getID();
+    for (let i = startX; i < endX; i++) {
+      for (let j = startY; j < endY; j++) {
+        this.pixelRepresentation[i][j] = segment_id;
+      }
+    }
   }
 
   /**
