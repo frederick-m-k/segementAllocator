@@ -31,6 +31,7 @@ export class GameComponent {
   private moveBy: number = 5;
   private maxScroll: number;
 
+
   private counter: number = 0;
   private canvas: HTMLCanvasElement;
   private areaToDraw: CanvasRenderingContext2D;
@@ -38,6 +39,8 @@ export class GameComponent {
    * Double array for every pixel in the canvas holding the id of the segment drawn on it
    */
   private pixelRepresentation: Array<Array<number>>;
+  private currentSegment: Segment;
+  private segmentSelected: boolean;
 
   private standards = new DrawingStandards();
 
@@ -65,7 +68,6 @@ export class GameComponent {
     if (this.counter == 4 && this.startGame) {
       this.initCanvas();
       this.drawBoundaries();
-      this.drawText();
       this.makeVisible();
       this.startMoving();
     }
@@ -98,14 +100,63 @@ export class GameComponent {
   }
 
 
-  private logPos = (xPos: number, yPos: number) => {
+  private logPos = (xPos: number, yPos: number): void => {
     xPos = Math.floor(xPos);
     yPos = Math.floor(yPos);
     let segment_id: number = this.pixelRepresentation[xPos][yPos];
     let segment: Segment = this.findClickedSegment(segment_id);
-    if (segment != null) {
-      segment.select(this.areaToDraw);
+    if (segment == null) {
+      // Error
+      return;
     }
+    if (this.segmentSelected) { // Compare
+      if (this.compareSegments(this.currentSegment, segment)) {
+        console.log("The same");
+        this.currentSegment.draw(this.areaToDraw);
+        this.segmentSelected = false;
+        return;
+      }
+      let differentLayers: boolean = this.compareLayers(this.currentSegment, segment);
+      if (differentLayers) {
+        console.log("found it");
+        this.segmentSelected = false;
+        return;
+      } else {
+        this.currentSegment.draw(this.areaToDraw);
+      }
+    }
+    segment.select(this.areaToDraw);
+    this.currentSegment = segment;
+    this.segmentSelected = true;
+  }
+  /**
+   * Check if segments are the same
+   */
+  private compareSegments = (oldSegment: Segment, newSegment: Segment): boolean => {
+    return oldSegment == newSegment;
+  }
+  /**
+   * 
+   */
+  private compareLayers = (oldSegment: Segment, newSegment: Segment): boolean => {
+    let oldInFirst: boolean = this.data.get(this.firstLayer).includes(oldSegment);
+    let newInSecond: boolean = this.data.get(this.secondLayer).includes(newSegment);
+    return ((oldInFirst && newInSecond) || (!oldInFirst && !newInSecond));
+  }
+
+  /**
+   * Get the segment based on its ID
+   */
+  private findClickedSegment = (id: number): Segment => {
+    for (const [key, value] of this.data) {
+      for (let i = 0; i < value.length; i++) {
+        let segment: Segment = value[i];
+        if (segment.getID() == id) {
+          return segment;
+        }
+      }
+    }
+    return null;
   }
 
 
@@ -115,7 +166,7 @@ export class GameComponent {
   /**
    * Draw the segmental boundaries
    */
-  private drawBoundaries = () => {
+  private drawBoundaries = (): void => {
     let counter: number = 0;
     let startY: number;
     this.data.forEach((value: Array<Segment>, key: string) => {
@@ -142,17 +193,6 @@ export class GameComponent {
     });
   }
 
-  /**
-   * Draw the segment content on the canvas
-   */
-  private drawText = () => {
-    this.data.forEach((value: Array<Segment>) => {
-      value.forEach((segment: Segment) => {
-        segment.writeContent(this.areaToDraw);
-      });
-    });
-  }
-
 
   /////////////////////////////////
   // Custom pixel representation //
@@ -160,7 +200,7 @@ export class GameComponent {
   /**
    * Initialize the custom pixel representation with 0s
    */
-  private initPixelRep = () => {
+  private initPixelRep = (): void => {
     this.pixelRepresentation = new Array();
     for (let i = 0; i < this.canvas.width; i++) {
       this.pixelRepresentation[i] = new Array();
@@ -172,7 +212,7 @@ export class GameComponent {
   /**
    * Update the pixels at the position of the given segment
    */
-  private fillPixelRep = (segment: Segment) => {
+  private fillPixelRep = (segment: Segment): void => {
     let startX: number = segment.getPixelXStart();
     let endX: number = segment.getPixelXEnd();
     let startY: number = segment.getPixelYStart();
@@ -186,6 +226,39 @@ export class GameComponent {
     }
   }
 
+  ////////////////////////////
+  // Movement of the canvas //
+  ////////////////////////////
+  /**
+   * Start the movement of the canvas
+   */
+  private startMoving = (): void => {
+    let slidingElement = document.getElementById("movingCanvas");
+    this.maxScroll = slidingElement.scrollWidth - slidingElement.clientWidth;
+    this.interval = setInterval(() => {
+      if (slidingElement.scrollLeft == this.maxScroll) {
+        this.stopMoving();
+      }
+      slidingElement.scrollLeft += this.moveBy;
+    }, this.movingSpeed);
+  }
+  /**
+   * Stop the movement of the canvas
+   */
+  private stopMoving = (): void => {
+    clearInterval(this.interval);
+  }
+  /**
+   * Change the speed of the canvas
+   */
+  private changeMovingSpeed = (speed: number): void => {
+    this.movingSpeed = speed;
+    let slidingElement = document.getElementById("movingCanvas");
+    clearInterval(this.interval);
+    this.interval = setInterval(() => {
+      slidingElement.scrollLeft += this.moveBy;
+    }, this.movingSpeed);
+  }
 
   /////////////
   // Helpers //
@@ -208,50 +281,7 @@ export class GameComponent {
     let returnVal = ((end - start) * this.standards.scaling) + 10;
     return returnVal;
   }
-  /**
-   * Get the segment based on its ID
-   */
-  private findClickedSegment = (id: number): Segment => {
-    for (const [key, value] of this.data) {
-      for (let i = 0; i < value.length; i++) {
-        let segment: Segment = value[i];
-        if (segment.getID() == id) {
-          return segment;
-        }
-      }
-    }
-    return null;
-  }
-  /**
-   * Start the movement of the canvas
-   */
-  private startMoving = () => {
-    let slidingElement = document.getElementById("movingCanvas");
-    this.maxScroll = slidingElement.scrollWidth - slidingElement.clientWidth;
-    this.interval = setInterval(() => {
-      if (slidingElement.scrollLeft == this.maxScroll) {
-        this.stopMoving();
-      }
-      slidingElement.scrollLeft += this.moveBy;
-    }, this.movingSpeed);
-  }
-  /**
-   * 
-   */
-  private stopMoving = () => {
-    clearInterval(this.interval);
-  }
-  /**
-   * 
-   */
-  private changeMovingSpeed = (speed: number) => {
-    this.movingSpeed = speed;
-    let slidingElement = document.getElementById("movingCanvas");
-    clearInterval(this.interval);
-    this.interval = setInterval(() => {
-      slidingElement.scrollLeft += this.moveBy;
-    }, this.movingSpeed);
-  }
+
 
   /////////////////
   // CSS Styling //
@@ -268,7 +298,7 @@ export class GameComponent {
   /**
    * Make gaming area invisible
    */
-  private makeInvisble = () => {
+  private makeInvisble = (): void => {
     let allElements = document.getElementsByClassName("gamingArea");
     for (let i = 0; i < allElements.length; i++) {
       allElements.item(i).classList.add("hiddenGame");

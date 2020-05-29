@@ -34,7 +34,7 @@ export class DrawingStandards {
 
 		this.segmentHeight = 180;
 
-		this.scaling = 400;
+		this.scaling = 500;
 
 		this.textFont = "20px Arial";
 		this.textAlign = "center";
