@@ -118,7 +118,8 @@ export class GameComponent {
       }
       let differentLayers: boolean = this.compareLayers(this.currentSegment, segment);
       if (differentLayers) {
-        console.log("found it");
+        this.currentSegment.allocate(this.areaToDraw);
+        segment.allocate(this.areaToDraw);
         this.segmentSelected = false;
         return;
       } else {

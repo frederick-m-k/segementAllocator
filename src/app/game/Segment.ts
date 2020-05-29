@@ -23,48 +23,41 @@ export class Segment {
     constructor(private xStart: number, private xEnd: number, private content: string) {
         this.colorCounter = 0;
         this.standards = new DrawingStandards();
+        this.pixelXStart = Math.floor(this.xStart * this.standards.scaling);
+        this.pixelXEnd = Math.floor(this.xEnd * this.standards.scaling);
+        this.pixelWidth = this.pixelXEnd - this.pixelXStart;
     }
 
     /**
      * Draw the background of the segment with its content
      */
     draw = (canvas: CanvasRenderingContext2D): void => {
-        this.pixelXStart = Math.floor(this.xStart * this.standards.scaling);
-        this.pixelXEnd = Math.floor(this.xEnd * this.standards.scaling);
-        this.pixelYEnd = Math.floor(this.pixelYStart + this.standards.segmentHeight);
-        this.pixelWidth = this.pixelXEnd - this.pixelXStart;
-        this.pixelHeight = this.pixelYEnd - this.pixelYStart;
-
-        canvas.clearRect(this.pixelXStart, this.pixelYStart, this.pixelWidth, this.pixelHeight);
-
-        canvas.strokeStyle = DrawingColors.BOUNDARY_COLOR;
-        canvas.moveTo(this.pixelXStart, this.pixelYStart);
-        canvas.lineTo(this.pixelXStart, this.pixelYEnd);
-        canvas.moveTo(this.pixelXEnd, this.pixelYStart);
-        canvas.lineTo(this.pixelXEnd, this.pixelYEnd);
-        canvas.stroke();
-
+        this.clear(canvas);
         canvas.fillStyle = this.base_color;
-        canvas.fillRect(this.pixelXStart, this.pixelYStart, this.pixelWidth, this.pixelHeight);
-
+        this.fill(canvas);
+        this.boundaries(canvas);
         this.writeContent(canvas);
     }
 
     /**
-     * Draw the background of the segment with the SELECTED color
+     * Show SELECTED status of segment
      */
     select = (canvas: CanvasRenderingContext2D): void => {
-        canvas.clearRect(this.pixelXStart, this.pixelYStart, this.pixelWidth, this.pixelHeight);
-
+        this.clear(canvas);
         canvas.fillStyle = DrawingColors.CURRENTLY_SELECTED;
-        canvas.fillRect(this.pixelXStart, this.pixelYStart, this.pixelWidth, this.pixelHeight);
+        this.fill(canvas);
+        this.boundaries(canvas);
+        this.writeContent(canvas);
+    }
 
-        canvas.moveTo(this.pixelXStart, this.pixelYStart);
-        canvas.lineTo(this.pixelXStart, this.pixelYEnd);
-        canvas.moveTo(this.pixelXEnd, this.pixelYStart);
-        canvas.lineTo(this.pixelXEnd, this.pixelYEnd);
-        canvas.stroke();
-
+    /**
+     * Show ALLOCATED status of segment
+     */
+    allocate = (canvas: CanvasRenderingContext2D): void => {
+        this.clear(canvas);
+        canvas.fillStyle = SelectedColorPairs.BASE_COLOR_1;
+        this.fill(canvas);
+        this.boundaries(canvas);
         this.writeContent(canvas);
     }
 
@@ -80,11 +73,34 @@ export class Segment {
         canvas.fillText(this.content, textX, textY);
     }
 
+    /**
+     * Draw the two boundaries of a segment
+     */
+    private boundaries = (canvas: CanvasRenderingContext2D): void => {
+        canvas.strokeStyle = DrawingColors.BOUNDARY_COLOR;
+        canvas.moveTo(this.pixelXStart, this.pixelYStart);
+        canvas.lineTo(this.pixelXStart, this.pixelYEnd);
+        canvas.moveTo(this.pixelXEnd, this.pixelYStart);
+        canvas.lineTo(this.pixelXEnd, this.pixelYEnd);
+        canvas.stroke();
+    }
+
+    private fill = (canvas: CanvasRenderingContext2D): void => {
+        canvas.fillRect(this.pixelXStart, this.pixelYStart, this.pixelWidth, this.pixelHeight);
+    }
+    private clear = (canvas: CanvasRenderingContext2D): void => {
+        canvas.clearRect(this.pixelXStart, this.pixelYStart, this.pixelWidth, this.pixelHeight);
+    }
+
     ////////////
     // Setter //
     ////////////
     setID = (id: number): void => { this.id = id; }
-    setPixelYStart = (yStart: number): void => { this.pixelYStart = Math.floor(yStart); }
+    setPixelYStart = (yStart: number): void => {
+        this.pixelYStart = Math.floor(yStart);
+        this.pixelYEnd = Math.floor(this.pixelYStart + this.standards.segmentHeight);
+        this.pixelHeight = this.pixelYEnd - this.pixelYStart;
+    }
     setColor = (color: string): void => { this.base_color = color; }
 
 
