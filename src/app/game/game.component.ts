@@ -23,7 +23,14 @@ export class GameComponent {
   @Input() private links: Map<number, Array<number>>;
   @Input() private startGame: boolean;
 
+  ////////////////
+  // For moving //
+  ////////////////
   private interval;
+  private movingSpeed: number = 200;
+  private moveBy: number = 5;
+  private maxScroll: number;
+
   private counter: number = 0;
   private canvas: HTMLCanvasElement;
   private areaToDraw: CanvasRenderingContext2D;
@@ -97,7 +104,7 @@ export class GameComponent {
     let segment_id: number = this.pixelRepresentation[xPos][yPos];
     let segment: Segment = this.findClickedSegment(segment_id);
     if (segment != null) {
-      segment.selectSegment(this.areaToDraw);
+      segment.select(this.areaToDraw);
     }
   }
 
@@ -220,9 +227,30 @@ export class GameComponent {
    */
   private startMoving = () => {
     let slidingElement = document.getElementById("movingCanvas");
+    this.maxScroll = slidingElement.scrollWidth - slidingElement.clientWidth;
     this.interval = setInterval(() => {
-      slidingElement.scrollLeft += 30;
-    }, 1000);
+      if (slidingElement.scrollLeft == this.maxScroll) {
+        this.stopMoving();
+      }
+      slidingElement.scrollLeft += this.moveBy;
+    }, this.movingSpeed);
+  }
+  /**
+   * 
+   */
+  private stopMoving = () => {
+    clearInterval(this.interval);
+  }
+  /**
+   * 
+   */
+  private changeMovingSpeed = (speed: number) => {
+    this.movingSpeed = speed;
+    let slidingElement = document.getElementById("movingCanvas");
+    clearInterval(this.interval);
+    this.interval = setInterval(() => {
+      slidingElement.scrollLeft += this.moveBy;
+    }, this.movingSpeed);
   }
 
   /////////////////

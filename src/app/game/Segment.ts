@@ -43,7 +43,7 @@ export class Segment {
         canvas.fillRect(this.pixelXStart, this.pixelYStart, this.pixelWidth, this.pixelHeight);
     }
 
-    selectSegment = (canvas: CanvasRenderingContext2D): void => {
+    select = (canvas: CanvasRenderingContext2D): void => {
         canvas.clearRect(this.pixelXStart, this.pixelYStart, this.pixelWidth, this.pixelHeight);
         canvas.fillStyle = SelectedColorPairs.BASE_COLOR_1;
         canvas.fillRect(this.pixelXStart, this.pixelYStart, this.pixelWidth, this.pixelHeight);
