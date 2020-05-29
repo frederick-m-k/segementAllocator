@@ -20,8 +20,8 @@ export class DrawingStandards {
 
 	readonly segmentHeight: number;
 
-	readonly text: string;
-
+	readonly textFont: string;
+	readonly textAlign: CanvasTextAlign;
 	/**
 	 * Horzizontal scaling
 	 */
@@ -36,7 +36,8 @@ export class DrawingStandards {
 
 		this.scaling = 400;
 
-		this.text = "20px Arial";
+		this.textFont = "20px Arial";
+		this.textAlign = "center";
 	}
 
 	canvasHeight = (): number => {
@@ -62,10 +63,17 @@ export class DrawingStandards {
  * Colors for drawing the game on the canvas
  */
 export enum DrawingColors {
-	BORDERS = '#3b3c3d',
+	BORDERS = "#3b3c3d",
 	LIGHT_BACKGROUND = "#bfbfbf",
 	DARK_BACKGROUND = "#666666",
-	TEXT = "#FFFFFF"
+	TEXT = "#FFFFFF",
+	CURRENTLY_SELECTED = "#04c707",
+	BOUNDARY_COLOR = "#000000"
+}
+
+export enum SelectedColorPairs {
+	BASE_COLOR_1 = "rgb(0, 0, 255)",
+	BASE_COLOR_2 = "rgb(125, 0, 184)"
 }
 
 /**
