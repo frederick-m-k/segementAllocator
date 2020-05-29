@@ -1,5 +1,5 @@
 
-import { SelectedColorPairs, DrawingColors, DrawingStandards } from './../standards';
+import { DrawingColors, DrawingStandards } from './../standards';
 
 /**
  * Representation of a Segment with real segment boundaries and pixel-wise boundaries
@@ -14,14 +14,13 @@ export class Segment {
     private pixelHeight: number;
 
     private id: number;
+    private allocatedIDs: Array<number>;
 
-    private colorCounter: number;
     private base_color: string;
 
     private standards: DrawingStandards;
 
     constructor(private xStart: number, private xEnd: number, private content: string) {
-        this.colorCounter = 0;
         this.standards = new DrawingStandards();
         this.pixelXStart = Math.floor(this.xStart * this.standards.scaling);
         this.pixelXEnd = Math.floor(this.xEnd * this.standards.scaling);
@@ -53,12 +52,20 @@ export class Segment {
     /**
      * Show ALLOCATED status of segment
      */
-    allocate = (canvas: CanvasRenderingContext2D): void => {
+    private allocate = (canvas: CanvasRenderingContext2D, color: string): void => {
         this.clear(canvas);
-        canvas.fillStyle = SelectedColorPairs.BASE_COLOR_1;
+        canvas.fillStyle = color;
         this.fill(canvas);
         this.boundaries(canvas);
         this.writeContent(canvas);
+    }
+
+    /**
+     * Add allocated id of segment and show colors
+     */
+    addAllocation = (canvas: CanvasRenderingContext2D, color: string, idToAdd: number) => {
+        this.allocate(canvas, color);
+        this.allocatedIDs.push(idToAdd);
     }
 
     /**

@@ -1,7 +1,7 @@
 
 import { Component, Input, SimpleChanges } from '@angular/core';
 
-import { DrawingStandards, DrawingColors } from './../standards';
+import { DrawingStandards, DrawingColors, AllocatedColors } from './../standards';
 import { Segment } from './Segment';
 
 /**
@@ -42,6 +42,7 @@ export class GameComponent {
   private currentSegment: Segment;
   private segmentSelected: boolean;
 
+  private colors: Map<number, string>;
   private standards = new DrawingStandards();
 
   constructor() { }
@@ -67,6 +68,7 @@ export class GameComponent {
     }
     if (this.counter == 4 && this.startGame) {
       this.initCanvas();
+      this.initColors();
       this.drawBoundaries();
       this.makeVisible();
       this.startMoving();
@@ -95,12 +97,26 @@ export class GameComponent {
       const rect = this.canvas.getBoundingClientRect();
       let x = event.clientX - rect.left;
       let y = event.clientY - rect.top;
-      this.logPos(x, y);
+      this.playGame(x, y);
     });
   }
+  /**
+   * Initialize the Map holding colors for all allocations
+   * based on the layer with less segments
+   */
+  private initColors = () => {
+    let amount: number = this.amountOfShortestLayer();
+    let colorCreation: AllocatedColors = new AllocatedColors(amount);
+    this.colors = colorCreation.getColors();
+  }
 
-
-  private logPos = (xPos: number, yPos: number): void => {
+  /////////////////////////////////////////
+  // Game mechanics for user interaction //
+  /////////////////////////////////////////
+  /**
+   * 
+   */
+  private playGame = (xPos: number, yPos: number): void => {
     xPos = Math.floor(xPos);
     yPos = Math.floor(yPos);
     let segment_id: number = this.pixelRepresentation[xPos][yPos];
@@ -111,15 +127,19 @@ export class GameComponent {
     }
     if (this.segmentSelected) { // Compare
       if (this.compareSegments(this.currentSegment, segment)) {
-        console.log("The same");
         this.currentSegment.draw(this.areaToDraw);
         this.segmentSelected = false;
         return;
       }
       let differentLayers: boolean = this.compareLayers(this.currentSegment, segment);
       if (differentLayers) {
-        this.currentSegment.allocate(this.areaToDraw);
-        segment.allocate(this.areaToDraw);
+        let allocationColor: string = this.findAllocationColor(this.currentSegment, segment);
+        if (allocationColor == null) {
+          // Error
+          return;
+        }
+        this.currentSegment.addAllocation(this.areaToDraw, allocationColor, segment.getID());
+        segment.addAllocation(this.areaToDraw, allocationColor, this.currentSegment.getID());
         this.segmentSelected = false;
         return;
       } else {
@@ -130,6 +150,7 @@ export class GameComponent {
     this.currentSegment = segment;
     this.segmentSelected = true;
   }
+
   /**
    * Check if segments are the same
    */
@@ -137,7 +158,7 @@ export class GameComponent {
     return oldSegment == newSegment;
   }
   /**
-   * 
+   * Check if the two segments are in different layers
    */
   private compareLayers = (oldSegment: Segment, newSegment: Segment): boolean => {
     let oldInFirst: boolean = this.data.get(this.firstLayer).includes(oldSegment);
@@ -158,6 +179,21 @@ export class GameComponent {
       }
     }
     return null;
+  }
+
+  /**
+   * 
+   */
+  private findAllocationColor = (oneSegment: Segment, secondSegment: Segment): string => {
+    if (this.colors.has(oneSegment.getID())) {
+      return this.colors.get(oneSegment.getID());
+    } else if (this.colors.has(secondSegment.getID())) {
+      return this.colors.get(secondSegment.getID());
+    } else {
+      // Error, you should not end up here
+      console.log("error");
+      return null;
+    }
   }
 
 
@@ -281,6 +317,18 @@ export class GameComponent {
     });
     let returnVal = ((end - start) * this.standards.scaling) + 10;
     return returnVal;
+  }
+  /**
+   * Return the amount of segments on the shortest layer
+   */
+  private amountOfShortestLayer = (): number => {
+    let amount: number = Number.MAX_SAFE_INTEGER;
+    this.data.forEach((value: Array<Segment>) => {
+      if (value.length < amount) {
+        amount = value.length;
+      }
+    });
+    return amount;
   }
 
 
