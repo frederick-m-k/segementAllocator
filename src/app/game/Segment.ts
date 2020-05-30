@@ -14,7 +14,8 @@ export class Segment {
     private pixelHeight: number;
 
     private id: number;
-    private allocatedIDs: Array<number>;
+    private allocatedIDs: Set<number>;
+    private firstLayer: string;
 
     private base_color: string;
 
@@ -25,6 +26,8 @@ export class Segment {
         this.pixelXStart = Math.floor(this.xStart * this.standards.scaling);
         this.pixelXEnd = Math.floor(this.xEnd * this.standards.scaling);
         this.pixelWidth = this.pixelXEnd - this.pixelXStart;
+
+        this.allocatedIDs = new Set<number>();
     }
 
     /**
@@ -63,9 +66,24 @@ export class Segment {
     /**
      * Add allocated id of segment and show colors
      */
-    addAllocation = (canvas: CanvasRenderingContext2D, color: string, idToAdd: number) => {
+    addAllocation = (canvas: CanvasRenderingContext2D, color: string, idToAdd: number): void => {
         this.allocate(canvas, color);
-        this.allocatedIDs.push(idToAdd);
+        this.allocatedIDs.add(idToAdd);
+    }
+    /**
+     * 
+     */
+    clearAllocation = (): number => {
+        let allocation: number = this.allocatedIDs.values().next().value;
+        this.allocatedIDs.clear();
+        return allocation;
+    }
+    /**
+     * 
+     */
+    removeSpecificAllocation = (id: number): void => {
+        this.allocatedIDs.delete(id);
+
     }
 
     /**
@@ -109,7 +127,8 @@ export class Segment {
         this.pixelHeight = this.pixelYEnd - this.pixelYStart;
     }
     setColor = (color: string): void => { this.base_color = color; }
-
+    setLayerBelonging = (layer: string): void => { this.firstLayer = layer; }
+    hasAllocation = (): boolean => { return this.allocatedIDs.size > 0; }
 
     ////////////
     // Getter //
@@ -117,6 +136,7 @@ export class Segment {
     getXStart = (): number => { return this.xStart; }
     getXEnd = (): number => { return this.xEnd; }
     getID = (): number => { return this.id; }
+    getLayerBelonging = (): string => { return this.firstLayer; }
 
     getPixelXStart = (): number => { return this.pixelXStart; }
     getPixelXEnd = (): number => { return this.pixelXEnd; }

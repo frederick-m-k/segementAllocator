@@ -113,6 +113,8 @@ export class PrepFileComponent {
         //value[i].push(LinkingID.UNASSIGNED);  // The linked-segment-state
         this.links.set(id, new Array<number>());
         id++;
+
+        value[i].setLayerBelonging(key);
       }
     });
   }
