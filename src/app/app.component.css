@@ -1,0 +1,29 @@
+
+.header {
+    margin: 10px;
+}
+
+.vl {
+    height: 50px;
+    width: 100vw;
+    border-left: 6px dashed #9c0a00;
+    text-align: left;
+    position: relative;
+    background-image: linear-gradient(-90deg, #9c0a00, #FFFFFF);
+}
+
+.gradient {
+    height: 7px;
+    background-image: linear-gradient(90deg, transparent, transparent 50%,
+                    #FFFFFF 50%, #FFFFFF 100%),
+                    linear-gradient(90deg, #9c0a00, #FFFFFF);
+    background-size: 20px 4px, 100% 10px;
+    border: none;
+}
+
+#name {
+    padding-left: 10px;
+    margin-bottom: 15px;
+    position: absolute;
+    top: 0px;
+}

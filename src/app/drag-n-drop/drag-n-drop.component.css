@@ -19,11 +19,11 @@
     left: 0;
 }
 .dropzone #fileBrowse {
-    color: #38424c;
+    color: #FFFFFF;
     width: 30%;
     height: 50px;
     border-radius: 12px;
-    background-color: #0aff1f;
+    background-color: #9c0a00;
     padding: 8px 16px;
 }
 .dropzone h3 {
@@ -51,8 +51,8 @@
 }
 .metaInformation .metaData {
     display: none;
-    border: solid 2px #38424c;
-    background-color: #0aff1f;
+    border: solid 2px #FFFFFF;
+    background-color: #9c0a00;
     position: relative;
 }
 .metaInformation .layerContainer {
@@ -73,9 +73,9 @@
 }
 .metaInformation .button {
     display: none;
-    border: solid 2px #38424c;
+    border: solid 2px #FFFFFF;
     border-radius: 4px;;
-    background-color: #0aff1f;
+    background-color: ##9c0a00;
     width: 100px;
     height: 30px;
     font-size: 15px;
