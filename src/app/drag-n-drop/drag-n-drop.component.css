@@ -75,7 +75,7 @@
     display: none;
     border: solid 2px #FFFFFF;
     border-radius: 4px;;
-    background-color: ##9c0a00;
+    background-color: #9c0a00;
     width: 100px;
     height: 30px;
     font-size: 15px;
@@ -87,4 +87,9 @@
 }
 .hidden {
     display: none;
+}
+
+
+.hiddenWhenGameStarts {
+    top: 40px;
 }
