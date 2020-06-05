@@ -8,7 +8,6 @@ import { Errors } from "./../../errors";
  *  - test Point tiers
  */
 export class TextGridParser {
-	private allTiers: Array<string> = new Array<string>();
 	private dataStructure: Map<
 		string,
 		Array<Segment>
@@ -58,12 +57,12 @@ export class TextGridParser {
 									}
 								} else if (currentLine.includes("name = ") && !watchForNextSegment) {
 									// Check if the tier is relevant
-									this.allTiers.push(currentLine.split("=")[1].trim());
-									if (currentLine.includes(firstLayer)) {
+									let temp: string = currentLine.split("=")[1].trim().replace(/"/g, "");
+									if (temp == firstLayer) {
 										this.dataStructure.set(firstLayer, new Array());
 										foundFirst = true;
 										layerOnThisRun = 1;
-									} else if (currentLine.includes(secondLayer)) {
+									} else if (temp == secondLayer) {
 										this.dataStructure.set(secondLayer, new Array());
 										foundSecond = true;
 										layerOnThisRun = 2;
@@ -76,9 +75,7 @@ export class TextGridParser {
 									// Cycle is done
 									first = second - 1;
 									break;
-								}
-								// ...and the the actual data
-								if (watchForNextSegment) {
+								} else if (watchForNextSegment) { // ...and the the actual data
 									if (!pointTier) {
 										if (currentLine.includes("xmin =")) {
 											startPoint = parseFloat(currentLine.split("=")[1].trim());
@@ -165,10 +162,6 @@ export class TextGridParser {
 		} else {
 			return Errors.NO_ERROR;
 		}
-	};
-
-	getAllTiers = () => {
-		return this.allTiers;
 	};
 	getDataStructure = () => {
 		return new Map<string, Array<Segment>>(this.dataStructure);

@@ -25,7 +25,6 @@ export class PrepFileComponent {
   @Input() private secondLayer: string;
 
   @Output() errorLogging: EventEmitter<Errors> = new EventEmitter(true);
-  @Output() tiers: EventEmitter<Array<string>> = new EventEmitter(true);
   @Output() data: EventEmitter<Map<string, Array<Segment>>> = new EventEmitter(true);
   @Output() segmentLinks: EventEmitter<Map<number, Array<number>>> = new EventEmitter();
 
@@ -50,6 +49,7 @@ export class PrepFileComponent {
    * @param changes 
    */
   ngOnChanges(changes: SimpleChanges) {
+    console.log(changes);
     let counter = 0;
     for (const propName in changes) {
       if (changes.hasOwnProperty(propName)) {
@@ -67,6 +67,7 @@ export class PrepFileComponent {
     }
 
     if (counter == 4) {
+      console.log("test2");
       this.parseFile();
     } else {
       counter = 0;
@@ -81,7 +82,7 @@ export class PrepFileComponent {
     if (this.type === "TextGrid") {
       parserReturn = this.textGridParser.parseTextGrid(this.content, this.firstLayer, this.secondLayer);
       this.errorLogging.emit(parserReturn);
-      this.tiers.emit(this.allLayers);
+
       switch (parserReturn) {
         case Errors.NO_ERROR:
           this.dataStructure = this.textGridParser.getDataStructure();

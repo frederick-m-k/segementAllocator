@@ -23,6 +23,8 @@ export class DragNDropComponent {
 
   @Input() startGame: boolean;
 
+  private correctFile: boolean;
+
   private fileName: string;
   private file: File;
   private privFileType: string;
@@ -37,15 +39,14 @@ export class DragNDropComponent {
    * Pass file content and metadata to the parent component via EventEmitters
    */
   transferFileContent = () => {
-    console.log("test");
+
     let firstLayer = (document.getElementById("firstLayer") as HTMLInputElement).value;
     let secondLayer = (document.getElementById("secondLayer") as HTMLInputElement).value;
 
     if (firstLayer === "" || secondLayer === "") {
-      console.log("error");
       this.errorLogging.emit(Errors.PROVIDE_BOTH_TIERS_ERROR);
     } else {
-      console.log("No error");
+      console.log("test1");
       this.fileContent.emit((this.text as string));
       this.fileType.emit(this.privFileType);
       this.firstLayer.emit(firstLayer);
@@ -137,6 +138,8 @@ export class DragNDropComponent {
           this.reader.readAsText(this.file);
 
           this.errorLogging.emit(Errors.NO_ERROR);
+
+          this.correctFile = true;
         }
       }
     }

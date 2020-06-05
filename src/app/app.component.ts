@@ -20,7 +20,6 @@ export class AppComponent {
   firstLayer: string;
   secondLayer: string;
 
-  tiers: Array<string>;
   errorLogging: Errors;
 
   data: Map<string, Array<Segment>>;
@@ -47,9 +46,6 @@ export class AppComponent {
 
   getError = (errorLogging: Errors) => {
     this.errorLogging = errorLogging;
-  }
-  getTiers = (tiers: Array<string>) => {
-    this.tiers = tiers;
   }
 
   getData = (data: Map<string, Array<Segment>>) => {
