@@ -520,7 +520,7 @@ export class GameComponent {
   private makeVisible = (): void => {
     let allElements = document.getElementsByClassName("gamingArea");
     for (let i = 0; i < allElements.length; i++) {
-      allElements.item(i).classList.remove("hiddenGame");
+      allElements.item(i).classList.remove("hidden");
     }
   }
   /**
@@ -529,7 +529,19 @@ export class GameComponent {
   private makeInvisble = (): void => {
     let allElements = document.getElementsByClassName("gamingArea");
     for (let i = 0; i < allElements.length; i++) {
-      allElements.item(i).classList.add("hiddenGame");
+      allElements.item(i).classList.add("hidden");
+    }
+  }
+
+  ///////////////////
+  // Event Binding //
+  ///////////////////
+  toggleLegend = (event: MouseEvent): void => {
+    let element: HTMLElement = document.getElementById("legend");
+    if (element.classList.contains("hidden")) {
+      element.classList.remove("hidden");
+    } else {
+      element.classList.add("hidden");
     }
   }
 }

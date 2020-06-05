@@ -10,7 +10,16 @@
 .config {
     margin: auto;
     width: 60vw;
-    height: 60vh;
+    height: 10vh;
+    text-align: center;
+}
+.config:hover {
+    opacity: 0.3;
+}
+.config h3 {
+    font-size: 25px;
+    font-family: "Palatino", Times, serif;
+    color: #38424c;
 }
 
 .config .shortcuts {
@@ -20,6 +29,8 @@
 .config .shortcuts p {
     padding: 0 5px;
     font-size: 18px;
+    font-family: "Palatino", Times, serif;
+    color: #38424c;
 }
 .config .shortcuts p img {
     width: 20px;
@@ -47,7 +58,9 @@
     height: 17px;
 }
 
+/* Left and right positioning */
 .config .shortcuts p .lefty {
+    float: left;
     text-align: left;
 }
 .config .shortcuts p .righty {
@@ -55,20 +68,7 @@
     text-align: right;
 }
 
-/* #time_related p #play_pause {
-    float: left;
-}
-#time_related p #a_w {
-    float: right;
-}
-#segment_related p #move_segment {
-    float: left;
-}
-#segment_related p #reset_segment {
-    float: right;
-} */
 
-
-.hiddenGame {
-   display: none;
+.hidden {
+    display: none;
 }
