@@ -49,7 +49,6 @@ export class PrepFileComponent {
    * @param changes 
    */
   ngOnChanges(changes: SimpleChanges) {
-    console.log(changes);
     let counter = 0;
     for (const propName in changes) {
       if (changes.hasOwnProperty(propName)) {
@@ -67,7 +66,6 @@ export class PrepFileComponent {
     }
 
     if (counter == 4) {
-      console.log("test2");
       this.parseFile();
     } else {
       counter = 0;

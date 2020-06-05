@@ -23,13 +23,13 @@ export class DragNDropComponent {
 
   @Input() startGame: boolean;
 
-  private correctFile: boolean;
-
   private fileName: string;
   private file: File;
   private privFileType: string;
   private reader = new FileReader();
   private text: string | ArrayBuffer;
+
+  private allTiers: Array<string> = new Array();
 
   private metaDataElements = document.getElementsByClassName("metaData");
 
@@ -39,18 +39,16 @@ export class DragNDropComponent {
    * Pass file content and metadata to the parent component via EventEmitters
    */
   transferFileContent = () => {
+    let firstLayer: string = (document.getElementById("firstLayer") as HTMLInputElement).value;
+    let secondLayer: string = (document.getElementById("secondLayer") as HTMLInputElement).value;
 
-    let firstLayer = (document.getElementById("firstLayer") as HTMLInputElement).value;
-    let secondLayer = (document.getElementById("secondLayer") as HTMLInputElement).value;
-
-    if (firstLayer === "" || secondLayer === "") {
-      this.errorLogging.emit(Errors.PROVIDE_BOTH_TIERS_ERROR);
-    } else {
-      console.log("test1");
+    if (this.allTiers.includes(firstLayer) && this.allTiers.includes(secondLayer)) {
       this.fileContent.emit((this.text as string));
       this.fileType.emit(this.privFileType);
       this.firstLayer.emit(firstLayer);
       this.secondLayer.emit(secondLayer);
+    } else {
+      this.errorLogging.emit(Errors.PROVIDE_BOTH_TIERS_ERROR);
     }
   }
 
@@ -138,8 +136,6 @@ export class DragNDropComponent {
           this.reader.readAsText(this.file);
 
           this.errorLogging.emit(Errors.NO_ERROR);
-
-          this.correctFile = true;
         }
       }
     }
@@ -192,6 +188,7 @@ export class DragNDropComponent {
         if (!curLine.includes("mark =") && !curLine.includes("text =")) { // Just to skip "name =" written in the segments
           let toAppend: string = curLine.split("=")[1].trim().replace(/"/g, "");
           message = message.concat(toAppend);
+          this.allTiers.push(toAppend);
           counter++;
           if (counter < amount) {
             message = message.concat(", ");
