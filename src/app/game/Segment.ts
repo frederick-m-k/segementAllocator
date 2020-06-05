@@ -18,6 +18,7 @@ export class Segment {
     private firstLayer: string;
 
     private base_color: string;
+    private allocationColor: string = DrawingColors.NO_COLOR;
 
     private standards: DrawingStandards;
 
@@ -35,7 +36,11 @@ export class Segment {
      */
     draw = (canvas: CanvasRenderingContext2D): void => {
         this.clear(canvas);
-        canvas.fillStyle = this.base_color;
+        if (this.allocationColor == DrawingColors.NO_COLOR) {
+            canvas.fillStyle = this.base_color;
+        } else {
+            canvas.fillStyle = this.allocationColor;
+        }
         this.fill(canvas);
         this.boundaries(canvas);
         this.writeContent(canvas);
@@ -53,11 +58,22 @@ export class Segment {
     }
 
     /**
+     * Reset the allocation color and return all allocated IDs
+     */
+    reset = (): Set<number> => {
+        this.allocationColor = DrawingColors.NO_COLOR;
+        let temp: Set<number> = new Set<number>(this.allocatedIDs);
+        this.allocatedIDs.clear();
+        return temp;
+    }
+
+    /**
      * Show ALLOCATED status of segment
      */
     private allocate = (canvas: CanvasRenderingContext2D, color: string): void => {
         this.clear(canvas);
         canvas.fillStyle = color;
+        this.allocationColor = color;
         this.fill(canvas);
         this.boundaries(canvas);
         this.writeContent(canvas);
@@ -83,7 +99,9 @@ export class Segment {
      */
     removeSpecificAllocation = (id: number): void => {
         this.allocatedIDs.delete(id);
-
+        if (this.allocatedIDs.size == 0) {
+            this.allocationColor = DrawingColors.NO_COLOR;
+        }
     }
 
     /**
@@ -137,6 +155,7 @@ export class Segment {
     getXEnd = (): number => { return this.xEnd; }
     getID = (): number => { return this.id; }
     getLayerBelonging = (): string => { return this.firstLayer; }
+    getAllocationIDs = (): Set<number> => { return this.allocatedIDs; }
 
     getPixelXStart = (): number => { return this.pixelXStart; }
     getPixelXEnd = (): number => { return this.pixelXEnd; }

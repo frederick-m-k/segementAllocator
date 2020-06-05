@@ -94,7 +94,8 @@ export enum DrawingColors {
 	DARK_BACKGROUND = "#e8e8e8",
 	TEXT = "#FFFFFF",
 	CURRENTLY_SELECTED = "#04c707",
-	BOUNDARY_COLOR = "#000000"
+	BOUNDARY_COLOR = "#000000",
+	NO_COLOR = "no_color"
 }
 /**
  * Providing states for linking the 

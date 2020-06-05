@@ -141,16 +141,17 @@ export class GameComponent {
   private playGame = (segment: Segment): void => {
     if (this.segmentSelected) { // Compare
       if (this.compareSegments(this.currentSegment, segment)) {
-        this.currentSegment.draw(this.drawingArea);
+        this.clearSegment(this.currentSegment);
         this.segmentSelected = false;
         return;
       }
       let differentLayers: boolean = this.compareLayers(this.currentSegment, segment);
       if (differentLayers) {
-        this.checkAllocation(this.currentSegment, segment);
+        this.clearAllocations(this.currentSegment, segment);
         let allocationColor: string = this.findAllocationColor(this.currentSegment, segment);
         if (allocationColor == null) {
           // Error
+          console.log("allocation color error");
           return;
         }
         this.currentSegment.addAllocation(this.drawingArea, allocationColor, segment.getID());
@@ -179,9 +180,22 @@ export class GameComponent {
     return oldSegment.getLayerBelonging() != newSegment.getLayerBelonging();
   }
   /**
+   * Reset a segment when double clicked on it
+   */
+  private clearSegment = (segment: Segment): void => {
+    let seg_id: number = segment.getID();
+    let seg_allocations: Set<number> = segment.reset();
+    seg_allocations.forEach((id: number) => {
+      let allocSeg: Segment = this.findSegment(id);
+      allocSeg.removeSpecificAllocation(seg_id);
+      allocSeg.draw(this.drawingArea);
+    });
+    segment.draw(this.drawingArea);
+  }
+  /**
    * Clear old allocations of the two segments
    */
-  private checkAllocation = (oldSegment: Segment, newSegment: Segment) => {
+  private clearAllocations = (oldSegment: Segment, newSegment: Segment) => {
     if (oldSegment.hasAllocation()) {
       if (oldSegment.getLayerBelonging() != this.shortestLayer) { // Also remove the allocation in the segment, oldSegment was linked to
         let otherAllocation: number = oldSegment.clearAllocation();
@@ -402,7 +416,9 @@ export class GameComponent {
     });
     this.shortestLayer = layer;
   }
-
+  /**
+   * Return the segment which is right above or below the middle of the other segment
+   */
   private findSegmentInOtherLayer = (segment: Segment): Segment => {
     let middleX: number = Math.floor((segment.getPixelXEnd() + segment.getPixelXStart()) / 2);
     let middleY: number = Math.floor((segment.getPixelYEnd() + segment.getPixelYStart()) / 2);
@@ -436,10 +452,6 @@ export class GameComponent {
           event.preventDefault();
           this.moveRight();
           break;
-        case "r": // reset the current segment
-          event.preventDefault();
-
-          break;
       }
     }
   }
@@ -462,6 +474,8 @@ export class GameComponent {
               // error
               console.log("Couldn't find segment in arrowup");
             }
+          } else {
+            this.playGame(this.currentSegment);
           }
           break;
         case "ArrowDown":
@@ -474,6 +488,8 @@ export class GameComponent {
               // error
               console.log("Couldn't find segment in arrowdown");
             }
+          } else {
+            this.playGame(this.currentSegment);
           }
           break;
         case "ArrowLeft":
