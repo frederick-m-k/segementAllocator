@@ -19,7 +19,7 @@
     left: 0;
 }
 .dropzone #fileBrowse {
-    color: #FFFFFF;
+    color: rgb(223, 219, 219);
     width: 30%;
     height: 50px;
     border-radius: 12px;
@@ -47,13 +47,26 @@
     margin: 0 auto;
 }
 .metaInformation #filename {
-    color: #000;
+    color: #38424c;
+}
+.metaInformation #layers {
+    color: #38424c;
 }
 .metaInformation .metaData {
     display: none;
     border: solid 2px #FFFFFF;
     background-color: #9c0a00;
     position: relative;
+}
+::placeholder {
+    color: rgb(223, 219, 219);
+    opacity: 1;
+}
+:-ms-input-placeholder {
+    color: rgb(223, 219, 219);
+}
+::-ms-input-placeholder {
+    color: rgb(223, 219, 219);
 }
 .metaInformation .layerContainer {
     text-align: center;
@@ -65,6 +78,7 @@
     height: 20px;
     border-radius: 3px;
     margin: 10px;
+    color: rgb(223, 219, 219);
 }
 .metaInformation .buttonContainer {
     text-align: center;
@@ -76,6 +90,7 @@
     border: solid 2px #FFFFFF;
     border-radius: 4px;;
     background-color: #9c0a00;
+    color: rgb(223, 219, 219);
     width: 100px;
     height: 30px;
     font-size: 15px;
@@ -91,5 +106,7 @@
 
 
 .hiddenWhenGameStarts {
-    top: 40px;
+    top: 30px;
+    margin-bottom: 30px;
+    font-family: "Palatino", Times, serif;
 }

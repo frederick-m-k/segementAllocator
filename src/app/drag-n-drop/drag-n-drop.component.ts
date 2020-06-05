@@ -15,34 +15,37 @@ export class DragNDropComponent {
   //////////////////////
   // Input and Output //
   //////////////////////
-  @Output() fileContent:EventEmitter<string> = new EventEmitter();
-  @Output() fileType:EventEmitter<string> = new EventEmitter();
-  @Output() firstLayer:EventEmitter<string> = new EventEmitter();
-  @Output() secondLayer :EventEmitter<string>= new EventEmitter();
-  @Output() errorLogging:EventEmitter<Errors> = new EventEmitter();
+  @Output() fileContent: EventEmitter<string> = new EventEmitter();
+  @Output() fileType: EventEmitter<string> = new EventEmitter();
+  @Output() firstLayer: EventEmitter<string> = new EventEmitter();
+  @Output() secondLayer: EventEmitter<string> = new EventEmitter();
+  @Output() errorLogging: EventEmitter<Errors> = new EventEmitter();
 
-  @Input() startGame:boolean;
+  @Input() startGame: boolean;
 
-  private fileName:string;
-  private file;
-  private privFileType:string;
+  private fileName: string;
+  private file: File;
+  private privFileType: string;
   private reader = new FileReader();
-  private text:string | ArrayBuffer;
+  private text: string | ArrayBuffer;
 
   private metaDataElements = document.getElementsByClassName("metaData");
 
-  constructor() {}
+  constructor() { }
 
   /**
    * Pass file content and metadata to the parent component via EventEmitters
    */
   transferFileContent = () => {
+    console.log("test");
     let firstLayer = (document.getElementById("firstLayer") as HTMLInputElement).value;
     let secondLayer = (document.getElementById("secondLayer") as HTMLInputElement).value;
 
     if (firstLayer === "" || secondLayer === "") {
+      console.log("error");
       this.errorLogging.emit(Errors.PROVIDE_BOTH_TIERS_ERROR);
     } else {
+      console.log("No error");
       this.fileContent.emit((this.text as string));
       this.fileType.emit(this.privFileType);
       this.firstLayer.emit(firstLayer);
@@ -61,14 +64,15 @@ export class DragNDropComponent {
         if (!changes[propName].isFirstChange()) {
           switch (propName) {
             case "startGame":
+              let elementsToHide = document.getElementsByClassName("hiddenWhenGameStarts");
               if (this.startGame) {
-                let elementsToHide = document.getElementsByClassName("hiddenWhenGameStarts");
-
-                for (let i = 0; i < elementsToHide.length; i ++) {
+                for (let i = 0; i < elementsToHide.length; i++) {
                   elementsToHide.item(i).classList.add("hidden");
                 }
               } else {
-                // Make visible again
+                for (let i = 0; i < elementsToHide.length; i++) {
+                  elementsToHide.item(i).classList.remove("hidden");
+                }
               }
               break;
           }
@@ -108,17 +112,19 @@ export class DragNDropComponent {
       if (files.length > 1) {
         this.errorLogging.emit(Errors.TOO_MANY_FILES_ERROR);
         this.writeFilename("");
+        this.writeTiers("");
       } else {
         this.file = files[0];
         this.fileName = this.file.name;
         if (!this.fileName.endsWith("TextGrid")) {
           this.errorLogging.emit(Errors.WRONG_FILE_TYPE_ERROR);
           this.writeFilename("");
+          this.writeTiers("");
         } else {
           this.privFileType = "TextGrid";
           this.writeFilename(this.fileName);
 
-          for (let i = 0; i < this.metaDataElements.length; i ++) {
+          for (let i = 0; i < this.metaDataElements.length; i++) {
             this.metaDataElements[i].classList.add("visible");
           }
           startButton.classList.add("visible");
@@ -126,6 +132,7 @@ export class DragNDropComponent {
           // read the file
           this.reader.onload = () => {
             this.text = this.reader.result;
+            this.writeTiers(this.getLayerNames((this.text as string)));
           }
           this.reader.readAsText(this.file);
 
@@ -158,7 +165,37 @@ export class DragNDropComponent {
     event.stopPropagation();
   }
 
-    private writeFilename = (msg:string) => {
-      document.getElementById("filename").innerText = msg;
+  private writeFilename = (msg: string): void => {
+    document.getElementById("filename").innerText = msg;
+  }
+  private writeTiers = (text: string): void => {
+    document.getElementById("layers").innerText = text;
+  }
+
+
+  private getLayerNames = (fileContent: string): string => {
+    let message: string = "Layers: ";
+    let lines: string[] = fileContent.split("\n");
+    let amount: number = 0;
+    let counter: number = 0;
+    for (let index = 0; index < lines.length; index++) {
+      let curLine: string = lines[index];
+      if (curLine.includes("size =")) {
+        if (!curLine.includes("intervals") && !curLine.includes("text =") && !curLine.includes("mark =")) {
+          amount = parseInt(curLine.split("=")[1].trim());
+        }
+      }
+      if (curLine.includes("name =")) {
+        if (!curLine.includes("mark =") && !curLine.includes("text =")) { // Just to skip "name =" written in the segments
+          let toAppend: string = curLine.split("=")[1].trim().replace(/"/g, "");
+          message = message.concat(toAppend);
+          counter++;
+          if (counter < amount) {
+            message = message.concat(", ");
+          }
+        }
+      }
     }
+    return message;
+  }
 }

@@ -1,6 +1,5 @@
-
 <div class="dropzone hiddenWhenGameStarts" id="dropzone">
-    <input type="file" id="fileDrop" (change)="getBrowsedFile($event)"/>
+    <input type="file" id="fileDrop" (change)="getBrowsedFile($event)" />
 
     <img src="/assets/images/file-upload.png" alt="Drop your TextGrid file here" id="uploadImage">
 
@@ -13,12 +12,14 @@
 
 <div class="metaInformation hiddenWhenGameStarts">
     <h2 id="filename"></h2>
+    <h4 id="layers"></h4>
 
     <div class="layerContainer">
-        <input type="text" id="firstLayer" class="metaData layerInput" placeholder="First layer"/>
-        <input type="text" id="secondLayer" class="metaData layerInput" placeholder="Second layer"/>
+        <input type="text" id="firstLayer" class="metaData layerInput" placeholder="First layer" />
+        <input type="text" id="secondLayer" class="metaData layerInput" placeholder="Second layer" />
     </div>
     <div class="buttonContainer">
-        <button value="Start game" type="button" id="startGame" class="button" (click)="transferFileContent()">Start Game</button>
+        <button value="Start game" type="button" id="startGame" class="button" (click)="transferFileContent()">Start
+            Game</button>
     </div>
 </div>
