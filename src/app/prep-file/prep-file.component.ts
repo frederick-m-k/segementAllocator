@@ -105,7 +105,7 @@ export class PrepFileComponent {
    * Add the own id and a dummy linked-segment id to every segment in the dataStructure
    */
   private addID = () => {
-    let id = 1;
+    let id = 0;
     this.dataStructure.forEach((value: Array<Segment>, key: string) => {
       for (let i = 0; i < value.length; i++) {
         value[i].setID(id);    // The own id

@@ -494,14 +494,14 @@ export class GameComponent {
           break;
         case "ArrowLeft":
           event.preventDefault();
-          if (this.data.get(this.currentSegment.getLayerBelonging())[0] != this.currentSegment) {
+          if (this.data.get(this.currentSegment.getLayerBelonging())[0].getID() != this.currentSegment.getID()) {
             let segment: Segment = this.findSegment(this.currentSegment.getID() - 1);
             this.playGame(segment);
           }
           break;
         case "ArrowRight":
           event.preventDefault();
-          if (this.data.get(this.currentSegment.getLayerBelonging())[this.data.get(this.currentSegment.getLayerBelonging()).length] != this.currentSegment) {
+          if (this.data.get(this.currentSegment.getLayerBelonging())[this.data.get(this.currentSegment.getLayerBelonging()).length - 1].getID() != this.currentSegment.getID()) {
             let segment: Segment = this.findSegment(this.currentSegment.getID() + 1);
             this.playGame(segment);
           }
