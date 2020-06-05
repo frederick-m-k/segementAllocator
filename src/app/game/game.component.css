@@ -11,9 +11,64 @@
     margin: auto;
     width: 60vw;
     height: 60vh;
-    position: relative;
 }
 
+.config .shortcuts {
+    margin: 30px 0;
+    position: relative;
+}
+.config .shortcuts p {
+    padding: 0 5px;
+    font-size: 18px;
+}
+.config .shortcuts p img {
+    width: 20px;
+    height: 20px;
+    padding: 4px;
+    border-radius: 3px;
+    background-color: #f5f5f5;
+    vertical-align: middle;
+}
+.config .shortcuts p .shortcut_definition {
+    font-size: 20px;
+}
+
+/* Fine tuning the images */
+.config .shortcuts p #play_pause #tab {
+    width: 18px;
+    height: 18px;
+}
+.config .shortcuts p #move_segment #arrows {
+    width: 35px;
+    height: 35px;
+}
+.config .shortcuts p span .mouse {
+    width: 17px;
+    height: 17px;
+}
+
+.config .shortcuts p .lefty {
+    text-align: left;
+}
+.config .shortcuts p .righty {
+    float: right;
+    text-align: right;
+}
+
+/* #time_related p #play_pause {
+    float: left;
+}
+#time_related p #a_w {
+    float: right;
+}
+#segment_related p #move_segment {
+    float: left;
+}
+#segment_related p #reset_segment {
+    float: right;
+} */
+
+
 .hiddenGame {
-    display: none;
+   display: none;
 }

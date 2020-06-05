@@ -444,14 +444,6 @@ export class GameComponent {
           event.preventDefault();
           console.log("Keyup " + key);
           break;
-        case "a":
-          event.preventDefault();
-          this.moveLeft();
-          break;
-        case "d":
-          event.preventDefault();
-          this.moveRight();
-          break;
       }
     }
   }
@@ -461,6 +453,14 @@ export class GameComponent {
     if (this.startGame) {
       let key = event.key;
       switch (key) {
+        case "a":
+          event.preventDefault();
+          this.moveLeft();
+          break;
+        case "d":
+          event.preventDefault();
+          this.moveRight();
+          break;
         case "Shift":
           console.log("shift");
           break;
