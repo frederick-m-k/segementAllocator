@@ -5,6 +5,7 @@
     height: 60vh;
     overflow: hidden;
     position: relative;
+    z-index: 1;
 }
 
 .config {
@@ -18,8 +19,6 @@
 }
 .config h3 {
     font-size: 25px;
-    font-family: "Palatino", Times, serif;
-    color: #38424c;
 }
 
 .config #legend .shortcuts {
@@ -29,8 +28,6 @@
 .config #legend .shortcuts p {
     padding: 0 5px;
     font-size: 18px;
-    font-family: "Palatino", Times, serif;
-    color: #38424c;
 }
 .config #legend .shortcuts p img {
     width: 20px;
@@ -60,6 +57,30 @@
 
 .config #legend .shortcuts p .shortcut {
     padding: 0 35px;
+}
+
+.text {
+    font-family: "Palatino", Times, serif;
+    color: #38424c;
+}
+
+/* The intro */
+#intro {
+    width: 90%;
+    height: 90%;
+    text-align: center;
+    position: absolute;
+    z-index: 4;
+    margin: auto;
+    border: none;
+    opacity: 0.9;
+    background-color: #e9e9e9;
+    vertical-align: middle;
+    padding: 40px;
+}
+#gamingAreaCanvas {
+    position: absolute;
+    z-index: 1;
 }
 
 

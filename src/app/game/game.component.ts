@@ -73,7 +73,7 @@ export class GameComponent {
       this.drawBoundaries();
       this.setStartSegment();
       this.makeVisible();
-      this.startMoving();
+      this.startIntro();
     }
   }
 
@@ -98,12 +98,12 @@ export class GameComponent {
     this.canvas.height = height;
     this.drawingArea = this.canvas.getContext("2d");
     // Event handling
-    this.canvas.addEventListener('mousedown', (event: MouseEvent) => {
+    this.canvas.onmousedown = (event: MouseEvent) => {
       const rect = this.canvas.getBoundingClientRect();
       let x = event.clientX - rect.left;
       let y = event.clientY - rect.top;
       this.playGame(this.getSegmentFromMouseEvent(x, y));
-    });
+    }
   }
   /**
    * Initialize the Map holding colors for all allocations
@@ -387,6 +387,31 @@ export class GameComponent {
   private moveLeft = (): void => {
     let slidingElement: HTMLElement = document.getElementById("movingCanvas");
     slidingElement.scrollLeft -= 70;
+  }
+
+  ///////////////
+  // The Intro //
+  ///////////////
+  skipIntro = (): void => {
+    console.log("Hi");
+
+    this.startMoving();
+  }
+
+  private startIntro = (): void => {
+    let introText: HTMLElement = document.getElementById("intro_text");
+    let skipButton: HTMLElement = document.getElementById("skip_intro");
+    introText.innerHTML = "<p>Welcome to <span style=\"color: #9c0a00\">Segment Allocater</span></p>" +
+      "<br /><p>Here you have to align the segments from two layers on each other</p>";
+    let timeout = setTimeout(() => {
+      introText.innerHTML = "<p>Choose a segment from each layer to establish a link between them!<p>" +
+        "<br /><p>You can use mouse and arrow keys</p>";
+    }, 3000);
+    timeout = setTimeout(() => {
+      skipButton.innerHTML = "Start";
+      introText.innerHTML = "<p>Ready? The press Enter or click on the Start Button</p>" +
+        "<br /><p>Enjoy!!</p>";
+    }, 9000);
   }
 
 
