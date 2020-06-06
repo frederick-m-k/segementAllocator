@@ -1,6 +1,7 @@
 
 import { Component, HostListener, Output, EventEmitter, Input, SimpleChanges } from '@angular/core';
 import { Errors } from './../errors';
+import { discardPeriodicTasks } from '@angular/core/testing';
 
 /**
  * 
@@ -23,6 +24,7 @@ export class DragNDropComponent {
 
   @Input() startGame: boolean;
 
+
   private fileName: string;
   private file: File;
   private privFileType: string;
@@ -30,6 +32,7 @@ export class DragNDropComponent {
   private text: string | ArrayBuffer;
 
   private allTiers: Array<string> = new Array();
+  private selectedLayers: Set<string> = new Set();
 
   private metaDataElements = document.getElementsByClassName("metaData");
 
@@ -39,10 +42,12 @@ export class DragNDropComponent {
    * Pass file content and metadata to the parent component via EventEmitters
    */
   transferFileContent = () => {
-    let firstLayer: string = (document.getElementById("firstLayer") as HTMLInputElement).value;
-    let secondLayer: string = (document.getElementById("secondLayer") as HTMLInputElement).value;
+    if (this.selectedLayers.size == 2) {
+      let iterator = this.selectedLayers.values();
+      let firstLayer: string = iterator.next().value;
+      let secondLayer: string = iterator.next().value;
+      console.log(firstLayer, secondLayer);
 
-    if (this.allTiers.includes(firstLayer) && this.allTiers.includes(secondLayer)) {
       this.fileContent.emit((this.text as string));
       this.fileType.emit(this.privFileType);
       this.firstLayer.emit(firstLayer);
@@ -111,14 +116,12 @@ export class DragNDropComponent {
       if (files.length > 1) {
         this.errorLogging.emit(Errors.TOO_MANY_FILES_ERROR);
         this.writeFilename("");
-        this.writeTiers("");
       } else {
         this.file = files[0];
         this.fileName = this.file.name;
         if (!this.fileName.endsWith("TextGrid")) {
           this.errorLogging.emit(Errors.WRONG_FILE_TYPE_ERROR);
           this.writeFilename("");
-          this.writeTiers("");
         } else {
           this.privFileType = "TextGrid";
           this.writeFilename(this.fileName);
@@ -131,7 +134,8 @@ export class DragNDropComponent {
           // read the file
           this.reader.onload = () => {
             this.text = this.reader.result;
-            this.writeTiers(this.getLayerNames((this.text as string)));
+            this.getLayerNames((this.text as string));
+            this.showLayers();
           }
           this.reader.readAsText(this.file);
 
@@ -166,36 +170,60 @@ export class DragNDropComponent {
 
   private writeFilename = (msg: string): void => {
     document.getElementById("filename").innerText = msg;
+    if (msg != "") {
+      document.getElementById("layers").innerText = "Choose two layers";
+    }
   }
-  private writeTiers = (text: string): void => {
-    document.getElementById("layers").innerText = text;
+
+  private showLayers = (): void => {
+    let wrapper: HTMLElement = document.getElementById("layerContainer");
+    for (let index = 0; index < this.allTiers.length; index++) {
+      let layerName: string = this.allTiers[index];
+      let div: HTMLDivElement = document.createElement("div");
+      div.style.border = "4px solid #ababab";
+      div.style.borderRadius = "4px";
+      div.style.backgroundColor = "#f0f0f0";
+      div.style.display = "inline-block";
+      div.style.margin = "0 5px";
+      div.style.padding = "10px";
+      div.onclick = () => {
+        if (this.selectedLayers.has(layerName)) {
+          this.selectedLayers.delete(layerName);
+          div.style.border = "4px solid #ababab";
+        } else if (this.selectedLayers.size < 2) {
+          this.selectedLayers.add(layerName);
+          div.style.border = "4px solid #9c0a00";
+        }
+      };
+      let text: HTMLParagraphElement = document.createElement("p");
+      text.innerText = layerName;
+      text.style.color = "#38424c";
+      text.style.fontFamily = "Palatino, Times, serif";
+      text.style.fontSize = "18px";
+      div.appendChild(text);
+      wrapper.appendChild(div);
+    }
+  }
+
+  private toggleClickedLayer = (): void => {
+
   }
 
 
-  private getLayerNames = (fileContent: string): string => {
-    let message: string = "Layers: ";
+  /**
+   * 
+   */
+  private getLayerNames = (fileContent: string): void => {
+    // TODO this is very TextGrid related
     let lines: string[] = fileContent.split("\n");
-    let amount: number = 0;
-    let counter: number = 0;
     for (let index = 0; index < lines.length; index++) {
       let curLine: string = lines[index];
-      if (curLine.includes("size =")) {
-        if (!curLine.includes("intervals") && !curLine.includes("text =") && !curLine.includes("mark =")) {
-          amount = parseInt(curLine.split("=")[1].trim());
-        }
-      }
       if (curLine.includes("name =")) {
         if (!curLine.includes("mark =") && !curLine.includes("text =")) { // Just to skip "name =" written in the segments
-          let toAppend: string = curLine.split("=")[1].trim().replace(/"/g, "");
-          message = message.concat(toAppend);
-          this.allTiers.push(toAppend);
-          counter++;
-          if (counter < amount) {
-            message = message.concat(", ");
-          }
+          let layer: string = curLine.split("=")[1].trim().replace(/"/g, "");
+          this.allTiers.push(layer);
         }
       }
     }
-    return message;
   }
 }

@@ -58,28 +58,12 @@
     background-color: #9c0a00;
     position: relative;
 }
-::placeholder {
-    color: rgb(223, 219, 219);
-    opacity: 1;
-}
-:-ms-input-placeholder {
-    color: rgb(223, 219, 219);
-}
-::-ms-input-placeholder {
-    color: rgb(223, 219, 219);
-}
-.metaInformation .layerContainer {
+
+.metaInformation #layerContainer {
     text-align: center;
-    padding: 6px;
-    display: block;
+    padding: 10px;
 }
-.metaInformation .layerInput {
-    width: 100px;
-    height: 20px;
-    border-radius: 3px;
-    margin: 10px;
-    color: rgb(223, 219, 219);
-}
+
 .metaInformation .buttonContainer {
     text-align: center;
     padding: 6px;
