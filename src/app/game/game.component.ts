@@ -30,6 +30,7 @@ export class GameComponent {
   private movingSpeed: number = 200;
   private moveBy: number = 5;
   private maxScroll: number;
+  private currentlyMoving: boolean;
 
 
   private counter: number = 0;
@@ -334,41 +335,58 @@ export class GameComponent {
       }
       slidingElement.scrollLeft += this.moveBy;
     }, this.movingSpeed);
+    this.currentlyMoving = true;
   }
   /**
    * Stop the movement of the canvas
    */
   private stopMoving = (): void => {
     clearInterval(this.interval);
+    this.currentlyMoving = false;
   }
   /**
    * Change the speed of the canvas
    */
-  private changeMovingSpeed = (speed: number): void => {
-    this.movingSpeed = speed;
+  private speedUp = (): void => {
+    this.movingSpeed /= 1.5;
+    if (this.movingSpeed <= 40) {
+      this.movingSpeed = 40;
+    }
     let slidingElement = document.getElementById("movingCanvas");
     clearInterval(this.interval);
     this.interval = setInterval(() => {
       slidingElement.scrollLeft += this.moveBy;
     }, this.movingSpeed);
+    this.currentlyMoving = true;
   }
   /**
-   * 
+   * Change the speed of the canvas
+   */
+  private slowDown = (): void => {
+    this.movingSpeed *= 1.5;
+    if (this.movingSpeed >= 1000) {
+      this.movingSpeed = 1000;
+    }
+    let slidingElement = document.getElementById("movingCanvas");
+    clearInterval(this.interval);
+    this.interval = setInterval(() => {
+      slidingElement.scrollLeft += this.moveBy;
+    }, this.movingSpeed);
+    this.currentlyMoving = true;
+  }
+  /**
+   * Move the canvas a bit to the right
    */
   private moveRight = (): void => {
     let slidingElement: HTMLElement = document.getElementById("movingCanvas");
     slidingElement.scrollLeft += 50;
   }
   /**
-   * 
+   * Move the canvas a bit to the left
    */
   private moveLeft = (): void => {
     let slidingElement: HTMLElement = document.getElementById("movingCanvas");
-    let temp: number = slidingElement.scrollLeft;
     slidingElement.scrollLeft -= 70;
-    if (temp == this.maxScroll) {
-      this.move(slidingElement);
-    }
   }
 
 
@@ -434,25 +452,28 @@ export class GameComponent {
   ///////////////
   // Shortcuts //
   ///////////////
-  @HostListener('body:keyup', ['$event'])
-  onKeyUp(event: KeyboardEvent) {               // for tab, A and D moving
-    if (this.startGame) {
-      let key: string = event.key;
-      //console.log(key);
-      switch (key) {
-        case "Tab":
-          event.preventDefault();
-          console.log("Keyup " + key);
-          break;
-      }
-    }
-  }
-
   @HostListener('document:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {             // for shift and arrow keys
     if (this.startGame) {
       let key = event.key;
       switch (key) {
+        // For moving time
+        case "Tab":
+          event.preventDefault();
+          if (this.currentlyMoving) {
+            this.stopMoving();
+          } else {
+            this.move(document.getElementById("movingCanvas"));
+          }
+          break;
+        case "+":
+          event.preventDefault();
+          this.speedUp();
+          break;
+        case "-":
+          event.preventDefault();
+          this.slowDown();
+          break;
         case "a":
           event.preventDefault();
           this.moveLeft();

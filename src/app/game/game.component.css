@@ -9,7 +9,7 @@
 
 .config {
     margin: auto;
-    width: 60vw;
+    width: 95vw;
     height: 10vh;
     text-align: center;
 }
@@ -22,17 +22,17 @@
     color: #38424c;
 }
 
-.config .shortcuts {
+.config #legend .shortcuts {
     margin: 30px 0;
     position: relative;
 }
-.config .shortcuts p {
+.config #legend .shortcuts p {
     padding: 0 5px;
     font-size: 18px;
     font-family: "Palatino", Times, serif;
     color: #38424c;
 }
-.config .shortcuts p img {
+.config #legend .shortcuts p img {
     width: 20px;
     height: 20px;
     padding: 4px;
@@ -40,32 +40,26 @@
     background-color: #f5f5f5;
     vertical-align: middle;
 }
-.config .shortcuts p .shortcut_definition {
+.config #legend .shortcuts p .shortcut_definition {
     font-size: 20px;
 }
 
 /* Fine tuning the images */
-.config .shortcuts p #play_pause #tab {
+.config #legend .shortcuts p #play_pause #tab {
     width: 18px;
     height: 18px;
 }
-.config .shortcuts p #move_segment #arrows {
+.config #legend .shortcuts p #move_segment #arrows {
     width: 35px;
     height: 35px;
 }
-.config .shortcuts p span .mouse {
+.config #legend .shortcuts p span .mouse {
     width: 17px;
     height: 17px;
 }
 
-/* Left and right positioning */
-.config .shortcuts p .lefty {
-    float: left;
-    text-align: left;
-}
-.config .shortcuts p .righty {
-    float: right;
-    text-align: right;
+.config #legend .shortcuts p .shortcut {
+    padding: 0 35px;
 }
 
 
