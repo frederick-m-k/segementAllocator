@@ -1,7 +1,7 @@
 
 import { Component, HostListener, Output, EventEmitter, Input, SimpleChanges } from '@angular/core';
 import { Errors } from './../errors';
-import { discardPeriodicTasks } from '@angular/core/testing';
+import { decimalDigest } from '@angular/compiler/src/i18n/digest';
 
 /**
  * 
@@ -36,7 +36,14 @@ export class DragNDropComponent {
 
   private metaDataElements = document.getElementsByClassName("metaData");
 
-  constructor() { }
+  constructor() {
+    // document.onload = (): void => {
+    //   document.getElementById("file_info").onclick = (): void => {
+    //     console.log("Hi");
+    //     this.toggleSupportedFormats(document.getElementById("file_info"));
+    //   }
+    // }
+  }
 
   /**
    * Pass file content and metadata to the parent component via EventEmitters
@@ -46,7 +53,6 @@ export class DragNDropComponent {
       let iterator = this.selectedLayers.values();
       let firstLayer: string = iterator.next().value;
       let secondLayer: string = iterator.next().value;
-      console.log(firstLayer, secondLayer);
 
       this.fileContent.emit((this.text as string));
       this.fileType.emit(this.privFileType);
@@ -145,6 +151,11 @@ export class DragNDropComponent {
     }
   }
 
+  @HostListener('dragenter', ['$event'])
+  onDragEnter(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
   @HostListener('dragover', ['$event'])
   onDragOver(event: DragEvent) {
     event.preventDefault();
@@ -205,10 +216,6 @@ export class DragNDropComponent {
     }
   }
 
-  private toggleClickedLayer = (): void => {
-
-  }
-
 
   /**
    * 
@@ -224,6 +231,15 @@ export class DragNDropComponent {
           this.allTiers.push(layer);
         }
       }
+    }
+  }
+
+  toggleSupportedFormats = (): void => {
+    let element: HTMLElement = document.getElementById("file_info");
+    if (element.innerText.includes("TextGrid")) {
+      element.innerHTML = "Supported file formats";
+    } else {
+      element.innerHTML = "Supported file formats<br />------<br />TextGrid";
     }
   }
 }

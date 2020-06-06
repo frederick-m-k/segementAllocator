@@ -1,18 +1,24 @@
-<div class="dropzone hiddenWhenGameStarts" id="dropzone">
-    <input type="file" id="fileDrop" (change)="getBrowsedFile($event)" />
+<div id="outerWrapper">
+    <div class="dropzone hiddenWhenGameStarts" id="dropzone">
+        <input type="file" id="fileDrop" (change)="getBrowsedFile($event)" />
 
-    <img src="/assets/images/file-upload.png" alt="Drop your TextGrid file here" id="uploadImage">
+        <img src="/assets/images/file-upload.png" alt="Drop your TextGrid file here" id="uploadImage">
 
-    <h3>Drag and Drop your file here</h3>
-    <h3>or</h3>
-    <label for="fileDrop" id="fileBrowse">
-        Browse for file
-    </label>
+        <h3 class="text">Drag and Drop your file here</h3>
+        <h3 class="text">or</h3>
+        <label for="fileDrop" id="fileBrowse">
+            Browse for file
+        </label>
+    </div>
+    <div id="supported_formats">
+        <button class="text" id="file_info" (click)="toggleSupportedFormats()" type="button">Supported file
+            formats<br />------<br />TextGrid</button>
+    </div>
 </div>
 
 <div class="metaInformation hiddenWhenGameStarts">
-    <h3 id="filename"></h3>
-    <h2 id="layers"></h2>
+    <h3 class="text" id="filename"></h3>
+    <h2 class="text" id="layers"></h2>
 
     <div id="layerContainer">
 

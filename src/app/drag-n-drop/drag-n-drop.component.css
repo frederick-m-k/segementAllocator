@@ -1,19 +1,24 @@
 
+* {
+    outline: none;
+}
+
 /* For the dropzone */
 .dropzone {
-    width: 60%;
-    height: 20%;
+    display: inline-block;
+    width: 50vw;
+    height: 10%;
     padding: 16px;
     text-align: center;
     border: dashed 3px #38424c;
     position: relative;
-    margin: 0 auto;
+    margin-left: 18vw;
 }
 .dropzone #fileDrop {
     opacity: 0;
     position: absolute;
     z-index: 2;
-    width: 100%;
+    width: 60vw;
     height: 100%;
     top: 0;
     left: 0;
@@ -26,7 +31,8 @@
     background-color: #9c0a00;
     padding: 8px 16px;
 }
-.dropzone h3 {
+.dropzone .text, .text {
+    font-family: "Palatino", Times, serif;
     font-size: 20px;
     font-weight: 600;
     color: #38424c;
@@ -36,20 +42,32 @@
     height: 120px;
 }
 
+#supported_formats {
+    float: right;
+    text-align: center;
+    width: 20vw;
+    margin-top: 20px;
+}
+#supported_formats #file_info {
+    padding: 10px;
+    border: none;
+    background: none;
+    font-size: 17px;
+}
+#supported_formats #file_info:hover {
+    background: #f0f0f0;
+}
 
 /* For the text input fields for some more information neede for the game */
 .metaInformation {
     width: 60%;
     height: 15%;
-    padding: 16px;
+    padding: 10px;
     text-align: center;
     position: relative;
     margin: 0 auto;
 }
 .metaInformation #filename {
-    color: #38424c;
-}
-.metaInformation #layers {
     color: #38424c;
 }
 .metaInformation .metaData {
