@@ -399,6 +399,7 @@ export class GameComponent {
   }
 
   private startIntro = (): void => {
+    let introDiv: HTMLElement = document.getElementById("intro");
     let introText: HTMLElement = document.getElementById("intro_text");
     let skipButton: HTMLElement = document.getElementById("skip_intro");
     introText.innerHTML = "<p>Welcome to <span style=\"color: #9c0a00\">Segment Allocater</span></p>" +
@@ -406,11 +407,13 @@ export class GameComponent {
     let timeout = setTimeout(() => {
       introText.innerHTML = "<p>Choose a segment from each layer to establish a link between them!<p>" +
         "<br /><p>You can use mouse and arrow keys</p>";
+      introDiv.style.opacity = "0.6";
     }, 3000);
     timeout = setTimeout(() => {
       skipButton.innerHTML = "Start";
       introText.innerHTML = "<p>Ready? The press Enter or click on the Start Button</p>" +
         "<br /><p>Enjoy!!</p>";
+      introDiv.style.opacity = "0.4";
     }, 9000);
   }
 
