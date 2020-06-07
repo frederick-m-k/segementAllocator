@@ -78,7 +78,6 @@ export class GameComponent {
       }
     }
     if (this.startCounter == 4 && this.startGame) {
-      console.log("test");
       this.init();
       this.drawBoundaries();
       this.setStartSegment();
@@ -152,6 +151,7 @@ export class GameComponent {
    * Compare the provided segment with the currently selected segment and react 
    */
   private playGame = (segment: Segment): void => {
+    console.log(this.currentSegments);
     if (this.segmentSelected) {
       if (this.currentSegments.has(segment)) {
         this.currentSegments.delete(segment);
@@ -176,6 +176,7 @@ export class GameComponent {
     segment.select(this.drawingArea);
     this.currentSegments.add(segment);
     this.segmentSelected = true;
+    this.currentLayer = segment.getLayerBelonging();
   }
 
   /**
