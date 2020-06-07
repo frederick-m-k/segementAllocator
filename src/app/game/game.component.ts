@@ -38,19 +38,23 @@ export class GameComponent {
   private transitionTimeout;
   private intro: boolean;
 
-  private counter: number = 0;
   private canvas: HTMLCanvasElement;
   private drawingArea: CanvasRenderingContext2D;
   /**
    * Double array for every pixel in the canvas holding the id of the segment drawn on it
    */
   private pixelRepresentation: Array<Array<number>>;
+  private currentSegments: Set<Segment> = new Set();
   private currentSegment: Segment;
   private segmentSelected: boolean;
+  private currentLayer: string;
+
   private shortestLayer: string;
 
   private colors: Map<number, string>;
   private standards = new DrawingStandards();
+
+  private startCounter: number = 0;
 
   constructor() { }
 
@@ -67,13 +71,14 @@ export class GameComponent {
             case "secondLayer":
             case "data":
             case "links":
-              this.counter++;
+              this.startCounter++;
               break;
           }
         }
       }
     }
-    if (this.counter == 4 && this.startGame) {
+    if (this.startCounter == 4 && this.startGame) {
+      console.log("test");
       this.init();
       this.drawBoundaries();
       this.setStartSegment();
@@ -123,9 +128,11 @@ export class GameComponent {
    * 
    */
   private setStartSegment = (): void => {
-    this.currentSegment = this.data.get(this.firstLayer)[0];
+    let segment: Segment = this.data.get(this.firstLayer)[0]
+    this.currentSegments.add(segment);
     this.segmentSelected = true;
-    this.currentSegment.select(this.drawingArea);
+    segment.select(this.drawingArea);
+    this.currentLayer = segment.getLayerBelonging();
   }
 
   /////////////////////////////////////////
@@ -145,46 +152,39 @@ export class GameComponent {
    * Compare the provided segment with the currently selected segment and react 
    */
   private playGame = (segment: Segment): void => {
-    if (this.segmentSelected) { // Compare
-      if (this.compareSegments(this.currentSegment, segment)) {
-        this.clearSegment(this.currentSegment);
-        this.segmentSelected = false;
-        return;
-      }
-      let differentLayers: boolean = this.compareLayers(this.currentSegment, segment);
-      if (differentLayers) {
-        this.clearAllocations(this.currentSegment, segment);
-        let allocationColor: string = this.findAllocationColor(this.currentSegment, segment);
-        if (allocationColor == null) {
-          // Error
-          console.log("allocation color error");
-          return;
+    if (this.segmentSelected) {
+      if (this.currentSegments.has(segment)) {
+        this.currentSegments.delete(segment);
+        this.clearSegment(segment);
+        if (this.currentSegments.size == 0) {
+          this.segmentSelected = false;
         }
-        this.currentSegment.addAllocation(this.drawingArea, allocationColor, segment.getID());
-        segment.addAllocation(this.drawingArea, allocationColor, this.currentSegment.getID());
-        this.segmentSelected = false;
+        return;
+      } else if (this.compareLayers(segment)) {
+        segment.select(this.drawingArea);
+        this.currentSegments.add(segment);
         return;
       } else {
-        this.currentSegment.draw(this.drawingArea);
+        this.currentSegments.add(segment);
+        this.clearAllocations();  // Clear old Allocations
+        this.addAllocations(); // Add the new Allocations
+        this.currentSegments.clear();
+        this.segmentSelected = false;
+        return;
       }
     }
     segment.select(this.drawingArea);
-    this.currentSegment = segment;
+    this.currentSegments.add(segment);
     this.segmentSelected = true;
   }
 
   /**
-   * Check if segments are the same
+   * Check if newly selected segment is in same layer
    */
-  private compareSegments = (oldSegment: Segment, newSegment: Segment): boolean => {
-    return oldSegment == newSegment;
+  private compareLayers = (newSegment: Segment): boolean => {
+    return this.currentLayer == newSegment.getLayerBelonging();
   }
-  /**
-   * Check if the two segments are in different layers
-   */
-  private compareLayers = (oldSegment: Segment, newSegment: Segment): boolean => {
-    return oldSegment.getLayerBelonging() != newSegment.getLayerBelonging();
-  }
+
   /**
    * Reset a segment when double clicked on it
    */
@@ -199,30 +199,43 @@ export class GameComponent {
     segment.draw(this.drawingArea);
   }
   /**
-   * Clear old allocations of the two segments
+   * Clear old allocations of the selected segments
    */
-  private clearAllocations = (oldSegment: Segment, newSegment: Segment) => {
-    if (oldSegment.hasAllocation()) {
-      if (oldSegment.getLayerBelonging() != this.shortestLayer) { // Also remove the allocation in the segment, oldSegment was linked to
-        let otherAllocation: number = oldSegment.clearAllocation();
-        let oldLinkedSegment: Segment = this.findSegment(otherAllocation);
-        if (oldLinkedSegment.hasAllocation()) {
-          oldLinkedSegment.removeSpecificAllocation(oldSegment.getID());
-          oldLinkedSegment.draw(this.drawingArea);
+  private clearAllocations = (): void => {
+    this.currentSegments.forEach((segment: Segment) => {
+      if (segment.hasAllocation()) {
+        if (segment.getLayerBelonging() != this.shortestLayer) {
+          let otherAllocation: number = segment.clearAllocation();
+          let linkedSegment: Segment = this.findSegment(otherAllocation);
+          if (linkedSegment.hasAllocation()) {
+            linkedSegment.removeSpecificAllocation(segment.getID());
+            linkedSegment.draw(this.drawingArea);
+          }
         }
       }
+    })
+  }
+  /**
+   * 
+   */
+  private addAllocations = (): void => {
+    let allocationSegment: Segment = this.findAllocationSegment();
+    if (allocationSegment == null) {
+      // Error
+      console.log("allocation color error");
+      return;
     }
-
-    if (newSegment.hasAllocation()) {
-      if (newSegment.getLayerBelonging() != this.shortestLayer) { // Also remove the allocation in the segment, newSegment was linked to
-        let otherAllocation: number = newSegment.clearAllocation();
-        let newLinkedSegment: Segment = this.findSegment(otherAllocation);
-        if (newLinkedSegment.hasAllocation()) {
-          newLinkedSegment.removeSpecificAllocation(newSegment.getID());
-          newLinkedSegment.draw(this.drawingArea);
-        }
-      }
-    }
+    let allocationColor: string = this.colors.get(allocationSegment.getID());
+    let idsToAllocate: Set<number> = new Set();
+    let tempSet: Set<Segment> = new Set(this.currentSegments);
+    tempSet.delete(allocationSegment);
+    tempSet.forEach((segment: Segment) => {
+      segment.addAllocation(this.drawingArea, allocationColor, allocationSegment.getID());
+      idsToAllocate.add(segment.getID());
+    });
+    idsToAllocate.forEach((id: number) => {
+      allocationSegment.addAllocation(this.drawingArea, allocationColor, id);
+    });
   }
 
   /**
@@ -243,16 +256,15 @@ export class GameComponent {
   /**
    * Return the allocation color of the segment which corresponds to the color
    */
-  private findAllocationColor = (oneSegment: Segment, secondSegment: Segment): string => {
-    if (this.colors.has(oneSegment.getID())) {
-      return this.colors.get(oneSegment.getID());
-    } else if (this.colors.has(secondSegment.getID())) {
-      return this.colors.get(secondSegment.getID());
-    } else {
-      // Error, you should not end up here
-      console.log("error");
-      return null;
+  private findAllocationSegment = (): Segment => {
+    for (const [key] of this.colors) {
+      if (this.currentSegments.has(this.findSegment(key))) {
+        return this.findSegment(key);
+      }
     }
+    // Error, you should not end up here
+    console.log("error");
+    return null;
   }
 
 
@@ -534,45 +546,45 @@ export class GameComponent {
           break;
         case "ArrowUp":
           event.preventDefault()
-          if (this.currentSegment.getLayerBelonging() == this.secondLayer) {
-            let segment: Segment = this.findSegmentInOtherLayer(this.currentSegment);
-            if (segment != null) {
-              this.playGame(segment);
-            } else {
-              // error
-              console.log("Couldn't find segment in arrowup");
-            }
-          } else {
-            this.playGame(this.currentSegment);
-          }
+          // if (this.currentSegment.getLayerBelonging() == this.secondLayer) {
+          //   let segment: Segment = this.findSegmentInOtherLayer(this.currentSegment);
+          //   if (segment != null) {
+          //     this.playGame(segment);
+          //   } else {
+          //     // error
+          //     console.log("Couldn't find segment in arrowup");
+          //   }
+          // } else {
+          //   this.playGame(this.currentSegment);
+          // }
           break;
         case "ArrowDown":
           event.preventDefault();
-          if (this.currentSegment.getLayerBelonging() == this.firstLayer) {
-            let segment: Segment = this.findSegmentInOtherLayer(this.currentSegment);
-            if (segment != null) {
-              this.playGame(segment);
-            } else {
-              // error
-              console.log("Couldn't find segment in arrowdown");
-            }
-          } else {
-            this.playGame(this.currentSegment);
-          }
+          // if (this.currentSegment.getLayerBelonging() == this.firstLayer) {
+          //   let segment: Segment = this.findSegmentInOtherLayer(this.currentSegment);
+          //   if (segment != null) {
+          //     this.playGame(segment);
+          //   } else {
+          //     // error
+          //     console.log("Couldn't find segment in arrowdown");
+          //   }
+          // } else {
+          //   this.playGame(this.currentSegment);
+          // }
           break;
         case "ArrowLeft":
           event.preventDefault();
-          if (this.data.get(this.currentSegment.getLayerBelonging())[0].getID() != this.currentSegment.getID()) {
-            let segment: Segment = this.findSegment(this.currentSegment.getID() - 1);
-            this.playGame(segment);
-          }
+          // if (this.data.get(this.currentSegment.getLayerBelonging())[0].getID() != this.currentSegment.getID()) {
+          //   let segment: Segment = this.findSegment(this.currentSegment.getID() - 1);
+          //   this.playGame(segment);
+          // }
           break;
         case "ArrowRight":
           event.preventDefault();
-          if (this.data.get(this.currentSegment.getLayerBelonging())[this.data.get(this.currentSegment.getLayerBelonging()).length - 1].getID() != this.currentSegment.getID()) {
-            let segment: Segment = this.findSegment(this.currentSegment.getID() + 1);
-            this.playGame(segment);
-          }
+          // if (this.data.get(this.currentSegment.getLayerBelonging())[this.data.get(this.currentSegment.getLayerBelonging()).length - 1].getID() != this.currentSegment.getID()) {
+          //   let segment: Segment = this.findSegment(this.currentSegment.getID() + 1);
+          //   this.playGame(segment);
+          // }
           break;
       }
     }
