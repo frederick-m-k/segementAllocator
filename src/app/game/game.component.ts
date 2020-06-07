@@ -130,6 +130,7 @@ export class GameComponent {
     let segment: Segment = this.data.get(this.firstLayer)[0]
     this.currentSegments.add(segment);
     this.segmentSelected = true;
+    this.currentSegment = segment;
     segment.select(this.drawingArea);
     this.currentLayer = segment.getLayerBelonging();
   }
@@ -151,7 +152,6 @@ export class GameComponent {
    * Compare the provided segment with the currently selected segment and react 
    */
   private playGame = (segment: Segment): void => {
-    console.log(this.currentSegments);
     if (this.segmentSelected) {
       if (this.currentSegments.has(segment)) {
         this.currentSegments.delete(segment);
@@ -161,8 +161,17 @@ export class GameComponent {
         }
         return;
       } else if (this.compareLayers(segment)) {
-        segment.select(this.drawingArea);
-        this.currentSegments.add(segment);
+        if (segment.getLayerBelonging() == this.shortestLayer) {
+          this.currentSegments.delete(this.currentSegment);
+          this.clearSegment(this.currentSegment);
+          this.currentSegment = segment;
+          this.currentSegment.select(this.drawingArea);
+          this.currentSegments.add(this.currentSegment);
+        } else {
+          this.currentSegment = segment;
+          segment.select(this.drawingArea);
+          this.currentSegments.add(segment);
+        }
         return;
       } else {
         this.currentSegments.add(segment);
@@ -173,6 +182,7 @@ export class GameComponent {
         return;
       }
     }
+    this.currentSegment = segment;
     segment.select(this.drawingArea);
     this.currentSegments.add(segment);
     this.segmentSelected = true;
@@ -255,7 +265,7 @@ export class GameComponent {
   }
 
   /**
-   * Return the allocation color of the segment which corresponds to the color
+   * Return the segment which holds a allocation color
    */
   private findAllocationSegment = (): Segment => {
     for (const [key] of this.colors) {
@@ -346,6 +356,9 @@ export class GameComponent {
     this.maxScroll = slidingElement.scrollWidth - slidingElement.clientWidth;
     this.move(slidingElement);
   }
+  /**
+   * Move the canvas
+   */
   private move = (slidingElement: HTMLElement): void => {
     this.interval = setInterval(() => {
       if (slidingElement.scrollLeft == this.maxScroll) {
@@ -363,7 +376,7 @@ export class GameComponent {
     this.currentlyMoving = false;
   }
   /**
-   * Change the speed of the canvas
+   * Speed up the movement of the canvas
    */
   private speedUp = (): void => {
     this.movingSpeed /= 1.5;
@@ -378,7 +391,7 @@ export class GameComponent {
     this.currentlyMoving = true;
   }
   /**
-   * Change the speed of the canvas
+   * Slow down the movement of the canvas
    */
   private slowDown = (): void => {
     this.movingSpeed *= 1.5;
@@ -410,6 +423,9 @@ export class GameComponent {
   ///////////////
   // The Intro //
   ///////////////
+  /**
+   * Skip the intro
+   */
   skipIntro = (): void => {
     this.intro = false;
     clearTimeout(this.transitionTimeout);
@@ -419,7 +435,9 @@ export class GameComponent {
       this.startMoving();
     }, 3000);
   }
-
+  /**
+   * Start the intro
+   */
   private startIntro = (): void => {
     this.intro = true;
     let introDiv: HTMLElement = document.getElementById("intro");
@@ -474,6 +492,9 @@ export class GameComponent {
     });
     return amount;
   }
+  /**
+   * Set the global variable shortestLayer to layer with the least segments
+   */
   private findShortestLayer = (): void => {
     let layer: string;
     let amount: number = Number.MAX_SAFE_INTEGER;
@@ -545,47 +566,53 @@ export class GameComponent {
         case "Shift":
           console.log("shift");
           break;
+        case "Enter":
+          event.preventDefault();
+          this.playGame(this.currentSegment);
+          break;
         case "ArrowUp":
           event.preventDefault()
-          // if (this.currentSegment.getLayerBelonging() == this.secondLayer) {
-          //   let segment: Segment = this.findSegmentInOtherLayer(this.currentSegment);
-          //   if (segment != null) {
-          //     this.playGame(segment);
-          //   } else {
-          //     // error
-          //     console.log("Couldn't find segment in arrowup");
-          //   }
-          // } else {
-          //   this.playGame(this.currentSegment);
-          // }
+          if (this.currentSegment.getLayerBelonging() == this.secondLayer) {
+            let segment: Segment = this.findSegmentInOtherLayer(this.currentSegment);
+            if (segment != null) {
+              segment.select(this.drawingArea);
+              this.currentSegment = segment;
+            } else {
+              // error
+              console.log("Couldn't find segment in arrowup");
+            }
+          } else {
+            this.playGame(this.currentSegment);
+          }
           break;
         case "ArrowDown":
           event.preventDefault();
-          // if (this.currentSegment.getLayerBelonging() == this.firstLayer) {
-          //   let segment: Segment = this.findSegmentInOtherLayer(this.currentSegment);
-          //   if (segment != null) {
-          //     this.playGame(segment);
-          //   } else {
-          //     // error
-          //     console.log("Couldn't find segment in arrowdown");
-          //   }
-          // } else {
-          //   this.playGame(this.currentSegment);
-          // }
+          if (this.currentSegment.getLayerBelonging() == this.firstLayer) {
+            let segment: Segment = this.findSegmentInOtherLayer(this.currentSegment);
+            if (segment != null) {
+              segment.select(this.drawingArea);
+              this.currentSegment = segment;
+            } else {
+              // error
+              console.log("Couldn't find segment in arrowdown");
+            }
+          } else {
+            this.playGame(this.currentSegment);
+          }
           break;
         case "ArrowLeft":
           event.preventDefault();
-          // if (this.data.get(this.currentSegment.getLayerBelonging())[0].getID() != this.currentSegment.getID()) {
-          //   let segment: Segment = this.findSegment(this.currentSegment.getID() - 1);
-          //   this.playGame(segment);
-          // }
+          if (this.data.get(this.currentSegment.getLayerBelonging())[0].getID() != this.currentSegment.getID()) {
+            let segment: Segment = this.findSegment(this.currentSegment.getID() - 1);
+            this.playGame(segment);
+          }
           break;
         case "ArrowRight":
           event.preventDefault();
-          // if (this.data.get(this.currentSegment.getLayerBelonging())[this.data.get(this.currentSegment.getLayerBelonging()).length - 1].getID() != this.currentSegment.getID()) {
-          //   let segment: Segment = this.findSegment(this.currentSegment.getID() + 1);
-          //   this.playGame(segment);
-          // }
+          if (this.data.get(this.currentSegment.getLayerBelonging())[this.data.get(this.currentSegment.getLayerBelonging()).length - 1].getID() != this.currentSegment.getID()) {
+            let segment: Segment = this.findSegment(this.currentSegment.getID() + 1);
+            this.playGame(segment);
+          }
           break;
       }
     }

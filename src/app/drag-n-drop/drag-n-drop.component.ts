@@ -1,5 +1,5 @@
 
-import { Component, HostListener, Output, EventEmitter, Input, SimpleChanges } from '@angular/core';
+import { Component, HostListener, Output, EventEmitter, Input, SimpleChanges, Host } from '@angular/core';
 import { Errors } from './../errors';
 import { decimalDigest } from '@angular/compiler/src/i18n/digest';
 
@@ -34,16 +34,13 @@ export class DragNDropComponent {
   private allTiers: Array<string> = new Array();
   private selectedLayers: Set<string> = new Set();
 
+  private enterPossible: boolean;
+
   private metaDataElements = document.getElementsByClassName("metaData");
 
-  constructor() {
-    // document.onload = (): void => {
-    //   document.getElementById("file_info").onclick = (): void => {
-    //     console.log("Hi");
-    //     this.toggleSupportedFormats(document.getElementById("file_info"));
-    //   }
-    // }
-  }
+  constructor() { }
+
+
 
   /**
    * Pass file content and metadata to the parent component via EventEmitters
@@ -58,6 +55,8 @@ export class DragNDropComponent {
       this.fileType.emit(this.privFileType);
       this.firstLayer.emit(firstLayer);
       this.secondLayer.emit(secondLayer);
+
+      this.enterPossible = false;
     } else {
       this.errorLogging.emit(Errors.PROVIDE_BOTH_TIERS_ERROR);
     }
@@ -129,6 +128,7 @@ export class DragNDropComponent {
           this.errorLogging.emit(Errors.WRONG_FILE_TYPE_ERROR);
           this.writeFilename("");
         } else {
+          this.enterPossible = true;
           this.privFileType = "TextGrid";
           this.writeFilename(this.fileName);
 
@@ -147,6 +147,19 @@ export class DragNDropComponent {
 
           this.errorLogging.emit(Errors.NO_ERROR);
         }
+      }
+    }
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent) {
+    if (this.enterPossible) {
+      switch (event.key) {
+        case "Enter":
+          event.preventDefault();
+          console.log("Hi");
+          this.transferFileContent();
+          break;
       }
     }
   }
