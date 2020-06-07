@@ -32,6 +32,11 @@ export class GameComponent {
   private maxScroll: number;
   private currentlyMoving: boolean;
 
+  ///////////////////
+  // For the intro //
+  ///////////////////
+  private transitionTimeout;
+  private intro: boolean;
 
   private counter: number = 0;
   private canvas: HTMLCanvasElement;
@@ -393,28 +398,33 @@ export class GameComponent {
   // The Intro //
   ///////////////
   skipIntro = (): void => {
-    console.log("Hi");
-
-    this.startMoving();
+    this.intro = false;
+    clearTimeout(this.transitionTimeout);
+    document.getElementById("intro").style.opacity = "0";
+    setTimeout(() => {
+      document.getElementById("intro").classList.add("hidden");
+      this.startMoving();
+    }, 3000);
   }
 
   private startIntro = (): void => {
+    this.intro = true;
     let introDiv: HTMLElement = document.getElementById("intro");
     let introText: HTMLElement = document.getElementById("intro_text");
     let skipButton: HTMLElement = document.getElementById("skip_intro");
     introText.innerHTML = "<p>Welcome to <span style=\"color: #9c0a00\">Segment Allocater</span></p>" +
       "<br /><p>Here you have to align the segments from two layers on each other</p>";
-    let timeout = setTimeout(() => {
+    this.transitionTimeout = setTimeout(() => {
       introText.innerHTML = "<p>Choose a segment from each layer to establish a link between them!<p>" +
         "<br /><p>You can use mouse and arrow keys</p>";
       introDiv.style.opacity = "0.6";
+      setTimeout(() => {
+        skipButton.innerHTML = "Start";
+        introText.innerHTML = "<p>Ready? The press Enter or click on the Start Button</p>" +
+          "<br /><p>Enjoy!!</p>";
+        introDiv.style.opacity = "0.4";
+      }, 9000);
     }, 3000);
-    timeout = setTimeout(() => {
-      skipButton.innerHTML = "Start";
-      introText.innerHTML = "<p>Ready? The press Enter or click on the Start Button</p>" +
-        "<br /><p>Enjoy!!</p>";
-      introDiv.style.opacity = "0.4";
-    }, 9000);
   }
 
 
@@ -482,7 +492,16 @@ export class GameComponent {
   ///////////////
   @HostListener('document:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {             // for shift and arrow keys
-    if (this.startGame) {
+    console.log(event.key);
+    if (this.intro) {
+      switch (event.key) {
+        case "Enter":
+          console.log("Jep");
+          event.preventDefault();
+          this.skipIntro();
+          break;
+      }
+    } else if (this.startGame) {
       let key = event.key;
       switch (key) {
         // For moving time
@@ -510,6 +529,8 @@ export class GameComponent {
           event.preventDefault();
           this.moveRight();
           break;
+
+        // For segments
         case "Shift":
           console.log("shift");
           break;
