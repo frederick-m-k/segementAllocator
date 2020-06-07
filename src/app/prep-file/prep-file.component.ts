@@ -113,7 +113,7 @@ export class PrepFileComponent {
         this.links.set(id, new Array<number>());
         id++;
 
-        value[i].setLayerBelonging(key);
+        value[i].setLayerBelonging(key, key == this.firstLayer);
       }
     });
   }

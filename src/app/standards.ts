@@ -27,17 +27,26 @@ export class DrawingStandards {
 	 */
 	readonly scaling: number;
 
+	///////////////////
+	// For selecting //
+	///////////////////
+	readonly baseY: number;
+	readonly baseXOffset: number;
+
 	constructor() {
-		this.firstLayerStart = 20;
-		this.layerMargin = 20;
+		this.firstLayerStart = 30;
+		this.layerMargin = 30;
 		this.layerSeparator = 3;
 
-		this.segmentHeight = 180;
+		this.segmentHeight = 190;
 
 		this.scaling = 500;
 
 		this.textFont = "20px Arial";
 		this.textAlign = "center";
+
+		this.baseY = 20;
+		this.baseXOffset = 20;
 	}
 
 	canvasHeight = (): number => {
@@ -93,7 +102,7 @@ export enum DrawingColors {
 	LIGHT_BACKGROUND = "#bfbfbf",
 	DARK_BACKGROUND = "#e8e8e8",
 	TEXT = "#FFFFFF",
-	CURRENTLY_SELECTED = "#04c707",
+	CURRENTLY_SELECTED = "#9c0a00",
 	BOUNDARY_COLOR = "#000000",
 	NO_COLOR = "no_color"
 }

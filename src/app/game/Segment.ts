@@ -6,6 +6,9 @@ import { DrawingColors, DrawingStandards } from './../standards';
  */
 export class Segment {
 
+    ///////////////////////
+    // Sizes for drawing //
+    ///////////////////////
     private pixelXStart: number;
     private pixelXEnd: number;
     private pixelYStart: number;
@@ -13,12 +16,17 @@ export class Segment {
     private pixelWidth: number;
     private pixelHeight: number;
 
+    ////////////////
+    // Allocation //
     private id: number;
     private allocatedIDs: Set<number>;
-    private firstLayer: string;
+    private allocationColor: string = DrawingColors.NO_COLOR;
+
+    private layer: string;
+    private upperLayer: boolean;
 
     private base_color: string;
-    private allocationColor: string = DrawingColors.NO_COLOR;
+    private currentColor: string;
 
     private standards: DrawingStandards;
 
@@ -37,8 +45,10 @@ export class Segment {
     draw = (canvas: CanvasRenderingContext2D): void => {
         this.clear(canvas);
         if (this.allocationColor == DrawingColors.NO_COLOR) {
+            this.currentColor = this.base_color;
             canvas.fillStyle = this.base_color;
         } else {
+            this.currentColor = this.allocationColor;
             canvas.fillStyle = this.allocationColor;
         }
         this.fill(canvas);
@@ -50,11 +60,24 @@ export class Segment {
      * Show SELECTED status of segment
      */
     select = (canvas: CanvasRenderingContext2D): void => {
-        this.clear(canvas);
         canvas.fillStyle = DrawingColors.CURRENTLY_SELECTED;
-        this.fill(canvas);
-        this.boundaries(canvas);
-        this.writeContent(canvas);
+        canvas.strokeStyle = DrawingColors.CURRENTLY_SELECTED;
+        let middleX: number = (this.pixelXEnd + this.pixelXStart) / 2;
+        let headY: number, baseY: number;
+        if (this.upperLayer) {
+            headY = this.pixelYStart;
+            baseY = this.pixelYStart - this.standards.baseY;
+        } else {
+            headY = this.pixelYEnd;
+            baseY = this.pixelYEnd + this.standards.baseY;
+        }
+        canvas.beginPath();
+        canvas.moveTo(middleX, headY);
+        canvas.lineTo(middleX - this.standards.baseXOffset, baseY);
+        canvas.lineTo(middleX + this.standards.baseXOffset, baseY);
+        canvas.closePath();
+        canvas.stroke();
+        canvas.fill();
     }
 
     /**
@@ -121,10 +144,15 @@ export class Segment {
      */
     private boundaries = (canvas: CanvasRenderingContext2D): void => {
         canvas.strokeStyle = DrawingColors.BOUNDARY_COLOR;
+        canvas.beginPath();
         canvas.moveTo(this.pixelXStart, this.pixelYStart);
         canvas.lineTo(this.pixelXStart, this.pixelYEnd);
+        canvas.closePath();
+        canvas.stroke();
+        canvas.beginPath();
         canvas.moveTo(this.pixelXEnd, this.pixelYStart);
         canvas.lineTo(this.pixelXEnd, this.pixelYEnd);
+        canvas.closePath();
         canvas.stroke();
     }
 
@@ -132,7 +160,17 @@ export class Segment {
         canvas.fillRect(this.pixelXStart, this.pixelYStart, this.pixelWidth, this.pixelHeight);
     }
     private clear = (canvas: CanvasRenderingContext2D): void => {
+        let clearXStart: number = ((this.pixelXEnd + this.pixelXStart) / 2) - this.standards.baseXOffset;
+        let clearWidth: number = this.standards.baseXOffset * 2;
+        let clearYStart: number;
+        let clearHeight: number = this.standards.baseY + canvas.lineWidth;
+        if (this.upperLayer) {
+            clearYStart = this.pixelYStart - clearHeight;
+        } else {
+            clearYStart = this.pixelYEnd;
+        }
         canvas.clearRect(this.pixelXStart, this.pixelYStart, this.pixelWidth, this.pixelHeight);
+        canvas.clearRect(clearXStart, clearYStart, clearWidth, clearHeight);
     }
 
     ////////////
@@ -144,8 +182,14 @@ export class Segment {
         this.pixelYEnd = Math.floor(this.pixelYStart + this.standards.segmentHeight);
         this.pixelHeight = this.pixelYEnd - this.pixelYStart;
     }
-    setColor = (color: string): void => { this.base_color = color; }
-    setLayerBelonging = (layer: string): void => { this.firstLayer = layer; }
+    setColor = (color: string): void => {
+        this.base_color = color;
+        this.currentColor = this.base_color;
+    }
+    setLayerBelonging = (layer: string, upperLayer: boolean): void => {
+        this.layer = layer;
+        this.upperLayer = upperLayer;
+    }
     hasAllocation = (): boolean => { return this.allocatedIDs.size > 0; }
 
     ////////////
@@ -154,7 +198,7 @@ export class Segment {
     getXStart = (): number => { return this.xStart; }
     getXEnd = (): number => { return this.xEnd; }
     getID = (): number => { return this.id; }
-    getLayerBelonging = (): string => { return this.firstLayer; }
+    getLayerBelonging = (): string => { return this.layer; }
     getAllocationIDs = (): Set<number> => { return this.allocatedIDs; }
 
     getPixelXStart = (): number => { return this.pixelXStart; }

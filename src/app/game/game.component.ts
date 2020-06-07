@@ -492,11 +492,9 @@ export class GameComponent {
   ///////////////
   @HostListener('document:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {             // for shift and arrow keys
-    console.log(event.key);
     if (this.intro) {
       switch (event.key) {
         case "Enter":
-          console.log("Jep");
           event.preventDefault();
           this.skipIntro();
           break;
