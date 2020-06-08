@@ -5,9 +5,9 @@
         <button id="skip_intro" class="text" type="button" (click)="skipIntro()">Skip</button>
     </div>
 </div>
-<div class="config gamingArea hidden" (mousedown)="toggleLegend($event)">
+<div class="config gamingArea hidden" (mousedown)="toggleLegend()">
     <h3 class="text">Legend</h3>
-    <div id="legend">
+    <div class="hidden" id="legend">
         <div class="shortcuts" id="time_related">
             <p class="text">
                 <span class="shortcut" id="play_pause">
@@ -34,18 +34,26 @@
             <p class="text">
                 <span class="shortcut" id="move_segment">
                     <img src="../../assets/images/arrows.png" alt="Arrow keys" id="arrows">
-                    /
-                    <img src="../../assets/images/mouse_pointer.png" alt="Mouse" class="mouse" id="mouse">
-                    <span class="shortcut_definition"> - Movement between segments</span>
+                    <span class="shortcut_definition"> - Move between segments</span>
                 </span>
                 <span class="shortcut" id="reset_segment">
                     <img src="../../assets/images/arrow-up.png" alt="Arrow Up" id="arrow_up">
                     /
                     <img src="../../assets/images/arrow-down.png" alt="Arrow down" id="arrow_down">
-                    /
-                    Double <img src="../../assets/images/mouse_pointer.png" alt="Mouse" class="mouse"
-                        id="doubled_mouse">
                     <span class="shortcut_definition"> - Reset a segment</span>
+                </span>
+                <span class="shortcut" id="gather_segments">
+                    <img src="../../assets/images/shift-key.png" alt="Shift key" id="shift_key">
+                    & (
+                    <img src="../../assets/images/arrow-left.png" alt="Arrow left" id="shift_arrow_left">
+                    /
+                    <img src="../../assets/images/arrow-right.png" alt="Arrow right" id="shift_arrow_right">
+                    )
+                    <span class="shortcut_definition"> - Gather segments</span>
+                </span>
+                <span class="shortcut" id="commit_segments">
+                    <img src="../../assets/images/enter-key.png" alt="Enter key" id="enter_key">
+                    <span class="shortcut_definition"> - Assign segments</span>
                 </span>
             </p>
         </div>

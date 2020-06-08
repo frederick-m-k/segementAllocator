@@ -446,10 +446,11 @@ export class GameComponent {
     let introText: HTMLElement = document.getElementById("intro_text");
     let skipButton: HTMLElement = document.getElementById("skip_intro");
     introText.innerHTML = "<p>Welcome to <span style=\"color: #9c0a00\">Segment Allocater</span></p>" +
-      "<br /><p>Here you have to align the segments from two layers on each other</p>";
+      "<br /><p>Here you have to assign the segments from two layers on each other</p>";
     this.transitionTimeout = setTimeout(() => {
-      introText.innerHTML = "<p>Choose a segment from each layer to establish a link between them!<p>" +
-        "<br /><p>You can use mouse and arrow keys</p>";
+      introText.innerHTML = "<p>Choose segments from the layer to establish links between them!<p>" +
+        "<br /><p>Use the mouse or the arrow keys</p>" +
+        "<br /><p>Check out the legend below to find shortcuts</p>";
       introDiv.style.opacity = "0.6";
       setTimeout(() => {
         skipButton.innerHTML = "Start";
@@ -686,7 +687,7 @@ export class GameComponent {
   ///////////////////
   // Event Binding //
   ///////////////////
-  toggleLegend = (event: MouseEvent): void => {
+  toggleLegend = (): void => {
     let element: HTMLElement = document.getElementById("legend");
     if (element.classList.contains("hidden")) {
       element.classList.remove("hidden");
