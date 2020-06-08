@@ -38,11 +38,11 @@ export class GameComponent {
   private transitionTimeout;
   private intro: boolean;
 
-  private canvas: HTMLCanvasElement;
+  private mainCanvas: HTMLCanvasElement;
   private drawingArea: CanvasRenderingContext2D;
   private middleCanvas: HTMLCanvasElement;
   private middleCanvasDrawing: CanvasRenderingContext2D;
-  private lowCanvas: HTMLElement;
+  private lowCanvas: HTMLCanvasElement;
   private lowCanvasDrawing: CanvasRenderingContext2D;
   /**
    * Double array for every pixel in the canvas holding the id of the segment drawn on it
@@ -104,15 +104,27 @@ export class GameComponent {
    * Init the area to draw on
    */
   private initCanvas = () => {
-    this.canvas = <HTMLCanvasElement>document.getElementById("mainCanvas");
     let width: number = this.getMaxWidth();
-    this.canvas.width = width;
     let height: number = this.standards.canvasHeight();
-    this.canvas.height = height;
-    this.drawingArea = this.canvas.getContext("2d");
-    // Event handling
-    this.canvas.onmousedown = (event: MouseEvent) => {
-      const rect = this.canvas.getBoundingClientRect();
+
+    this.mainCanvas = <HTMLCanvasElement>document.getElementById("mainCanvas");
+    this.drawingArea = this.mainCanvas.getContext("2d");
+    this.mainCanvas.width = width;
+    this.mainCanvas.height = height;
+
+    this.middleCanvas = <HTMLCanvasElement>document.getElementById("middleCanvas");
+    this.middleCanvasDrawing = this.middleCanvas.getContext("2d");
+    this.middleCanvas.width = width;
+    this.middleCanvas.height = height;
+
+    this.lowCanvas = <HTMLCanvasElement>document.getElementById("lowCanvas");
+    this.lowCanvasDrawing = this.lowCanvas.getContext("2d");
+    this.lowCanvas.width = width;
+    this.lowCanvas.height = height;
+
+    // Event handling only for mainCanvas, cause z-index is highest
+    this.mainCanvas.onmousedown = (event: MouseEvent) => {
+      const rect = this.mainCanvas.getBoundingClientRect();
       let x = event.clientX - rect.left;
       let y = event.clientY - rect.top;
       this.playGame(this.getSegmentFromMouseEvent(x, y));
@@ -292,7 +304,7 @@ export class GameComponent {
    * Draw the segmental boundaries
    */
   private drawBoundaries = (): void => {
-    let counter: number = 0;
+    let colorCounter: number = 0;
     let startY: number;
     this.data.forEach((value: Array<Segment>, key: string) => {
       switch (key) {
@@ -305,12 +317,12 @@ export class GameComponent {
       }
       value.forEach((segment: Segment) => {
         segment.setPixelYStart(startY);
-        if (counter == 0) {
+        if (colorCounter == 0) {
           segment.setColor(DrawingColors.DARK_BACKGROUND);
-          counter = 1;
+          colorCounter = 1;
         } else {
           segment.setColor(DrawingColors.LIGHT_BACKGROUND);
-          counter = 0;
+          colorCounter = 0;
         }
         segment.draw(this.drawingArea);
         this.fillPixelRep(segment);
@@ -327,9 +339,9 @@ export class GameComponent {
    */
   private initPixelRep = (): void => {
     this.pixelRepresentation = new Array();
-    for (let i = 0; i < this.canvas.width; i++) {
+    for (let i = 0; i < this.mainCanvas.width; i++) {
       this.pixelRepresentation[i] = new Array();
-      for (let j = 0; j < this.canvas.height; j++) {
+      for (let j = 0; j < this.mainCanvas.height; j++) {
         this.pixelRepresentation[i][j] = -1;
       }
     }
