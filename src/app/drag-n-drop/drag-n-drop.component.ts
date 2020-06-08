@@ -159,6 +159,14 @@ export class DragNDropComponent {
           event.preventDefault();
           this.transferFileContent();
           break;
+        case "ArrowLeft":
+          event.preventDefault();
+          // Select layers by arrow keys
+          break;
+        case "ArrowRight":
+          event.preventDefault();
+          // Select layers by arrow keys
+          break;
       }
     }
   }
@@ -208,7 +216,7 @@ export class DragNDropComponent {
       div.style.backgroundColor = "#f0f0f0";
       div.style.display = "inline-block";
       div.style.margin = "0 5px";
-      div.style.padding = "10px";
+      div.style.padding = "3px 20px";
       div.onclick = () => {
         if (this.selectedLayers.has(layerName)) {
           this.selectedLayers.delete(layerName);

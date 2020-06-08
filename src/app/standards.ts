@@ -1,3 +1,4 @@
+
 /**
  * Define some standards like the scope on which the program still thinks
  * a segment from one layer could correspond to another one
@@ -14,56 +15,77 @@ export class LinkingStandards {
  * Some standards for drawing the game on the canvas
  */
 export class DrawingStandards {
-	readonly firstLayerStart: number;
-	private layerMargin: number;
 	readonly layerSeparator: number;
 
-	readonly segmentHeight: number;
+	///////////////////////////
+	// The main canvas sizes //
+	///////////////////////////
+	readonly mainUpperLayerStart: number = 30;
+	readonly mainSegmentHeight: number = 200;
+	readonly mainHorizontalScaling: number = 500;
 
-	readonly textFont: string;
-	readonly textAlign: CanvasTextAlign;
-	/**
-	 * Horzizontal scaling
-	 */
-	readonly scaling: number;
+	readonly mainTextFont: string = "20px Arial";
 
-	///////////////////
-	// For selecting //
-	///////////////////
-	readonly baseY: number;
-	readonly baseXOffset: number;
+	readonly mainSelectBaseY: number = 20;
+	readonly mainSelectBaseX: number = 20;
+
+
+	/////////////////////////////
+	// The middle canvas sizes //
+	/////////////////////////////
+	readonly middleUpperLayerStart: number = 100;
+	readonly middleSegmentHeight: number = 130;
+
+	readonly middleTextFont: string = "15px Arial";
+
+	readonly middleSelectBaseY: number = 10;
+	readonly middleSelectBaseX: number = 10;
+
+
+	////////////////////////////
+	// The small canvas sizes //
+	////////////////////////////
+	readonly smallUpperLayerStart: number = 170;
+	readonly smallSegmentHeight: number = 60;
+
+	readonly smallTextFont: string = "10px Arial";
+
+	readonly smallSelectBaseY: number = 5;
+	readonly smallSelectBaseX: number = 5;
+
+
+	//////////////////
+	// Global sizes //
+	//////////////////
+	private verticalLayerMargin: number = 30;
+	readonly textAlign: CanvasTextAlign = "center";
+
 
 	constructor() {
-		this.firstLayerStart = 30;
-		this.layerMargin = 30;
 		this.layerSeparator = 3;
-
-		this.segmentHeight = 190;
-
-		this.scaling = 500;
-
-		this.textFont = "20px Arial";
-		this.textAlign = "center";
-
-		this.baseY = 20;
-		this.baseXOffset = 20;
 	}
 
+	/**
+	 * Return the complete height of the canvas
+	 */
 	canvasHeight = (): number => {
 		let returnVal: number =
-			this.firstLayerStart +
-			this.segmentHeight +
-			this.layerMargin +
-			this.segmentHeight +
-			this.layerMargin;
+			this.mainUpperLayerStart +
+			this.mainSegmentHeight +
+			this.verticalLayerMargin +
+			this.mainSegmentHeight +
+			this.verticalLayerMargin;
 		return returnVal;
 	};
 
-	secondLayerStart = (): number => {
+	/**
+	 * Return the pixel start Y point of the lower layer
+	 */
+	lowerLayerStart = (): number => {
 		let returnVal: number =
-			this.firstLayerStart +
-			this.segmentHeight +
-			this.layerMargin;
+			this.mainUpperLayerStart +
+			this.mainSegmentHeight +
+			this.verticalLayerMargin;
 		return returnVal;
 	}
 }

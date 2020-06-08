@@ -1,13 +1,4 @@
 
-.wrapper {
-    margin: auto;
-    width: 60vw;
-    height: 60vh;
-    overflow: hidden;
-    position: relative;
-    z-index: 1;
-}
-
 .config {
     margin: auto;
     width: 95vw;
@@ -71,13 +62,24 @@
     color: #38424c;
 }
 
+
+
+.wrapper {
+    margin: 0 auto;
+    width: 80vw;
+    height: 60vh;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
 /* The intro */
 .wrapper #intro {
-    width: 70vw;
+    width: 85vw;
     height: 50vh;
     text-align: center;
     position: fixed;
-    z-index: 4;
+    z-index: 10;
     margin: auto;
     border: none;
     opacity: 1;
@@ -112,9 +114,17 @@
     transform: translate(-50%);
     margin: 0 auto;
 }
-.wrapper #gamingAreaCanvas {
+.wrapper #mainCanvas {
     position: absolute;
-    z-index: 1;
+    z-index: 5;
+}
+.wrapper #middleCanvas {
+    position: absolute;
+    z-index: 4;
+}
+.wrapper #lowCanvas {
+    position: absolute;
+    z-index: 3;
 }
 
 

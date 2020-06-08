@@ -40,6 +40,10 @@ export class GameComponent {
 
   private canvas: HTMLCanvasElement;
   private drawingArea: CanvasRenderingContext2D;
+  private middleCanvas: HTMLCanvasElement;
+  private middleCanvasDrawing: CanvasRenderingContext2D;
+  private lowCanvas: HTMLElement;
+  private lowCanvasDrawing: CanvasRenderingContext2D;
   /**
    * Double array for every pixel in the canvas holding the id of the segment drawn on it
    */
@@ -100,7 +104,7 @@ export class GameComponent {
    * Init the area to draw on
    */
   private initCanvas = () => {
-    this.canvas = <HTMLCanvasElement>document.getElementById("gamingAreaCanvas");
+    this.canvas = <HTMLCanvasElement>document.getElementById("mainCanvas");
     let width: number = this.getMaxWidth();
     this.canvas.width = width;
     let height: number = this.standards.canvasHeight();
@@ -293,10 +297,10 @@ export class GameComponent {
     this.data.forEach((value: Array<Segment>, key: string) => {
       switch (key) {
         case this.firstLayer:
-          startY = this.standards.firstLayerStart;
+          startY = this.standards.mainUpperLayerStart;
           break;
         case this.secondLayer:
-          startY = this.standards.secondLayerStart();
+          startY = this.standards.lowerLayerStart();
           break;
       }
       value.forEach((segment: Segment) => {
@@ -434,7 +438,7 @@ export class GameComponent {
     document.getElementById("intro").style.opacity = "0";
     setTimeout(() => {
       document.getElementById("intro").classList.add("hidden");
-      this.startMoving();
+      //this.startMoving();
     }, 3000);
   }
   /**
@@ -454,7 +458,7 @@ export class GameComponent {
       introDiv.style.opacity = "0.6";
       setTimeout(() => {
         skipButton.innerHTML = "Start";
-        introText.innerHTML = "<p>Ready? The press Enter or click on the Start Button</p>" +
+        introText.innerHTML = "<p>Ready? Then press Enter or click on the Start Button!</p>" +
           "<br /><p>Enjoy!!</p>";
         introDiv.style.opacity = "0.4";
       }, 9000);
@@ -480,7 +484,7 @@ export class GameComponent {
         end = curEnd;
       }
     });
-    let returnVal = ((end - start) * this.standards.scaling) + 10;
+    let returnVal = ((end - start) * this.standards.mainHorizontalScaling) + 10;
     return returnVal;
   }
   /**
@@ -516,9 +520,9 @@ export class GameComponent {
     let middleX: number = Math.floor((segment.getPixelXEnd() + segment.getPixelXStart()) / 2);
     let middleY: number = Math.floor((segment.getPixelYEnd() + segment.getPixelYStart()) / 2);
     if (segment.getLayerBelonging() == this.firstLayer) {
-      middleY += this.standards.secondLayerStart();
+      middleY += this.standards.lowerLayerStart();
     } else {
-      middleY -= this.standards.secondLayerStart();
+      middleY -= this.standards.lowerLayerStart();
     }
     let retSegment: Segment = this.findSegment(this.pixelRepresentation[middleX][middleY]);
     return retSegment;

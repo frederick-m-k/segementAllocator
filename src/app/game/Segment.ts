@@ -18,6 +18,7 @@ export class Segment {
 
     ////////////////
     // Allocation //
+    ////////////////
     private id: number;
     private allocatedIDs: Set<number>;
     private allocationColor: string = DrawingColors.NO_COLOR;
@@ -28,12 +29,17 @@ export class Segment {
     private base_color: string;
     private currentColor: string;
 
+    //////////////////////
+    // Offscreen canvas //
+    //////////////////////
+    private canvas: Map<number, HTMLCanvasElement>;
+
     private standards: DrawingStandards;
 
     constructor(private xStart: number, private xEnd: number, private content: string) {
         this.standards = new DrawingStandards();
-        this.pixelXStart = Math.floor(this.xStart * this.standards.scaling);
-        this.pixelXEnd = Math.floor(this.xEnd * this.standards.scaling);
+        this.pixelXStart = Math.floor(this.xStart * this.standards.mainHorizontalScaling);
+        this.pixelXEnd = Math.floor(this.xEnd * this.standards.mainHorizontalScaling);
         this.pixelWidth = this.pixelXEnd - this.pixelXStart;
 
         this.allocatedIDs = new Set<number>();
@@ -66,15 +72,15 @@ export class Segment {
         let headY: number, baseY: number;
         if (this.upperLayer) {
             headY = this.pixelYStart;
-            baseY = this.pixelYStart - this.standards.baseY;
+            baseY = this.pixelYStart - this.standards.mainSelectBaseY;
         } else {
             headY = this.pixelYEnd;
-            baseY = this.pixelYEnd + this.standards.baseY;
+            baseY = this.pixelYEnd + this.standards.mainSelectBaseY;
         }
         canvas.beginPath();
         canvas.moveTo(middleX, headY);
-        canvas.lineTo(middleX - this.standards.baseXOffset, baseY);
-        canvas.lineTo(middleX + this.standards.baseXOffset, baseY);
+        canvas.lineTo(middleX - this.standards.mainSelectBaseX, baseY);
+        canvas.lineTo(middleX + this.standards.mainSelectBaseX, baseY);
         canvas.closePath();
         canvas.stroke();
         canvas.fill();
@@ -134,7 +140,7 @@ export class Segment {
         let textX: number = this.pixelXStart + ((this.pixelXEnd - this.pixelXStart) / 2);
         let textY: number = this.pixelYStart + ((this.pixelYEnd - this.pixelYStart) / 2);
         canvas.fillStyle = DrawingColors.TEXT;
-        canvas.font = this.standards.textFont;
+        canvas.font = this.standards.mainTextFont;
         canvas.textAlign = this.standards.textAlign;
         canvas.fillText(this.content, textX, textY);
     }
@@ -160,10 +166,10 @@ export class Segment {
         canvas.fillRect(this.pixelXStart, this.pixelYStart, this.pixelWidth, this.pixelHeight);
     }
     private clear = (canvas: CanvasRenderingContext2D): void => {
-        let clearXStart: number = ((this.pixelXEnd + this.pixelXStart) / 2) - this.standards.baseXOffset;
-        let clearWidth: number = (this.standards.baseXOffset * 2) + (canvas.lineWidth * 2);
+        let clearXStart: number = ((this.pixelXEnd + this.pixelXStart) / 2) - this.standards.mainSelectBaseX;
+        let clearWidth: number = (this.standards.mainSelectBaseX * 2) + (canvas.lineWidth * 2);
         let clearYStart: number;
-        let clearHeight: number = this.standards.baseY + canvas.lineWidth;
+        let clearHeight: number = this.standards.mainSelectBaseY + canvas.lineWidth;
         if (this.upperLayer) {
             clearYStart = this.pixelYStart - clearHeight;
         } else {
@@ -173,14 +179,19 @@ export class Segment {
         canvas.clearRect(clearXStart, clearYStart, clearWidth, clearHeight);
     }
 
+    private initOffscreenCanvas = (): void => {
+
+    }
+
     ////////////
     // Setter //
     ////////////
     setID = (id: number): void => { this.id = id; }
     setPixelYStart = (yStart: number): void => {
         this.pixelYStart = Math.floor(yStart);
-        this.pixelYEnd = Math.floor(this.pixelYStart + this.standards.segmentHeight);
+        this.pixelYEnd = Math.floor(this.pixelYStart + this.standards.mainSegmentHeight);
         this.pixelHeight = this.pixelYEnd - this.pixelYStart;
+        this.initOffscreenCanvas();
     }
     setColor = (color: string): void => {
         this.base_color = color;
