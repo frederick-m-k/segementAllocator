@@ -157,7 +157,6 @@ export class DragNDropComponent {
       switch (event.key) {
         case "Enter":
           event.preventDefault();
-          console.log("Hi");
           this.transferFileContent();
           break;
       }

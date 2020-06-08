@@ -82,7 +82,6 @@ export class AllocatedColors {
 			let partition: number = step * i;
 			this.allColors.set(i, this.rgbColor(partition));
 		}
-		console.log(this.allColors);
 	}
 
 	private rgbColor = (step: number): string => {
