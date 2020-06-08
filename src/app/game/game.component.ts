@@ -146,47 +146,53 @@ export class GameComponent {
     yPos = Math.floor(yPos);
     let segment_id: number = this.pixelRepresentation[xPos][yPos];
     let segment: Segment = this.findSegment(segment_id);
+    console.log("next");
+    console.log(segment);
     return segment;
   }
   /**
    * Compare the provided segment with the currently selected segment and react 
    */
   private playGame = (segment: Segment): void => {
-    if (this.segmentSelected) {
-      if (this.currentSegments.has(segment)) {
-        this.currentSegments.delete(segment);
-        this.clearSegment(segment);
-        if (this.currentSegments.size == 0) {
-          this.segmentSelected = false;
-        }
-        return;
-      } else if (this.compareLayers(segment)) {
-        if (segment.getLayerBelonging() == this.shortestLayer) {
-          this.currentSegments.delete(this.currentSegment);
-          this.clearSegment(this.currentSegment);
-          this.currentSegment = segment;
-          this.currentSegment.select(this.drawingArea);
-          this.currentSegments.add(this.currentSegment);
+    if (segment != null) {
+      if (this.segmentSelected) {
+        if (this.currentSegments.has(segment)) {
+          this.currentSegments.delete(segment);
+          this.clearSegment(segment);
+          if (this.currentSegments.size == 0) {
+            this.segmentSelected = false;
+          }
+          return;
+        } else if (this.compareLayers(segment)) {
+          if (segment.getLayerBelonging() == this.shortestLayer) {
+            this.currentSegments.delete(this.currentSegment);
+            this.clearSegment(this.currentSegment);
+            this.currentSegment = segment;
+            this.currentSegment.select(this.drawingArea);
+            this.currentSegments.add(this.currentSegment);
+          } else {
+            this.currentSegment = segment;
+            segment.select(this.drawingArea);
+            this.currentSegments.add(segment);
+          }
+          return;
         } else {
-          this.currentSegment = segment;
-          segment.select(this.drawingArea);
+          console.log(segment);
           this.currentSegments.add(segment);
+          console.log(this.currentSegments.values().next());
+          this.clearAllocations();  // Clear old Allocations
+          this.addAllocations(); // Add the new Allocations
+          this.currentSegments.clear();
+          this.segmentSelected = false;
+          return;
         }
-        return;
-      } else {
-        this.currentSegments.add(segment);
-        this.clearAllocations();  // Clear old Allocations
-        this.addAllocations(); // Add the new Allocations
-        this.currentSegments.clear();
-        this.segmentSelected = false;
-        return;
       }
+      this.currentSegment = segment;
+      segment.select(this.drawingArea);
+      this.currentSegments.add(segment);
+      this.segmentSelected = true;
+      this.currentLayer = segment.getLayerBelonging();
     }
-    this.currentSegment = segment;
-    segment.select(this.drawingArea);
-    this.currentSegments.add(segment);
-    this.segmentSelected = true;
-    this.currentLayer = segment.getLayerBelonging();
   }
 
   /**
@@ -224,7 +230,7 @@ export class GameComponent {
           }
         }
       }
-    })
+    });
   }
   /**
    * 
@@ -268,6 +274,7 @@ export class GameComponent {
    * Return the segment which holds a allocation color
    */
   private findAllocationSegment = (): Segment => {
+    console.log(this.colors);
     for (const [key] of this.colors) {
       if (this.currentSegments.has(this.findSegment(key))) {
         return this.findSegment(key);
@@ -324,7 +331,7 @@ export class GameComponent {
     for (let i = 0; i < this.canvas.width; i++) {
       this.pixelRepresentation[i] = new Array();
       for (let j = 0; j < this.canvas.height; j++) {
-        this.pixelRepresentation[i][j] = 0;
+        this.pixelRepresentation[i][j] = -1;
       }
     }
   }

@@ -161,7 +161,7 @@ export class Segment {
     }
     private clear = (canvas: CanvasRenderingContext2D): void => {
         let clearXStart: number = ((this.pixelXEnd + this.pixelXStart) / 2) - this.standards.baseXOffset;
-        let clearWidth: number = this.standards.baseXOffset * 2;
+        let clearWidth: number = (this.standards.baseXOffset * 2) + (canvas.lineWidth * 2);
         let clearYStart: number;
         let clearHeight: number = this.standards.baseY + canvas.lineWidth;
         if (this.upperLayer) {

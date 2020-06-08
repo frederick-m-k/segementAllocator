@@ -78,10 +78,11 @@ export class AllocatedColors {
 	constructor(private amount: number) {
 		this.allColors = new Map();
 		let step: number = Math.floor(255 / amount);
-		for (let i = 1; i < amount + 1; i++) {
+		for (let i = 0; i < amount; i++) {
 			let partition: number = step * i;
 			this.allColors.set(i, this.rgbColor(partition));
 		}
+		console.log(this.allColors);
 	}
 
 	private rgbColor = (step: number): string => {
