@@ -1,5 +1,5 @@
-<div id="outerWrapper" class="hiddenWhenGameStarts">
-    <div class="dropzone" id="dropzone">
+<div id="dragWrapper">
+    <div class="dropzone hiddenWhenGameStarts" id="dropzone">
         <input type="file" id="fileDrop" (change)="getBrowsedFile($event)" />
 
         <img src="/assets/images/file-upload.png" alt="Drop your TextGrid file here" id="uploadImage">
@@ -14,17 +14,17 @@
         <button class="text" id="file_info" (click)="toggleSupportedFormats()" type="button">Supported file
             formats<br />------<br />TextGrid</button>
     </div>
-</div>
 
-<div class="metaInformation hiddenWhenGameStarts">
-    <h3 class="text" id="filename"></h3>
-    <h2 class="text" id="layers"></h2>
+    <div class="metaInformation hiddenWhenGameStarts">
+        <h3 class="text" id="filename"></h3>
+        <h2 class="text" id="layers"></h2>
 
-    <div id="layerContainer">
+        <div id="layerContainer">
 
-    </div>
-    <div class="buttonContainer">
-        <button value="Start game" type="button" id="startGame" class="button" (click)="transferFileContent()">Start
-            Game</button>
+        </div>
+        <div class="buttonContainer">
+            <button value="Start game" type="button" id="startGame" class="button" (click)="transferFileContent()">Start
+                Game</button>
+        </div>
     </div>
 </div>
