@@ -1,7 +1,7 @@
 
 .config {
     margin: auto;
-    width: 95vw;
+    width: 90vw;
     height: 10vh;
     text-align: center;
 }
@@ -67,7 +67,7 @@
 .wrapper {
     margin: 0 auto;
     width: 80vw;
-    height: 60vh;
+    height: 500px;
     overflow: hidden;
     position: relative;
     z-index: 1;
@@ -76,7 +76,7 @@
 /* The intro */
 .wrapper #intro {
     width: 85vw;
-    height: 50vh;
+    height: 500px;
     text-align: center;
     position: fixed;
     z-index: 10;

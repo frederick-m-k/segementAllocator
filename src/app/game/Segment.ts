@@ -28,11 +28,13 @@ export class Segment {
 
     private base_color: string;
     private currentColor: string;
+    private allColors: Map<number, string>;
 
     //////////////////////
     // Offscreen canvas //
     //////////////////////
-    private canvas: Map<number, HTMLCanvasElement>;
+    private allDrawings: Map<string, HTMLCanvasElement>;
+    private selections: Map<string, HTMLCanvasElement>;
 
     private standards: DrawingStandards;
 
@@ -52,38 +54,29 @@ export class Segment {
         this.clear(canvas);
         if (this.allocationColor == DrawingColors.NO_COLOR) {
             this.currentColor = this.base_color;
-            canvas.fillStyle = this.base_color;
         } else {
             this.currentColor = this.allocationColor;
-            canvas.fillStyle = this.allocationColor;
         }
-        this.fill(canvas);
-        this.boundaries(canvas);
-        this.writeContent(canvas);
+        canvas.drawImage(this.allDrawings.get(this.currentColor), this.pixelXStart, this.pixelYStart);
     }
 
     /**
      * Show SELECTED status of segment
      */
     select = (canvas: CanvasRenderingContext2D): void => {
-        canvas.fillStyle = DrawingColors.CURRENTLY_SELECTED;
-        canvas.strokeStyle = DrawingColors.CURRENTLY_SELECTED;
-        let middleX: number = (this.pixelXEnd + this.pixelXStart) / 2;
-        let headY: number, baseY: number;
+        this.clear(canvas);
+        let startX: number = ((this.pixelXEnd + this.pixelXStart) / 2) - (this.standards.mainSelectBaseX / 2);
+        let baseY: number;
         if (this.upperLayer) {
-            headY = this.pixelYStart;
+            console.log("Jo");
             baseY = this.pixelYStart - this.standards.mainSelectBaseY;
-        } else {
-            headY = this.pixelYEnd;
-            baseY = this.pixelYEnd + this.standards.mainSelectBaseY;
+            canvas.drawImage(this.selections.get("upper"), startX, baseY);
         }
-        canvas.beginPath();
-        canvas.moveTo(middleX, headY);
-        canvas.lineTo(middleX - this.standards.mainSelectBaseX, baseY);
-        canvas.lineTo(middleX + this.standards.mainSelectBaseX, baseY);
-        canvas.closePath();
-        canvas.stroke();
-        canvas.fill();
+        else {
+            console.log("Hi");
+            baseY = this.pixelYEnd;
+            canvas.drawImage(this.selections.get("lower"), startX, baseY);
+        }
     }
 
     /**
@@ -103,9 +96,7 @@ export class Segment {
         this.clear(canvas);
         canvas.fillStyle = color;
         this.allocationColor = color;
-        this.fill(canvas);
-        this.boundaries(canvas);
-        this.writeContent(canvas);
+        canvas.drawImage(this.allDrawings.get(this.allocationColor), this.pixelXStart, this.pixelYStart);
     }
 
     /**
@@ -133,64 +124,130 @@ export class Segment {
         }
     }
 
-    /**
-     * Write the content of this segment on the canvas
-     */
-    private writeContent = (canvas: CanvasRenderingContext2D): void => {
-        let textX: number = this.pixelXStart + ((this.pixelXEnd - this.pixelXStart) / 2);
-        let textY: number = this.pixelYStart + ((this.pixelYEnd - this.pixelYStart) / 2);
-        canvas.fillStyle = DrawingColors.TEXT;
-        canvas.font = this.standards.mainTextFont;
-        canvas.textAlign = this.standards.textAlign;
-        canvas.fillText(this.content, textX, textY);
-    }
-
-    /**
-     * Draw the two boundaries of a segment
-     */
-    private boundaries = (canvas: CanvasRenderingContext2D): void => {
-        canvas.strokeStyle = DrawingColors.BOUNDARY_COLOR;
-        canvas.beginPath();
-        canvas.moveTo(this.pixelXStart, this.pixelYStart);
-        canvas.lineTo(this.pixelXStart, this.pixelYEnd);
-        canvas.closePath();
-        canvas.stroke();
-        canvas.beginPath();
-        canvas.moveTo(this.pixelXEnd, this.pixelYStart);
-        canvas.lineTo(this.pixelXEnd, this.pixelYEnd);
-        canvas.closePath();
-        canvas.stroke();
-    }
-
-    private fill = (canvas: CanvasRenderingContext2D): void => {
-        canvas.fillRect(this.pixelXStart, this.pixelYStart, this.pixelWidth, this.pixelHeight);
-    }
     private clear = (canvas: CanvasRenderingContext2D): void => {
+        canvas.clearRect(this.pixelXStart, this.pixelYStart, this.pixelWidth, this.pixelHeight);
+
         let clearXStart: number = ((this.pixelXEnd + this.pixelXStart) / 2) - this.standards.mainSelectBaseX;
         let clearWidth: number = (this.standards.mainSelectBaseX * 2) + (canvas.lineWidth * 2);
         let clearYStart: number;
-        let clearHeight: number = this.standards.mainSelectBaseY + canvas.lineWidth;
+        let clearHeight: number = this.standards.mainSelectBaseY + (canvas.lineWidth * 2);
         if (this.upperLayer) {
             clearYStart = this.pixelYStart - clearHeight;
         } else {
             clearYStart = this.pixelYEnd;
         }
-        canvas.clearRect(this.pixelXStart, this.pixelYStart, this.pixelWidth, this.pixelHeight);
         canvas.clearRect(clearXStart, clearYStart, clearWidth, clearHeight);
     }
 
+    /**
+     * 
+     */
     private initOffscreenCanvas = (): void => {
+        this.allDrawings = new Map();
+        let baseCanvas: HTMLCanvasElement = document.createElement("canvas");
+        baseCanvas.height = this.pixelHeight + this.standards.lineWidth;
+        baseCanvas.width = this.pixelWidth + this.standards.lineWidth;
 
+        let baseDrawing: CanvasRenderingContext2D = baseCanvas.getContext("2d");
+        baseDrawing.lineWidth = this.standards.lineWidth;
+        baseDrawing.fillStyle = this.base_color;
+        baseDrawing.strokeStyle = DrawingColors.BOUNDARY_COLOR;
+
+        baseDrawing.fillRect(0, 0, this.pixelWidth, this.pixelHeight);
+
+        baseDrawing.beginPath();
+        baseDrawing.moveTo(0, 0);
+        baseDrawing.lineTo(0, this.pixelHeight);
+        baseDrawing.moveTo(this.pixelWidth, 0);
+        baseDrawing.lineTo(this.pixelWidth, this.pixelHeight);
+        baseDrawing.closePath();
+        baseDrawing.stroke();
+
+        baseDrawing.fillStyle = DrawingColors.TEXT;
+        baseDrawing.font = this.standards.mainTextFont;
+        baseDrawing.textAlign = this.standards.textAlign;
+        let textX: number = this.pixelWidth - (this.pixelWidth / 2);
+        let textY: number = this.pixelHeight - (this.pixelHeight / 2);
+        baseDrawing.fillText(this.content, textX, textY);
+
+        this.allDrawings.set(this.base_color, baseCanvas);
+
+        for (const [, color] of this.allColors) {
+            let canvas: HTMLCanvasElement = document.createElement("canvas");
+            let drawing: CanvasRenderingContext2D = canvas.getContext("2d");
+            drawing.lineWidth = this.standards.lineWidth;
+            drawing.fillStyle = color;
+            drawing.strokeStyle = DrawingColors.BOUNDARY_COLOR;
+
+            canvas.width = this.pixelWidth + drawing.lineWidth;
+            canvas.height = this.pixelHeight + drawing.lineWidth;
+
+            drawing.fillRect(0, 0, this.pixelWidth, this.pixelHeight);
+
+            drawing.beginPath();
+            drawing.moveTo(0, 0);
+            drawing.lineTo(0, this.pixelHeight);
+            drawing.moveTo(this.pixelWidth, 0);
+            drawing.lineTo(this.pixelWidth, this.pixelHeight);
+            drawing.closePath();
+            drawing.stroke();
+
+            drawing.fillStyle = DrawingColors.TEXT;
+            drawing.font = this.standards.mainTextFont;
+            drawing.textAlign = this.standards.textAlign;
+            let textX: number = this.pixelWidth - (this.pixelWidth / 2);
+            let textY: number = this.pixelHeight - (this.pixelHeight / 2);
+            drawing.fillText(this.content, textX, textY);
+
+            this.allDrawings.set(color, canvas);
+        }
+
+        // Init the two select images
+        this.selections = new Map();
+        let upperSelect: HTMLCanvasElement = document.createElement("canvas");
+        upperSelect.width = (this.standards.mainSelectBaseX * 2) + (this.standards.lineWidth * 2);
+        upperSelect.height = this.standards.mainSelectBaseY + (this.standards.lineWidth * 2);
+        let upperDrawing: CanvasRenderingContext2D = upperSelect.getContext("2d");
+        upperDrawing.fillStyle = DrawingColors.CURRENTLY_SELECTED;
+        upperDrawing.strokeStyle = DrawingColors.CURRENTLY_SELECTED;
+        upperDrawing.lineWidth = this.standards.lineWidth;
+
+        upperDrawing.beginPath();
+        upperDrawing.moveTo(0, 0);
+        upperDrawing.lineTo(this.standards.mainSelectBaseX, 0);
+        upperDrawing.lineTo(this.standards.mainSelectBaseX - (this.standards.mainSelectBaseX / 2), this.standards.mainSelectBaseY);
+        upperDrawing.closePath();
+        upperDrawing.stroke();
+        upperDrawing.fill();
+        this.selections.set("upper", upperSelect);
+
+        let lowerSelect: HTMLCanvasElement = document.createElement("canvas");
+        lowerSelect.width = (this.standards.mainSelectBaseX * 2) + (this.standards.lineWidth * 2);
+        lowerSelect.height = this.standards.mainSelectBaseY + (this.standards.lineWidth * 2);
+        let lowerDrawing: CanvasRenderingContext2D = lowerSelect.getContext("2d");
+        lowerDrawing.fillStyle = DrawingColors.CURRENTLY_SELECTED;
+        lowerDrawing.strokeStyle = DrawingColors.CURRENTLY_SELECTED;
+        lowerDrawing.lineWidth = this.standards.lineWidth;
+
+        lowerDrawing.beginPath();
+        lowerDrawing.moveTo(0, this.standards.mainSelectBaseY);
+        lowerDrawing.lineTo(this.standards.mainSelectBaseX, this.standards.mainSelectBaseY);
+        lowerDrawing.lineTo(this.standards.mainSelectBaseX - (this.standards.mainSelectBaseX / 2), 0);
+        lowerDrawing.closePath();
+        lowerDrawing.stroke();
+        lowerDrawing.fill();
+        this.selections.set("lower", lowerSelect);
     }
 
     ////////////
     // Setter //
     ////////////
     setID = (id: number): void => { this.id = id; }
-    setPixelYStart = (yStart: number): void => {
+    setPixelYStart = (yStart: number, colors: Map<number, string>): void => {
         this.pixelYStart = Math.floor(yStart);
         this.pixelYEnd = Math.floor(this.pixelYStart + this.standards.mainSegmentHeight);
         this.pixelHeight = this.pixelYEnd - this.pixelYStart;
+        this.allColors = colors;
         this.initOffscreenCanvas();
     }
     setColor = (color: string): void => {
@@ -201,7 +258,6 @@ export class Segment {
         this.layer = layer;
         this.upperLayer = upperLayer;
     }
-    hasAllocation = (): boolean => { return this.allocatedIDs.size > 0; }
 
     ////////////
     // Getter //
@@ -211,6 +267,7 @@ export class Segment {
     getID = (): number => { return this.id; }
     getLayerBelonging = (): string => { return this.layer; }
     getAllocationIDs = (): Set<number> => { return this.allocatedIDs; }
+    hasAllocation = (): boolean => { return this.allocatedIDs.size > 0; }
 
     getPixelXStart = (): number => { return this.pixelXStart; }
     getPixelXEnd = (): number => { return this.pixelXEnd; }

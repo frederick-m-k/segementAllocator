@@ -83,7 +83,7 @@ export class GameComponent {
     }
     if (this.startCounter == 4 && this.startGame) {
       this.init();
-      this.drawBoundaries();
+      this.drawBase();
       this.setStartSegment();
       this.makeVisible();
       this.startIntro();
@@ -112,15 +112,15 @@ export class GameComponent {
     this.mainCanvas.width = width;
     this.mainCanvas.height = height;
 
-    this.middleCanvas = <HTMLCanvasElement>document.getElementById("middleCanvas");
-    this.middleCanvasDrawing = this.middleCanvas.getContext("2d");
-    this.middleCanvas.width = width;
-    this.middleCanvas.height = height;
+    // this.middleCanvas = <HTMLCanvasElement>document.getElementById("middleCanvas");
+    // this.middleCanvasDrawing = this.middleCanvas.getContext("2d");
+    // this.middleCanvas.width = width;
+    // this.middleCanvas.height = height;
 
-    this.lowCanvas = <HTMLCanvasElement>document.getElementById("lowCanvas");
-    this.lowCanvasDrawing = this.lowCanvas.getContext("2d");
-    this.lowCanvas.width = width;
-    this.lowCanvas.height = height;
+    // this.lowCanvas = <HTMLCanvasElement>document.getElementById("lowCanvas");
+    // this.lowCanvasDrawing = this.lowCanvas.getContext("2d");
+    // this.lowCanvas.width = width;
+    // this.lowCanvas.height = height;
 
     // Event handling only for mainCanvas, cause z-index is highest
     this.mainCanvas.onmousedown = (event: MouseEvent) => {
@@ -303,7 +303,7 @@ export class GameComponent {
   /**
    * Draw the segmental boundaries
    */
-  private drawBoundaries = (): void => {
+  private drawBase = (): void => {
     let colorCounter: number = 0;
     let startY: number;
     this.data.forEach((value: Array<Segment>, key: string) => {
@@ -316,7 +316,6 @@ export class GameComponent {
           break;
       }
       value.forEach((segment: Segment) => {
-        segment.setPixelYStart(startY);
         if (colorCounter == 0) {
           segment.setColor(DrawingColors.DARK_BACKGROUND);
           colorCounter = 1;
@@ -324,6 +323,7 @@ export class GameComponent {
           segment.setColor(DrawingColors.LIGHT_BACKGROUND);
           colorCounter = 0;
         }
+        segment.setPixelYStart(startY, this.colors);
         segment.draw(this.drawingArea);
         this.fillPixelRep(segment);
       });

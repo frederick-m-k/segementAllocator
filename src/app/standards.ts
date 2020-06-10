@@ -59,6 +59,7 @@ export class DrawingStandards {
 	//////////////////
 	private verticalLayerMargin: number = 30;
 	readonly textAlign: CanvasTextAlign = "center";
+	readonly lineWidth: number = 2;
 
 
 	constructor() {

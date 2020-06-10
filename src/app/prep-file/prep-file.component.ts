@@ -109,7 +109,6 @@ export class PrepFileComponent {
     this.dataStructure.forEach((value: Array<Segment>, key: string) => {
       for (let i = 0; i < value.length; i++) {
         value[i].setID(id);    // The own id
-        //value[i].push(LinkingID.UNASSIGNED);  // The linked-segment-state
         this.links.set(id, new Array<number>());
         id++;
 
