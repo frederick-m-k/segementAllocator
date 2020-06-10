@@ -68,12 +68,10 @@ export class Segment {
         let startX: number = ((this.pixelXEnd + this.pixelXStart) / 2) - (this.standards.mainSelectBaseX / 2);
         let baseY: number;
         if (this.upperLayer) {
-            console.log("Jo");
             baseY = this.pixelYStart - this.standards.mainSelectBaseY;
             canvas.drawImage(this.selections.get("upper"), startX, baseY);
         }
         else {
-            console.log("Hi");
             baseY = this.pixelYEnd;
             canvas.drawImage(this.selections.get("lower"), startX, baseY);
         }
@@ -94,7 +92,6 @@ export class Segment {
      */
     private allocate = (canvas: CanvasRenderingContext2D, color: string): void => {
         this.clear(canvas);
-        canvas.fillStyle = color;
         this.allocationColor = color;
         canvas.drawImage(this.allDrawings.get(this.allocationColor), this.pixelXStart, this.pixelYStart);
     }
@@ -205,8 +202,8 @@ export class Segment {
         // Init the two select images
         this.selections = new Map();
         let upperSelect: HTMLCanvasElement = document.createElement("canvas");
-        upperSelect.width = (this.standards.mainSelectBaseX * 2) + (this.standards.lineWidth * 2);
-        upperSelect.height = this.standards.mainSelectBaseY + (this.standards.lineWidth * 2);
+        upperSelect.width = Math.floor((this.standards.mainSelectBaseX * 2) + (this.standards.lineWidth * 2));
+        upperSelect.height = Math.floor(this.standards.mainSelectBaseY + (this.standards.lineWidth * 2));
         let upperDrawing: CanvasRenderingContext2D = upperSelect.getContext("2d");
         upperDrawing.fillStyle = DrawingColors.CURRENTLY_SELECTED;
         upperDrawing.strokeStyle = DrawingColors.CURRENTLY_SELECTED;
@@ -215,15 +212,15 @@ export class Segment {
         upperDrawing.beginPath();
         upperDrawing.moveTo(0, 0);
         upperDrawing.lineTo(this.standards.mainSelectBaseX, 0);
-        upperDrawing.lineTo(this.standards.mainSelectBaseX - (this.standards.mainSelectBaseX / 2), this.standards.mainSelectBaseY);
+        upperDrawing.lineTo(Math.floor(this.standards.mainSelectBaseX - (this.standards.mainSelectBaseX / 2)), this.standards.mainSelectBaseY);
         upperDrawing.closePath();
         upperDrawing.stroke();
         upperDrawing.fill();
         this.selections.set("upper", upperSelect);
 
         let lowerSelect: HTMLCanvasElement = document.createElement("canvas");
-        lowerSelect.width = (this.standards.mainSelectBaseX * 2) + (this.standards.lineWidth * 2);
-        lowerSelect.height = this.standards.mainSelectBaseY + (this.standards.lineWidth * 2);
+        lowerSelect.width = Math.floor((this.standards.mainSelectBaseX * 2) + (this.standards.lineWidth * 2));
+        lowerSelect.height = Math.floor(this.standards.mainSelectBaseY + (this.standards.lineWidth * 2));
         let lowerDrawing: CanvasRenderingContext2D = lowerSelect.getContext("2d");
         lowerDrawing.fillStyle = DrawingColors.CURRENTLY_SELECTED;
         lowerDrawing.strokeStyle = DrawingColors.CURRENTLY_SELECTED;
@@ -232,7 +229,7 @@ export class Segment {
         lowerDrawing.beginPath();
         lowerDrawing.moveTo(0, this.standards.mainSelectBaseY);
         lowerDrawing.lineTo(this.standards.mainSelectBaseX, this.standards.mainSelectBaseY);
-        lowerDrawing.lineTo(this.standards.mainSelectBaseX - (this.standards.mainSelectBaseX / 2), 0);
+        lowerDrawing.lineTo(Math.floor(this.standards.mainSelectBaseX - (this.standards.mainSelectBaseX / 2)), 0);
         lowerDrawing.closePath();
         lowerDrawing.stroke();
         lowerDrawing.fill();

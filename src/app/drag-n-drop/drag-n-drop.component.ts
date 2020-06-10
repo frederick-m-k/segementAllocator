@@ -208,6 +208,10 @@ export class DragNDropComponent {
 
   private showLayers = (): void => {
     let wrapper: HTMLElement = document.getElementById("layerContainer");
+    while (wrapper.firstChild) {
+      console.log("Hi");
+      wrapper.removeChild(wrapper.lastChild);
+    }
     for (let index = 0; index < this.allTiers.length; index++) {
       let layerName: string = this.allTiers[index];
       let div: HTMLDivElement = document.createElement("div");
@@ -243,6 +247,7 @@ export class DragNDropComponent {
   private getLayerNames = (fileContent: string): void => {
     // TODO this is very TextGrid related
     let lines: string[] = fileContent.split("\n");
+    this.allTiers = new Array();
     for (let index = 0; index < lines.length; index++) {
       let curLine: string = lines[index];
       if (curLine.includes("name =")) {
