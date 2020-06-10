@@ -250,7 +250,6 @@ export class GameComponent {
   private addAllocations = (): void => {
     let allocationSegment: Segment = this.findAllocationSegment();
     if (allocationSegment == null) {
-      // Error
       console.log("allocation color error");
       return;
     }

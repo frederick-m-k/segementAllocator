@@ -65,7 +65,7 @@ export class Segment {
      */
     select = (canvas: CanvasRenderingContext2D): void => {
         this.clear(canvas);
-        let startX: number = ((this.pixelXEnd + this.pixelXStart) / 2) - (this.standards.mainSelectBaseX / 2);
+        let startX: number = ((this.pixelXEnd + this.pixelXStart) / 2) - (this.standards.mainSelectBaseX);
         let baseY: number;
         if (this.upperLayer) {
             baseY = this.pixelYStart - this.standards.mainSelectBaseY;
@@ -75,6 +75,7 @@ export class Segment {
             baseY = this.pixelYEnd;
             canvas.drawImage(this.selections.get("lower"), startX, baseY);
         }
+        canvas.drawImage(this.allDrawings.get(this.currentColor), this.pixelXStart, this.pixelYStart);
     }
 
     /**
@@ -93,6 +94,7 @@ export class Segment {
     private allocate = (canvas: CanvasRenderingContext2D, color: string): void => {
         this.clear(canvas);
         this.allocationColor = color;
+        this.currentColor = this.allocationColor;
         canvas.drawImage(this.allDrawings.get(this.allocationColor), this.pixelXStart, this.pixelYStart);
     }
 
@@ -171,13 +173,13 @@ export class Segment {
 
         for (const [, color] of this.allColors) {
             let canvas: HTMLCanvasElement = document.createElement("canvas");
+            canvas.width = this.pixelWidth + this.standards.lineWidth;
+            canvas.height = this.pixelHeight + this.standards.lineWidth;
+
             let drawing: CanvasRenderingContext2D = canvas.getContext("2d");
             drawing.lineWidth = this.standards.lineWidth;
             drawing.fillStyle = color;
             drawing.strokeStyle = DrawingColors.BOUNDARY_COLOR;
-
-            canvas.width = this.pixelWidth + drawing.lineWidth;
-            canvas.height = this.pixelHeight + drawing.lineWidth;
 
             drawing.fillRect(0, 0, this.pixelWidth, this.pixelHeight);
 
@@ -211,8 +213,8 @@ export class Segment {
 
         upperDrawing.beginPath();
         upperDrawing.moveTo(0, 0);
-        upperDrawing.lineTo(this.standards.mainSelectBaseX, 0);
-        upperDrawing.lineTo(Math.floor(this.standards.mainSelectBaseX - (this.standards.mainSelectBaseX / 2)), this.standards.mainSelectBaseY);
+        upperDrawing.lineTo(this.standards.mainSelectBaseX * 2, 0);
+        upperDrawing.lineTo(this.standards.mainSelectBaseX, this.standards.mainSelectBaseY);
         upperDrawing.closePath();
         upperDrawing.stroke();
         upperDrawing.fill();
@@ -228,8 +230,8 @@ export class Segment {
 
         lowerDrawing.beginPath();
         lowerDrawing.moveTo(0, this.standards.mainSelectBaseY);
-        lowerDrawing.lineTo(this.standards.mainSelectBaseX, this.standards.mainSelectBaseY);
-        lowerDrawing.lineTo(Math.floor(this.standards.mainSelectBaseX - (this.standards.mainSelectBaseX / 2)), 0);
+        lowerDrawing.lineTo(this.standards.mainSelectBaseX * 2, this.standards.mainSelectBaseY);
+        lowerDrawing.lineTo(this.standards.mainSelectBaseX, 0);
         lowerDrawing.closePath();
         lowerDrawing.stroke();
         lowerDrawing.fill();
