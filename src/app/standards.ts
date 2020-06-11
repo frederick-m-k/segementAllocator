@@ -67,9 +67,9 @@ export class DrawingStandards {
 	}
 
 	/**
-	 * Return the complete height of the canvas
+	 * Return the complete height of the main canvas
 	 */
-	canvasHeight = (): number => {
+	mainCanvasHeight = (): number => {
 		let returnVal: number =
 			this.mainUpperLayerStart +
 			this.mainSegmentHeight +
@@ -77,7 +77,27 @@ export class DrawingStandards {
 			this.mainSegmentHeight +
 			this.verticalLayerMargin;
 		return returnVal;
-	};
+	}
+	/**
+	 * Return the complete height of the middle canvas
+	 */
+	middleCanvasHeight = (): number => {
+		return this.middleUpperLayerStart +
+			this.middleSegmentHeight +
+			this.verticalLayerMargin +
+			this.middleSegmentHeight +
+			this.verticalLayerMargin;
+	}
+	/**
+	 * Return the complete height of the smallest canvas
+	 */
+	smallCanvasHeight = (): number => {
+		return this.smallUpperLayerStart +
+			this.smallSegmentHeight +
+			this.verticalLayerMargin +
+			this.smallSegmentHeight +
+			this.verticalLayerMargin;
+	}
 
 	/**
 	 * Return the pixel start Y point of the lower layer
@@ -98,7 +118,7 @@ export class AllocatedColors {
 
 	private allColors: Map<number, string>;
 
-	constructor(private amount: number) {
+	constructor(amount: number) {
 		this.allColors = new Map();
 		let step: number = Math.floor(255 / amount);
 		for (let i = 0; i < amount; i++) {

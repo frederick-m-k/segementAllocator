@@ -105,7 +105,7 @@ export class GameComponent {
    */
   private initCanvas = () => {
     let width: number = this.getMaxWidth();
-    let height: number = this.standards.canvasHeight();
+    let height: number = this.standards.mainCanvasHeight();
 
     this.mainCanvas = <HTMLCanvasElement>document.getElementById("mainCanvas");
     this.drawingArea = this.mainCanvas.getContext("2d");
@@ -449,7 +449,7 @@ export class GameComponent {
     document.getElementById("intro").style.opacity = "0";
     setTimeout(() => {
       document.getElementById("intro").classList.add("hidden");
-      //this.startMoving();
+      this.startMoving();
     }, 3000);
   }
   /**
