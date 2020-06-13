@@ -1,7 +1,5 @@
 
-import { Component, HostListener, Output, EventEmitter, Input, SimpleChanges, Host } from '@angular/core';
-import { Errors } from './../errors';
-import { decimalDigest } from '@angular/compiler/src/i18n/digest';
+import { Component, HostListener, Output, EventEmitter, Input, SimpleChanges } from '@angular/core';
 
 /**
  * 
@@ -20,7 +18,6 @@ export class DragNDropComponent {
   @Output() fileType: EventEmitter<string> = new EventEmitter();
   @Output() firstLayer: EventEmitter<string> = new EventEmitter();
   @Output() secondLayer: EventEmitter<string> = new EventEmitter();
-  @Output() errorLogging: EventEmitter<Errors> = new EventEmitter();
 
   @Input() startGame: boolean;
   @Input() restartGame: boolean;
@@ -46,6 +43,7 @@ export class DragNDropComponent {
    */
   transferFileContent = () => {
     if (this.selectedLayers.size == 2) {
+      console.log("Jup");
       let iterator = this.selectedLayers.values();
       let firstLayer: string = iterator.next().value;
       let secondLayer: string = iterator.next().value;
@@ -56,8 +54,6 @@ export class DragNDropComponent {
       this.secondLayer.emit(secondLayer);
 
       this.enterPossible = false;
-    } else {
-      this.errorLogging.emit(Errors.PROVIDE_BOTH_TIERS_ERROR);
     }
   }
 
@@ -105,6 +101,11 @@ export class DragNDropComponent {
   private reset = (): void => {
     this.selectedLayers = new Set();
     this.showLayers();
+    document.getElementById("startGame").classList.remove("visible");
+    this.fileContent.emit(null);
+    this.fileType.emit(null);
+    this.firstLayer.emit(null);
+    this.secondLayer.emit(null);
   }
 
   /**
@@ -134,13 +135,11 @@ export class DragNDropComponent {
   private readFile = (files: FileList) => {
     if (files) {
       if (files.length > 1) {
-        this.errorLogging.emit(Errors.TOO_MANY_FILES_ERROR);
         this.writeFilename("");
       } else {
         this.file = files[0];
         this.fileName = this.file.name;
         if (!this.fileName.endsWith("TextGrid")) {
-          this.errorLogging.emit(Errors.WRONG_FILE_TYPE_ERROR);
           this.writeFilename("");
         } else {
           this.privFileType = "TextGrid";
@@ -158,7 +157,6 @@ export class DragNDropComponent {
           }
           this.reader.readAsText(this.file);
 
-          this.errorLogging.emit(Errors.NO_ERROR);
         }
       }
     }

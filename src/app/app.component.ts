@@ -1,6 +1,5 @@
 
-import { Component, HostListener } from '@angular/core';
-import { Errors } from './errors'
+import { Component } from '@angular/core';
 import { Segment } from './game/Segment';
 
 /**
@@ -19,8 +18,6 @@ export class AppComponent {
   fileType: string;
   firstLayer: string;
   secondLayer: string;
-
-  errorLogging: Errors;
 
   data: Map<string, Array<Segment>>;
   links: Map<number, Array<number>>;
@@ -43,10 +40,6 @@ export class AppComponent {
   }
   getSecondLayer = (secondLayer: string) => {
     this.secondLayer = secondLayer;
-  }
-
-  getError = (errorLogging: Errors) => {
-    this.errorLogging = errorLogging;
   }
 
   getData = (data: Map<string, Array<Segment>>) => {

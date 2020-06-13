@@ -24,7 +24,6 @@ export class PrepFileComponent {
   @Input() private firstLayer: string;
   @Input() private secondLayer: string;
 
-  @Output() errorLogging: EventEmitter<Errors> = new EventEmitter(true);
   @Output() data: EventEmitter<Map<string, Array<Segment>>> = new EventEmitter(true);
   @Output() segmentLinks: EventEmitter<Map<number, Array<number>>> = new EventEmitter();
 
@@ -34,6 +33,7 @@ export class PrepFileComponent {
   private dataStructure: Map<string, Array<Segment>> = new Map();
   private links: Map<number, Array<number>> = new Map();
   private allLayers: Array<string> = new Array();
+  private counter: number = 0;
 
   ////////////////////////
   // All custom objects //
@@ -49,7 +49,6 @@ export class PrepFileComponent {
    * @param changes 
    */
   ngOnChanges(changes: SimpleChanges) {
-    let counter = 0;
     for (const propName in changes) {
       if (changes.hasOwnProperty(propName)) {
         if (!changes[propName].isFirstChange()) {
@@ -58,17 +57,16 @@ export class PrepFileComponent {
             case 'content':
             case 'firstLayer':
             case 'secondLayer':
-              counter++;
+              this.counter++;
               break;
           }
         }
       }
     }
 
-    if (counter == 4) {
+    if (this.counter == 4) {
       this.parseFile();
-    } else {
-      counter = 0;
+      this.counter = 0;
     }
   }
 
@@ -79,12 +77,10 @@ export class PrepFileComponent {
     let parserReturn: Errors;
     if (this.type === "TextGrid") {
       parserReturn = this.textGridParser.parseTextGrid(this.content, this.firstLayer, this.secondLayer);
-      this.errorLogging.emit(parserReturn);
 
       switch (parserReturn) {
         case Errors.NO_ERROR:
           this.dataStructure = this.textGridParser.getDataStructure();
-          this.errorLogging.emit();
           this.addID();
           this.establishLinks();
           this.data.emit(new Map<string, Array<Segment>>(this.dataStructure));
@@ -92,8 +88,10 @@ export class PrepFileComponent {
           break;
       }
     } else {
-      // Write to logfile
-      console.log("Maybe you provided a not provided file type " + this.type);
+      if (this.type != null) {
+        // Write to logfile
+        console.log("Maybe you provided a not provided file type " + this.type);
+      }
     }
   }
 

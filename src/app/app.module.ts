@@ -7,15 +7,13 @@ import { AppComponent } from './app.component';
 import { DragNDropComponent } from './drag-n-drop/drag-n-drop.component';
 import { GameComponent } from './game/game.component';
 import { PrepFileComponent } from './prep-file/prep-file.component';
-import { ErrorLoggingComponent } from './error-logging/error-logging.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DragNDropComponent,
     GameComponent,
-    PrepFileComponent,
-    ErrorLoggingComponent
+    PrepFileComponent
   ],
   imports: [
     BrowserModule,

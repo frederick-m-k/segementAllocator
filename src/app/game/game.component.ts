@@ -70,17 +70,33 @@ export class GameComponent {
         if (!changes[propName].isFirstChange()) { // First change is always on init
           switch (propName) {
             case "firstLayer":
+              if (this.firstLayer != null) {
+                this.startCounter++;
+              }
+              break;
             case "secondLayer":
+              if (this.secondLayer != null) {
+                this.startCounter++;
+              }
+              break;
             case "data":
+              if (this.data != null) {
+                this.startCounter++;
+              }
+              break;
             case "links":
-              this.startCounter++;
+              if (this.links != null) {
+                this.startCounter++;
+              }
               break;
           }
         }
       }
     }
     if (this.startCounter == 4 && this.startGame) {
+      console.log("jeo");
       this.start();
+      this.startCounter = 0;
     }
   }
 
