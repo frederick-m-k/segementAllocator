@@ -1,2 +1,2 @@
 Icons by
-Freepik, Pixel Perfect, Those Icons
+Freepik, Pixel Perfect, Those Icons, Pixel Perfect

@@ -10,6 +10,7 @@
 }
 .config #hoveringLegend:hover {
     opacity: 0.3;
+    cursor: help;
 }
 .config h3 {
     font-size: 25px;
@@ -130,6 +131,24 @@
 .wrapper #mainCanvas {
     position: absolute;
     z-index: 4;
+}
+
+#button_ui {
+    position: absolute;
+    right: 5%;
+    width: 25px;
+}
+#button_ui img {
+    width: 25px;
+    height: 25px;
+    padding: 10px;
+}
+#button_ui img:hover {
+    cursor: pointer;
+}
+#button_ui #pause_button {
+    width: 27px;
+    height: 27px;
 }
 
 .hidden {

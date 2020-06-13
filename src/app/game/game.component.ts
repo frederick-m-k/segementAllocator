@@ -117,6 +117,7 @@ export class GameComponent {
     this.initColors();
     this.initPixelRep();
     this.findShortestLayer();
+    this.clickEventsForButtonUI();
   }
   /**
    * Init the area to draw on
@@ -148,7 +149,7 @@ export class GameComponent {
     this.colors = colorCreation.getColors();
   }
   /**
-   * 
+   * Define the start segment as the first segment in the first layer
    */
   private setStartSegment = (): void => {
     let segment: Segment = this.data.get(this.firstLayer)[0]
@@ -158,6 +159,28 @@ export class GameComponent {
     segment.select(this.drawingArea);
     this.currentLayer = segment.getLayerBelonging();
   }
+  /**
+   * Set onclick for the buttons in the button UI
+   */
+  private clickEventsForButtonUI = (): void => {
+    document.getElementById("play_button").onclick = () => {
+      if (!this.currentlyMoving) {
+        this.move(document.getElementById("movingCanvas"));
+      }
+    }
+    document.getElementById("pause_button").onclick = () => {
+      if (this.currentlyMoving) {
+        this.stopMoving();
+      }
+    }
+    document.getElementById("fast_forward").onclick = () => {
+      this.speedUp();
+    }
+    document.getElementById("slow_down").onclick = () => {
+      this.slowDown();
+    }
+  }
+
 
   /**
    * 
@@ -402,6 +425,7 @@ export class GameComponent {
    * Move the canvas
    */
   private move = (slidingElement: HTMLElement): void => {
+    clearInterval(this.interval);
     this.interval = setInterval(() => {
       if (slidingElement.scrollLeft == this.maxScroll) {
         this.stopMoving();
