@@ -151,6 +151,11 @@
     height: 27px;
 }
 
+#movingCanvas #skip_intro:hover, .config #new_game:hover {
+    cursor: pointer;
+}
+
+
 .hidden {
     display: none;
 }

@@ -107,19 +107,6 @@ export class DragNDropComponent {
   }
 
   /**
-   * Get file when dropped
-   * @param event 
-   */
-  @HostListener('drop', ['$event'])
-  onDrop(event: DragEvent) {
-    event.preventDefault();
-    event.stopPropagation();
-
-    const { dataTransfer } = event;
-    this.readFile(dataTransfer.files);
-  }
-
-  /**
    * Check if file is of correct type
    * Write found errors to parent component (e.g. too many files dropped)
    */
@@ -153,6 +140,10 @@ export class DragNDropComponent {
     }
   }
 
+
+  ///////////////
+  // Shortcuts //
+  ///////////////
   @HostListener('document:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {
     if (this.enterPossible) {
@@ -173,15 +164,35 @@ export class DragNDropComponent {
     }
   }
 
+  ///////////////////////////////////
+  // Host Listeners for dragevents //
+  ///////////////////////////////////
+  /**
+   * Get file when dropped
+   * @param event 
+   */
+  @HostListener('drop', ['$event'])
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const { dataTransfer } = event;
+    this.readFile(dataTransfer.files);
+  }
+
   @HostListener('dragenter', ['$event'])
   onDragEnter(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
+    event.dataTransfer.effectAllowed = "copy";
+    event.dataTransfer.dropEffect = "copy";
   }
   @HostListener('dragover', ['$event'])
   onDragOver(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
+    event.dataTransfer.effectAllowed = "copy";
+    event.dataTransfer.dropEffect = "copy";
   }
   @HostListener('dragleave', ['$event'])
   onDragLeave(event: DragEvent) {
@@ -194,21 +205,32 @@ export class DragNDropComponent {
   onBodyDrop(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
+    event.dataTransfer.dropEffect = "none";
+    event.dataTransfer.effectAllowed = "none";
   }
   @HostListener('body:dragover', ['$event'])
   onBodyDragOver(event: DragEvent) {
     event.preventDefault();
     event.stopPropagation();
+    event.dataTransfer.dropEffect = "none";
+    event.dataTransfer.effectAllowed = "none";
   }
+
 
   private writeFilename = (msg: string): void => {
     document.getElementById("filename").innerText = msg;
-    if (msg != "") {
-      document.getElementById("layers").innerText = "Choose two layers";
+    if (msg == "") {
+      document.getElementById("layers").innerText = "";
+      let wrapper: HTMLElement = document.getElementById("layerContainer");
+      while (wrapper.firstChild) {
+        wrapper.removeChild(wrapper.lastChild);
+      }
+      document.getElementById("startGame").classList.remove("visible");
     }
   }
 
   private showLayers = (): void => {
+    document.getElementById("layers").innerText = "Choose two layers";
     let wrapper: HTMLElement = document.getElementById("layerContainer");
     while (wrapper.firstChild) {
       wrapper.removeChild(wrapper.lastChild);
@@ -220,8 +242,9 @@ export class DragNDropComponent {
       div.style.borderRadius = "4px";
       div.style.backgroundColor = "#f0f0f0";
       div.style.display = "inline-block";
-      div.style.margin = "0 5px";
+      div.style.margin = "5px";
       div.style.padding = "3px 20px";
+      div.style.cursor = "pointer";
       div.onclick = () => {
         if (this.selectedLayers.has(layerName)) {
           this.selectedLayers.delete(layerName);
