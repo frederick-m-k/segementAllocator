@@ -132,8 +132,6 @@ export class DragNDropComponent {
    * Write found errors to parent component (e.g. too many files dropped)
    */
   private readFile = (files: FileList) => {
-    let startButton = document.getElementById("startGame");
-
     if (files) {
       if (files.length > 1) {
         this.errorLogging.emit(Errors.TOO_MANY_FILES_ERROR);
@@ -145,14 +143,12 @@ export class DragNDropComponent {
           this.errorLogging.emit(Errors.WRONG_FILE_TYPE_ERROR);
           this.writeFilename("");
         } else {
-          this.enterPossible = true;
           this.privFileType = "TextGrid";
           this.writeFilename(this.fileName);
 
           for (let i = 0; i < this.metaDataElements.length; i++) {
             this.metaDataElements[i].classList.add("visible");
           }
-          startButton.classList.add("visible");
 
           // read the file
           this.reader.onload = () => {
@@ -244,6 +240,13 @@ export class DragNDropComponent {
         } else if (this.selectedLayers.size < 2) {
           this.selectedLayers.add(layerName);
           div.style.border = "4px solid #9c0a00";
+        }
+        if (this.selectedLayers.size == 2) {
+          this.enterPossible = true;
+          document.getElementById("startGame").classList.add("visible");
+        } else {
+          this.enterPossible = false;
+          document.getElementById("startGame").classList.remove("visible");
         }
       };
       let text: HTMLParagraphElement = document.createElement("p");
