@@ -23,7 +23,7 @@ export class DragNDropComponent {
   @Output() errorLogging: EventEmitter<Errors> = new EventEmitter();
 
   @Input() startGame: boolean;
-
+  @Input() restartGame: boolean;
 
   private fileName: string;
   private file: File;
@@ -39,7 +39,6 @@ export class DragNDropComponent {
   private metaDataElements = document.getElementsByClassName("metaData");
 
   constructor() { }
-
 
 
   /**
@@ -84,10 +83,28 @@ export class DragNDropComponent {
                 }
               }
               break;
+            case "restartGame":
+              let elementsToShow = document.getElementsByClassName("hiddenWhenGameStarts");
+              if (this.restartGame) {
+                for (let i = 0; i < elementsToShow.length; i++) {
+                  elementsToShow.item(i).classList.remove("hidden");
+                }
+                this.reset();
+              } else {
+                for (let i = 0; i < elementsToShow.length; i++) {
+                  elementsToShow.item(i).classList.add("hidden");
+                }
+              }
+              break;
           }
         }
       }
     }
+  }
+
+  private reset = (): void => {
+    this.selectedLayers = new Set();
+    this.showLayers();
   }
 
   /**
@@ -209,7 +226,6 @@ export class DragNDropComponent {
   private showLayers = (): void => {
     let wrapper: HTMLElement = document.getElementById("layerContainer");
     while (wrapper.firstChild) {
-      console.log("Hi");
       wrapper.removeChild(wrapper.lastChild);
     }
     for (let index = 0; index < this.allTiers.length; index++) {

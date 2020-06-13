@@ -72,6 +72,7 @@
 }
 .metaInformation #filename {
     color: #38424c;
+    font-size: 17px;
 }
 .metaInformation .metaData {
     display: none;
@@ -95,11 +96,10 @@
     border: solid 2px #FFFFFF;
     border-radius: 4px;;
     background-color: #9c0a00;
-    color: rgb(223, 219, 219);
-    width: 100px;
-    height: 30px;
-    font-size: 15px;
+    color: #FFFFFF;
+    font-size: 18px;
     font-weight: bold;
+    padding: 10px;
 }
 
 .metaInformation .visible {

@@ -13,11 +13,18 @@
     margin-left: 0;
 }
 
-.gradient {
+#short {
     height: 2px;
     background-image: linear-gradient(90deg, transparent, transparent 50%,
                 #FFFFFF 50%, #FFFFFF 100%),
                 linear-gradient(90deg, #9c0a00, #FFFFFF);
+    border: none;
+}
+#long {
+    height: 2px;
+    background-image: linear-gradient(90deg, transparent, transparent 50%,
+                #FFFFFF 50%, #FFFFFF 100%),
+                linear-gradient(90deg, #009c27, #FFFFFF);
     border: none;
 }
 
@@ -25,5 +32,10 @@
     margin: 0;
     padding-left: 10px;
     margin-bottom: -5px;
+}
+#name #red_name {
     color: #832620;
+}
+#name #green_name {
+    color: #009c27;
 }

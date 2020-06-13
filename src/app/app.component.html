@@ -1,13 +1,15 @@
 <!-- Header -->
 <header class="header" id="header">
-        <h3 id="name">Segment <br /> &nbsp;&nbsp;&nbsp;&nbsp; Allocator</h3>
+        <h3 id="name"><span id="red_name">Segment</span> <br /> &nbsp;&nbsp;&nbsp;&nbsp;
+                <span id="green_name">Allocator</span></h3>
         <hr class="gradient" id="short">
         <hr class="gradient" id="long">
 </header>
 
 <!-- Drag'n'Drop & Upload Zone -->
 <app-drag-n-drop (fileContent)="getFile($event)" (fileType)="getFileType($event)" (firstLayer)="getFirstLayer($event)"
-        (secondLayer)="getSecondLayer($event)" (errorLogging)="getError($event)" [startGame]="startGame">
+        (secondLayer)="getSecondLayer($event)" (errorLogging)="getError($event)" [startGame]="startGame"
+        [restartGame]="restartGame">
 </app-drag-n-drop>
 
 <app-error-logging [errorLogging]="errorLogging"></app-error-logging>
@@ -17,7 +19,8 @@
         (errorLogging)="getError($event)" (data)="getData($event)" (segmentLinks)="getLinks($event)">
 </app-prep-file>
 
-<app-game [startGame]="startGame" [firstLayer]="firstLayer" [secondLayer]="secondLayer" [data]="data" [links]="links">
+<app-game [startGame]="startGame" [firstLayer]="firstLayer" [secondLayer]="secondLayer" [data]="data" [links]="links"
+        (restartGame)="getRestart($event)">
 </app-game>
 
 <!-- Footer -->

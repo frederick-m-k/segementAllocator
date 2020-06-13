@@ -25,6 +25,7 @@ export class AppComponent {
   data: Map<string, Array<Segment>>;
   links: Map<number, Array<number>>;
   startGame: boolean;
+  restartGame: boolean;
 
   private errorLog: Array<string> = new Array<string>();
   private nextError: string;
@@ -58,5 +59,9 @@ export class AppComponent {
 
   getNextLoggedError = (nextError: string) => {
     this.nextError = nextError;
+  }
+
+  getRestart = (restart: boolean) => {
+    this.restartGame = restart;
   }
 }

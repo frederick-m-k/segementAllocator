@@ -1,5 +1,5 @@
 
-import { Component, Input, SimpleChanges, HostListener } from '@angular/core';
+import { Component, Input, SimpleChanges, HostListener, Output, EventEmitter } from '@angular/core';
 
 import { DrawingStandards, DrawingColors, AllocatedColors } from './../standards';
 import { Segment } from './Segment';
@@ -23,6 +23,8 @@ export class GameComponent {
   @Input() private links: Map<number, Array<number>>;
   @Input() private startGame: boolean;
 
+  @Output() restartGame: EventEmitter<boolean> = new EventEmitter();
+
   ////////////////
   // For moving //
   ////////////////
@@ -40,10 +42,6 @@ export class GameComponent {
 
   private mainCanvas: HTMLCanvasElement;
   private drawingArea: CanvasRenderingContext2D;
-  private middleCanvas: HTMLCanvasElement;
-  private middleCanvasDrawing: CanvasRenderingContext2D;
-  private lowCanvas: HTMLCanvasElement;
-  private lowCanvasDrawing: CanvasRenderingContext2D;
   /**
    * Double array for every pixel in the canvas holding the id of the segment drawn on it
    */
@@ -82,11 +80,7 @@ export class GameComponent {
       }
     }
     if (this.startCounter == 4 && this.startGame) {
-      this.init();
-      this.drawBase();
-      this.setStartSegment();
-      this.makeVisible();
-      this.startIntro();
+      this.start();
     }
   }
 
@@ -94,7 +88,15 @@ export class GameComponent {
   //////////////
   // On start //
   //////////////
-  private init = () => {
+  private start = (): void => {
+    this.init();
+    this.drawBase();
+    this.setStartSegment();
+    this.makeVisible();
+    this.startIntro()
+  }
+
+  private init = (): void => {
     this.initCanvas();
     this.initColors();
     this.initPixelRep();
@@ -111,16 +113,6 @@ export class GameComponent {
     this.drawingArea = this.mainCanvas.getContext("2d");
     this.mainCanvas.width = width;
     this.mainCanvas.height = height;
-
-    // this.middleCanvas = <HTMLCanvasElement>document.getElementById("middleCanvas");
-    // this.middleCanvasDrawing = this.middleCanvas.getContext("2d");
-    // this.middleCanvas.width = width;
-    // this.middleCanvas.height = height;
-
-    // this.lowCanvas = <HTMLCanvasElement>document.getElementById("lowCanvas");
-    // this.lowCanvasDrawing = this.lowCanvas.getContext("2d");
-    // this.lowCanvas.width = width;
-    // this.lowCanvas.height = height;
 
     // Event handling only for mainCanvas, cause z-index is highest
     this.mainCanvas.onmousedown = (event: MouseEvent) => {
@@ -149,6 +141,21 @@ export class GameComponent {
     this.currentSegment = segment;
     segment.select(this.drawingArea);
     this.currentLayer = segment.getLayerBelonging();
+  }
+
+  /**
+   * 
+   */
+  restart = (): void => {
+    let allElements = document.getElementsByClassName("gamingArea");
+    for (let i = 0; i < allElements.length; i++) {
+      allElements.item(i).classList.add("invisible");
+    }
+    setTimeout(() => {
+      this.makeInvisble();
+      this.restartGame.emit(true);
+      this.drawingArea.clearRect(0, 0, this.mainCanvas.width, this.mainCanvas.height);
+    }, 3000);
   }
 
   /////////////////////////////////////////
@@ -463,8 +470,8 @@ export class GameComponent {
     introText.innerHTML = "<p>Welcome to <span style=\"color: #9c0a00\">Segment Allocater</span></p>" +
       "<br /><p>Here you have to assign the segments from two layers on each other</p>";
     this.transitionTimeout = setTimeout(() => {
-      introText.innerHTML = "<p>Choose segments from the layer to establish links between them!<p>" +
-        "<br /><p>Use the mouse or the arrow keys</p>" +
+      introText.innerHTML = "<p>Choose segments from the layers to establish links between them!<p>" +
+        "<br /><p>Use the mouse or preferably the arrow keys</p>" +
         "<br /><p>Check out the legend below to find shortcuts</p>";
       introDiv.style.opacity = "0.6";
       setTimeout(() => {
