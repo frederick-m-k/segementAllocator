@@ -43,7 +43,6 @@ export class DragNDropComponent {
    */
   transferFileContent = () => {
     if (this.selectedLayers.size == 2) {
-      console.log("Jup");
       let iterator = this.selectedLayers.values();
       let firstLayer: string = iterator.next().value;
       let secondLayer: string = iterator.next().value;
@@ -73,10 +72,6 @@ export class DragNDropComponent {
                 for (let i = 0; i < elementsToHide.length; i++) {
                   elementsToHide.item(i).classList.add("hidden");
                 }
-              } else {
-                for (let i = 0; i < elementsToHide.length; i++) {
-                  elementsToHide.item(i).classList.remove("hidden");
-                }
               }
               break;
             case "restartGame":
@@ -86,10 +81,6 @@ export class DragNDropComponent {
                   elementsToShow.item(i).classList.remove("hidden");
                 }
                 this.reset();
-              } else {
-                for (let i = 0; i < elementsToShow.length; i++) {
-                  elementsToShow.item(i).classList.add("hidden");
-                }
               }
               break;
           }

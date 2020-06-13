@@ -45,6 +45,7 @@ export class AppComponent {
   getData = (data: Map<string, Array<Segment>>) => {
     this.data = data;
     this.startGame = true;
+    this.restartGame = false;
   }
   getLinks = (links: Map<number, Array<number>>) => {
     this.links = links;
@@ -56,5 +57,6 @@ export class AppComponent {
 
   getRestart = (restart: boolean) => {
     this.restartGame = restart;
+    this.startGame = false;
   }
 }

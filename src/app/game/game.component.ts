@@ -94,7 +94,6 @@ export class GameComponent {
       }
     }
     if (this.startCounter == 4 && this.startGame) {
-      console.log("jeo");
       this.start();
       this.startCounter = 0;
     }
@@ -109,7 +108,8 @@ export class GameComponent {
     this.drawBase();
     this.setStartSegment();
     this.makeVisible();
-    this.startIntro()
+    this.startIntro();
+    this.startPositionCanvas();
   }
 
   private init = (): void => {
@@ -132,7 +132,7 @@ export class GameComponent {
 
     // Event handling only for mainCanvas, cause z-index is highest
     this.mainCanvas.onmousedown = (event: MouseEvent) => {
-      const rect = this.mainCanvas.getBoundingClientRect();
+      const rect: DOMRect = this.mainCanvas.getBoundingClientRect();
       let x = event.clientX - rect.left;
       let y = event.clientY - rect.top;
       this.playGame(this.getSegmentFromMouseEvent(x, y));
@@ -168,9 +168,11 @@ export class GameComponent {
       allElements.item(i).classList.add("invisible");
     }
     setTimeout(() => {
+      this.stopMoving();
       this.makeInvisble();
       this.restartGame.emit(true);
       this.drawingArea.clearRect(0, 0, this.mainCanvas.width, this.mainCanvas.height);
+      document.getElementById("legend").classList.add("hidden");
     }, 3000);
   }
 
@@ -459,6 +461,13 @@ export class GameComponent {
     let slidingElement: HTMLElement = document.getElementById("movingCanvas");
     slidingElement.scrollLeft -= 70;
   }
+  /**
+   * Move the canvas to its starting position
+   */
+  private startPositionCanvas = (): void => {
+    document.getElementById("movingCanvas").scrollLeft -= document.getElementById("movingCanvas").scrollLeft;
+  }
+
 
   ///////////////
   // The Intro //
@@ -483,6 +492,10 @@ export class GameComponent {
     let introDiv: HTMLElement = document.getElementById("intro");
     let introText: HTMLElement = document.getElementById("intro_text");
     let skipButton: HTMLElement = document.getElementById("skip_intro");
+    if (introDiv.classList.contains("hidden")) {
+      introDiv.classList.remove("hidden");
+      introDiv.style.opacity = "1";
+    }
     introText.innerHTML = "<p>Welcome to <span style=\"color: #9c0a00\">Segment Allocater</span></p>" +
       "<br /><p>Here you have to assign the segments from two layers on each other</p>";
     this.transitionTimeout = setTimeout(() => {
@@ -567,6 +580,9 @@ export class GameComponent {
   ///////////////
   @HostListener('document:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {             // for shift and arrow keys
+    if (event.key == "Enter" || event.key == "Tab") {
+      event.preventDefault();
+    }
     if (this.intro) {
       switch (event.key) {
         case "Enter":
@@ -710,6 +726,9 @@ export class GameComponent {
     let allElements = document.getElementsByClassName("gamingArea");
     for (let i = 0; i < allElements.length; i++) {
       allElements.item(i).classList.remove("hidden");
+      if (allElements.item(i).classList.contains("invisible")) {
+        allElements.item(i).classList.remove("invisible");
+      }
     }
   }
   /**
