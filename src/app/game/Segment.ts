@@ -1,20 +1,40 @@
 
-import { DrawingColors, DrawingStandards } from './../standards';
+import { DrawingColors, DrawingStandards, CanvasLayer, SelectPosition } from './../standards';
 
 /**
  * Representation of a Segment with real segment boundaries and pixel-wise boundaries
  */
 export class Segment {
 
-    ///////////////////////
-    // Sizes for drawing //
-    ///////////////////////
-    private pixelXStart: number;
-    private pixelXEnd: number;
+    ////////////////////////////
+    // Sizes for main drawing //
+    ////////////////////////////
     private pixelYStart: number;
     private pixelYEnd: number;
-    private pixelWidth: number;
     private pixelHeight: number;
+    private pixelXStart: number;
+    private pixelXEnd: number;
+    private pixelWidth: number;
+
+    //////////////////////////////
+    // Sizes for middle drawing //
+    //////////////////////////////
+    private middlePixelYStart: number;
+    private middlePixelYEnd: number;
+    private middlePixelHeight: number;
+    private middlePixelXStart: number;
+    private middlePixelXEnd: number;
+    private middlePixelWidth: number;
+
+    /////////////////////////////
+    // Sizes for small drawing //
+    /////////////////////////////
+    private smallPixelYStart: number;
+    private smallPixelYEnd: number;
+    private smallPixelHeight: number;
+    private smallPixelXStart: number;
+    private smallPixelXEnd: number;
+    private smallPixelWidth: number;
 
     ////////////////
     // Allocation //
@@ -33,16 +53,25 @@ export class Segment {
     //////////////////////
     // Offscreen canvas //
     //////////////////////
-    private allDrawings: Map<string, HTMLCanvasElement>;
-    private selections: Map<string, HTMLCanvasElement>;
+    private allDrawings: Map<number, Map<string, HTMLCanvasElement>>;
+    private selections: Map<number, HTMLCanvasElement>;
 
     private standards: DrawingStandards;
 
     constructor(private xStart: number, private xEnd: number, private content: string) {
         this.standards = new DrawingStandards();
+        // Main drawing
         this.pixelXStart = Math.floor(this.xStart * this.standards.mainHorizontalScaling);
         this.pixelXEnd = Math.floor(this.xEnd * this.standards.mainHorizontalScaling);
         this.pixelWidth = this.pixelXEnd - this.pixelXStart;
+        // Middle drawing
+        this.middlePixelXStart = Math.floor(this.xStart * this.standards.middleHorizontalScaling);
+        this.middlePixelXEnd = Math.floor(this.xEnd * this.standards.middleHorizontalScaling);
+        this.middlePixelWidth = this.middlePixelXEnd - this.middlePixelXStart;
+        // Small drawing
+        this.smallPixelXStart = Math.floor(this.xStart * this.standards.smallHorizontalScaling);
+        this.smallPixelXEnd = Math.floor(this.xEnd * this.standards.smallHorizontalScaling);
+        this.smallPixelWidth = this.smallPixelXEnd - this.smallPixelXStart;
 
         this.allocatedIDs = new Set<number>();
     }
@@ -57,7 +86,7 @@ export class Segment {
         } else {
             this.currentColor = this.allocationColor;
         }
-        canvas.drawImage(this.allDrawings.get(this.currentColor), this.pixelXStart, this.pixelYStart);
+        canvas.drawImage(this.allDrawings.get(CanvasLayer.MAIN).get(this.currentColor), this.pixelXStart, this.pixelYStart);
     }
 
     /**
@@ -69,13 +98,13 @@ export class Segment {
         let baseY: number;
         if (this.upperLayer) {
             baseY = this.pixelYStart - this.standards.mainSelectBaseY;
-            canvas.drawImage(this.selections.get("upper"), startX, baseY);
+            canvas.drawImage(this.selections.get(SelectPosition.UPPER), startX, baseY);
         }
         else {
             baseY = this.pixelYEnd;
-            canvas.drawImage(this.selections.get("lower"), startX, baseY);
+            canvas.drawImage(this.selections.get(SelectPosition.LOWER), startX, baseY);
         }
-        canvas.drawImage(this.allDrawings.get(this.currentColor), this.pixelXStart, this.pixelYStart);
+        canvas.drawImage(this.allDrawings.get(CanvasLayer.MAIN).get(this.currentColor), this.pixelXStart, this.pixelYStart);
     }
 
     /**
@@ -95,7 +124,7 @@ export class Segment {
         this.clear(canvas);
         this.allocationColor = color;
         this.currentColor = this.allocationColor;
-        canvas.drawImage(this.allDrawings.get(this.allocationColor), this.pixelXStart, this.pixelYStart);
+        canvas.drawImage(this.allDrawings.get(CanvasLayer.MAIN).get(this.allocationColor), this.pixelXStart, this.pixelYStart);
     }
 
     /**
@@ -139,67 +168,81 @@ export class Segment {
     }
 
     /**
-     * 
+     * Initialize all 
      */
-    private initOffscreenCanvas = (): void => {
+    private initDrawings = (): void => {
         this.allDrawings = new Map();
-        let baseCanvas: HTMLCanvasElement = document.createElement("canvas");
-        baseCanvas.height = this.pixelHeight + this.standards.lineWidth;
-        baseCanvas.width = this.pixelWidth + this.standards.lineWidth;
+        this.allDrawings.set(CanvasLayer.MAIN, new Map<string, HTMLCanvasElement>());
+        this.allDrawings.set(CanvasLayer.MIDDLE, new Map<string, HTMLCanvasElement>());
+        this.allDrawings.set(CanvasLayer.SMALL, new Map<string, HTMLCanvasElement>());
+        this.allDrawings.forEach((value: Map<string, HTMLCanvasElement>, key: number) => {
+            let baseCanvas: HTMLCanvasElement = document.createElement("canvas");
+            switch (key) {
+                case CanvasLayer.MAIN:
+                    break;
+                case CanvasLayer.MIDDLE:
+                    break;
+                case CanvasLayer.SMALL:
+                    break;
+            }
+            baseCanvas.height = this.pixelHeight + this.standards.lineWidth;
+            baseCanvas.width = this.pixelWidth + this.standards.lineWidth;
 
-        let baseDrawing: CanvasRenderingContext2D = baseCanvas.getContext("2d");
-        baseDrawing.lineWidth = this.standards.lineWidth;
-        baseDrawing.fillStyle = this.base_color;
-        baseDrawing.strokeStyle = DrawingColors.BOUNDARY_COLOR;
+            let baseDrawing: CanvasRenderingContext2D = baseCanvas.getContext("2d");
+            baseDrawing.lineWidth = this.standards.lineWidth;
+            baseDrawing.fillStyle = this.base_color;
+            baseDrawing.strokeStyle = DrawingColors.BOUNDARY_COLOR;
 
-        baseDrawing.fillRect(0, 0, this.pixelWidth, this.pixelHeight);
+            baseDrawing.fillRect(0, 0, this.pixelWidth, this.pixelHeight);
 
-        baseDrawing.beginPath();
-        baseDrawing.moveTo(0, 0);
-        baseDrawing.lineTo(0, this.pixelHeight);
-        baseDrawing.moveTo(this.pixelWidth, 0);
-        baseDrawing.lineTo(this.pixelWidth, this.pixelHeight);
-        baseDrawing.closePath();
-        baseDrawing.stroke();
+            baseDrawing.beginPath();
+            baseDrawing.moveTo(0, 0);
+            baseDrawing.lineTo(0, this.pixelHeight);
+            baseDrawing.moveTo(this.pixelWidth, 0);
+            baseDrawing.lineTo(this.pixelWidth, this.pixelHeight);
+            baseDrawing.closePath();
+            baseDrawing.stroke();
 
-        baseDrawing.fillStyle = DrawingColors.TEXT;
-        baseDrawing.font = this.standards.mainTextFont;
-        baseDrawing.textAlign = this.standards.textAlign;
-        let textX: number = this.pixelWidth - (this.pixelWidth / 2);
-        let textY: number = this.pixelHeight - (this.pixelHeight / 2);
-        baseDrawing.fillText(this.content, textX, textY);
-
-        this.allDrawings.set(this.base_color, baseCanvas);
-
-        for (const [, color] of this.allColors) {
-            let canvas: HTMLCanvasElement = document.createElement("canvas");
-            canvas.width = this.pixelWidth + this.standards.lineWidth;
-            canvas.height = this.pixelHeight + this.standards.lineWidth;
-
-            let drawing: CanvasRenderingContext2D = canvas.getContext("2d");
-            drawing.lineWidth = this.standards.lineWidth;
-            drawing.fillStyle = color;
-            drawing.strokeStyle = DrawingColors.BOUNDARY_COLOR;
-
-            drawing.fillRect(0, 0, this.pixelWidth, this.pixelHeight);
-
-            drawing.beginPath();
-            drawing.moveTo(0, 0);
-            drawing.lineTo(0, this.pixelHeight);
-            drawing.moveTo(this.pixelWidth, 0);
-            drawing.lineTo(this.pixelWidth, this.pixelHeight);
-            drawing.closePath();
-            drawing.stroke();
-
-            drawing.fillStyle = DrawingColors.TEXT;
-            drawing.font = this.standards.mainTextFont;
-            drawing.textAlign = this.standards.textAlign;
+            baseDrawing.fillStyle = DrawingColors.TEXT;
+            baseDrawing.font = this.standards.mainTextFont;
+            baseDrawing.textAlign = this.standards.textAlign;
             let textX: number = this.pixelWidth - (this.pixelWidth / 2);
             let textY: number = this.pixelHeight - (this.pixelHeight / 2);
-            drawing.fillText(this.content, textX, textY);
+            baseDrawing.fillText(this.content, textX, textY);
 
-            this.allDrawings.set(color, canvas);
-        }
+            value.set(this.base_color, baseCanvas);
+
+            for (const [, color] of this.allColors) {
+                let canvas: HTMLCanvasElement = document.createElement("canvas");
+                canvas.width = this.pixelWidth + this.standards.lineWidth;
+                canvas.height = this.pixelHeight + this.standards.lineWidth;
+
+                let drawing: CanvasRenderingContext2D = canvas.getContext("2d");
+                drawing.lineWidth = this.standards.lineWidth;
+                drawing.fillStyle = color;
+                drawing.strokeStyle = DrawingColors.BOUNDARY_COLOR;
+
+                drawing.fillRect(0, 0, this.pixelWidth, this.pixelHeight);
+
+                drawing.beginPath();
+                drawing.moveTo(0, 0);
+                drawing.lineTo(0, this.pixelHeight);
+                drawing.moveTo(this.pixelWidth, 0);
+                drawing.lineTo(this.pixelWidth, this.pixelHeight);
+                drawing.closePath();
+                drawing.stroke();
+
+                drawing.fillStyle = DrawingColors.TEXT;
+                drawing.font = this.standards.mainTextFont;
+                drawing.textAlign = this.standards.textAlign;
+                let textX: number = this.pixelWidth - (this.pixelWidth / 2);
+                let textY: number = this.pixelHeight - (this.pixelHeight / 2);
+                drawing.fillText(this.content, textX, textY);
+
+                value.set(color, canvas);
+            }
+        });
+
 
         // Init the two select images
         this.selections = new Map();
@@ -218,7 +261,7 @@ export class Segment {
         upperDrawing.closePath();
         upperDrawing.stroke();
         upperDrawing.fill();
-        this.selections.set("upper", upperSelect);
+        this.selections.set(SelectPosition.UPPER, upperSelect);
 
         let lowerSelect: HTMLCanvasElement = document.createElement("canvas");
         lowerSelect.width = Math.floor((this.standards.mainSelectBaseX * 2) + (this.standards.lineWidth * 2));
@@ -235,7 +278,7 @@ export class Segment {
         lowerDrawing.closePath();
         lowerDrawing.stroke();
         lowerDrawing.fill();
-        this.selections.set("lower", lowerSelect);
+        this.selections.set(SelectPosition.LOWER, lowerSelect);
     }
 
     ////////////
@@ -247,15 +290,19 @@ export class Segment {
         this.pixelYEnd = Math.floor(this.pixelYStart + this.standards.mainSegmentHeight);
         this.pixelHeight = this.pixelYEnd - this.pixelYStart;
         this.allColors = colors;
-        this.initOffscreenCanvas();
+        this.initDrawings();
     }
-    setColor = (color: string): void => {
+    setColor = (color: string, colors: Map<number, string>): void => {
         this.base_color = color;
         this.currentColor = this.base_color;
+
+        this.allColors = colors;
+        this.initDrawings();
     }
     setLayerBelonging = (layer: string, upperLayer: boolean): void => {
         this.layer = layer;
         this.upperLayer = upperLayer;
+
     }
 
     ////////////

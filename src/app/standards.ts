@@ -15,7 +15,6 @@ export class LinkingStandards {
  * Some standards for drawing the game on the canvas
  */
 export class DrawingStandards {
-	readonly layerSeparator: number;
 
 	///////////////////////////
 	// The main canvas sizes //
@@ -35,6 +34,7 @@ export class DrawingStandards {
 	/////////////////////////////
 	readonly middleUpperLayerStart: number = 100;
 	readonly middleSegmentHeight: number = 130;
+	readonly middleHorizontalScaling: number = 300;
 
 	readonly middleTextFont: string = "15px Arial";
 
@@ -47,11 +47,20 @@ export class DrawingStandards {
 	////////////////////////////
 	readonly smallUpperLayerStart: number = 170;
 	readonly smallSegmentHeight: number = 60;
+	readonly smallHorizontalScaling: number = 100;
 
 	readonly smallTextFont: string = "10px Arial";
 
 	readonly smallSelectBaseY: number = 5;
 	readonly smallSelectBaseX: number = 5;
+
+	/////////////////////////////////
+	// The thresholds for resizing //
+	/////////////////////////////////
+	readonly middleThresholdLeft: number = 100;
+	readonly bigThresholdLeft: number = 200;
+	readonly bigThresholdRight: number = 400;
+	readonly middleThresholdRight: number = 500;
 
 
 	//////////////////
@@ -62,9 +71,7 @@ export class DrawingStandards {
 	readonly lineWidth: number = 2;
 
 
-	constructor() {
-		this.layerSeparator = 3;
-	}
+	constructor() { }
 
 	/**
 	 * Return the complete height of the main canvas
@@ -77,26 +84,6 @@ export class DrawingStandards {
 			this.mainSegmentHeight +
 			this.verticalLayerMargin;
 		return returnVal;
-	}
-	/**
-	 * Return the complete height of the middle canvas
-	 */
-	middleCanvasHeight = (): number => {
-		return this.middleUpperLayerStart +
-			this.middleSegmentHeight +
-			this.verticalLayerMargin +
-			this.middleSegmentHeight +
-			this.verticalLayerMargin;
-	}
-	/**
-	 * Return the complete height of the smallest canvas
-	 */
-	smallCanvasHeight = (): number => {
-		return this.smallUpperLayerStart +
-			this.smallSegmentHeight +
-			this.verticalLayerMargin +
-			this.smallSegmentHeight +
-			this.verticalLayerMargin;
 	}
 
 	/**
@@ -156,4 +143,21 @@ export enum LinkingID {
 	UNASSIGNED = 0,
 	ASSIGNED = 1,
 	NOT_ASSIGNABLE = 2
+}
+
+/**
+ * Sizes for the segments on the canvas
+ */
+export enum CanvasLayer {
+	MAIN = 1,
+	MIDDLE = 2,
+	SMALL = 3
+}
+
+/**
+ * 
+ */
+export enum SelectPosition {
+	UPPER = 0,
+	LOWER = 1
 }

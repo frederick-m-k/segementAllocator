@@ -352,25 +352,21 @@ export class GameComponent {
    */
   private drawBase = (): void => {
     let colorCounter: number = 0;
-    let startY: number;
     this.data.forEach((value: Array<Segment>, key: string) => {
-      switch (key) {
-        case this.firstLayer:
-          startY = this.standards.mainUpperLayerStart;
-          break;
-        case this.secondLayer:
-          startY = this.standards.lowerLayerStart();
-          break;
-      }
       value.forEach((segment: Segment) => {
         if (colorCounter == 0) {
-          segment.setColor(DrawingColors.DARK_BACKGROUND);
+          segment.setColor(DrawingColors.DARK_BACKGROUND, this.colors);
           colorCounter = 1;
         } else {
-          segment.setColor(DrawingColors.LIGHT_BACKGROUND);
+          segment.setColor(DrawingColors.LIGHT_BACKGROUND, this.colors);
           colorCounter = 0;
         }
-        segment.setPixelYStart(startY, this.colors);
+        if (segment.getPixelXStart() < this.standards.middleThresholdLeft) {
+
+        } else if (segment.getPixelXStart() < this.standards.bigThresholdLeft) {
+
+        }
+        //segment.setPixelYStart(startY, this.colors);
         segment.draw(this.drawingArea);
         this.fillPixelRep(segment);
       });
