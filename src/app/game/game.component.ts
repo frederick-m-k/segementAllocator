@@ -60,8 +60,6 @@ export class GameComponent {
 
   private startCounter: number = 0;
 
-  private date: Date = new Date();
-
   constructor() { }
 
   /**
@@ -303,7 +301,7 @@ export class GameComponent {
     });
   }
   /**
-   * 
+   * Add the correct allocations for all selected segments
    */
   private addAllocations = (): void => {
     let allocationSegment: Segment = this.findAllocationSegment();
@@ -321,6 +319,17 @@ export class GameComponent {
     });
     idsToAllocate.forEach((id: number) => {
       allocationSegment.addAllocation(this.drawingArea, allocationColor, id);
+    });
+  }
+
+  /**
+   * 
+   */
+  private clearEverything = (): void => {
+    this.data.forEach((value: Array<Segment>) => {
+      value.forEach((segment: Segment) => {
+        segment.clearAllocation();
+      })
     });
   }
 
@@ -636,15 +645,18 @@ export class GameComponent {
         this.slowDown();
       } else if (key == "a") {
         event.preventDefault();
-        this.moveLeft();
+        this.moveRight();
       } else if (key == "d") {
         event.preventDefault();
-        this.moveRight();
-      } else if (key == "r") {
+        this.moveLeft();
+      } else if (key == "s") {
         this.startPositionCanvas();
       }
 
       // For segments
+      else if (key == "r") {
+        this.clearEverything();
+      }
       else if (event.shiftKey && key == "ArrowRight") {
         event.preventDefault();
         if (this.data.get(this.currentSegment.getLayerBelonging())[this.data.get(this.currentSegment.getLayerBelonging()).length - 1].getID() != this.currentSegment.getID()) {
