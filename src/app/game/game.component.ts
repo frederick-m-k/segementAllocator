@@ -1,8 +1,10 @@
+import { Intro } from './Intro';
 
 import { Component, Input, SimpleChanges, HostListener, Output, EventEmitter } from '@angular/core';
 
 import { DrawingStandards, DrawingColors, AllocatedColors } from './../standards';
 import { Segment } from './Segment';
+import { ɵangular_packages_platform_browser_platform_browser_k } from '@angular/platform-browser';
 
 /**
  * For playing the game
@@ -37,8 +39,8 @@ export class GameComponent {
   ///////////////////
   // For the intro //
   ///////////////////
-  private transitionTimeout;
-  private intro: boolean;
+  private curIntro: boolean;
+  private intro: Intro;
 
   private mainCanvas: HTMLCanvasElement;
   private drawingArea: CanvasRenderingContext2D;
@@ -108,7 +110,7 @@ export class GameComponent {
   private start = (): void => {
     this.init();
     this.drawBase();
-    //this.setStartSegment();
+    this.setStartSegment();
     this.makeVisible();
     this.startIntro();
     this.startPositionCanvas();
@@ -499,43 +501,30 @@ export class GameComponent {
   // The Intro //
   ///////////////
   /**
-   * Skip the intro
-   */
-  skipIntro = (): void => {
-    this.intro = false;
-    clearTimeout(this.transitionTimeout);
-    document.getElementById("intro").style.opacity = "0";
-    setTimeout(() => {
-      document.getElementById("intro").classList.add("hidden");
-      this.startMoving();
-    }, 3000);
-  }
-  /**
    * Start the intro
    */
   private startIntro = (): void => {
-    this.intro = true;
-    let introDiv: HTMLElement = document.getElementById("intro");
-    let introText: HTMLElement = document.getElementById("intro_text");
-    let skipButton: HTMLElement = document.getElementById("skip_intro");
-    if (introDiv.classList.contains("hidden")) {
-      introDiv.classList.remove("hidden");
-      introDiv.style.opacity = "1";
-    }
-    introText.innerHTML = "<p>Welcome to <span style=\"color: #9c0a00\">Segment</span> <span style=\"color:#009c27\">Allocater</span></p>" +
-      "<br /><p>Here you have to assign the segments from two layers on each other</p>";
-    this.transitionTimeout = setTimeout(() => {
-      introText.innerHTML = "<p>Choose segments from the layers to establish links between them!<p>" +
-        "<br /><p>Use the mouse or preferably the arrow keys</p>" +
-        "<br /><p>Check out the legend below to find shortcuts</p>";
-      introDiv.style.opacity = "0.6";
-      setTimeout(() => {
-        skipButton.innerHTML = "Start";
-        introText.innerHTML = "<p>Ready? Then press Enter or click on the Start Button!</p>" +
-          "<br /><p>Enjoy!!</p>";
-        introDiv.style.opacity = "0.4";
-      }, 9000);
-    }, 3000);
+    this.curIntro = true;
+    this.intro = new Intro();
+  }
+  /**
+   * Move one screen back in the intro
+   */
+  introBack = (): void => {
+    this.intro.lastStage();
+  }
+  /**
+   * Move one screen forward in the intro
+   */
+  introForward = (): void => {
+    this.intro.nextStage();
+  }
+  /**
+   * Skip the intro
+   */
+  skipIntro = (): void => {
+    this.curIntro = false;
+    this.intro.skip();
   }
 
 
@@ -609,12 +598,19 @@ export class GameComponent {
     if (event.key == "Enter" || event.key == "Tab") {
       event.preventDefault();
     }
-    if (this.intro) {
+    if (this.curIntro) {
       switch (event.key) {
         case "Enter":
           event.preventDefault();
           this.skipIntro();
           break;
+        case "ArrowRight":
+          event.preventDefault();
+          this.introForward();
+          break;
+        case "ArrowLeft":
+          event.preventDefault();
+          this.introBack();
       }
     } else if (this.startGame) {
       let key = event.key;
@@ -638,6 +634,8 @@ export class GameComponent {
       } else if (key == "d") {
         event.preventDefault();
         this.moveRight();
+      } else if (key == "r") {
+        this.startPositionCanvas();
       }
 
       // For segments

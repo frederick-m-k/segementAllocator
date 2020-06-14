@@ -11,7 +11,9 @@
     <canvas id="lowCanvas"></canvas> -->
     <div id="intro">
         <h2 class="text" id="intro_text"></h2>
+        <button id="last_intro" class="text" type="button" (click)="introBack()">Back</button>
         <button id="skip_intro" class="text" type="button" (click)="skipIntro()">Skip</button>
+        <button id="next_intro" class="text" type="button" (click)="introForward()">Forward</button>
     </div>
 </div>
 <div class="config gamingArea hidden" (mousedown)="toggleLegend()">

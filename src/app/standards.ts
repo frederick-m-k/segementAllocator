@@ -36,8 +36,6 @@ export class DrawingStandards {
 	readonly middleUpperLayerStart: number = 100;
 	readonly middleSegmentHeight: number = 130;
 
-	readonly middleTextFont: string = "15px Palatino";
-
 	readonly middleSelectBaseY: number = 10;
 	readonly middleSelectBaseX: number = 10;
 
@@ -47,8 +45,6 @@ export class DrawingStandards {
 	////////////////////////////
 	readonly smallUpperLayerStart: number = 170;
 	readonly smallSegmentHeight: number = 60;
-
-	readonly smallTextFont: string = "10px Palatino";
 
 	readonly smallSelectBaseY: number = 5;
 	readonly smallSelectBaseX: number = 5;
@@ -77,26 +73,6 @@ export class DrawingStandards {
 			this.mainSegmentHeight +
 			this.verticalLayerMargin;
 		return returnVal;
-	}
-	/**
-	 * Return the complete height of the middle canvas
-	 */
-	middleCanvasHeight = (): number => {
-		return this.middleUpperLayerStart +
-			this.middleSegmentHeight +
-			this.verticalLayerMargin +
-			this.middleSegmentHeight +
-			this.verticalLayerMargin;
-	}
-	/**
-	 * Return the complete height of the smallest canvas
-	 */
-	smallCanvasHeight = (): number => {
-		return this.smallUpperLayerStart +
-			this.smallSegmentHeight +
-			this.verticalLayerMargin +
-			this.smallSegmentHeight +
-			this.verticalLayerMargin;
 	}
 
 	/**

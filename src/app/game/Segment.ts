@@ -184,8 +184,6 @@ export class Segment {
         let textX: number = Math.floor(this.pixelXEnd - (this.pixelWidth / 2));
         let textY: number = Math.floor(this.pixelYEnd - (this.pixelHeight / 2));
         canvas.fillText(this.content, textX, textY);
-        console.log(this.pixelWidth, textX);
-        console.log(this.pixelHeight, textY);
     }
 
     /**

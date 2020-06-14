@@ -111,7 +111,7 @@
     -o-transform: translate(-50%);
     transform: translate(-50%);
 }
-.wrapper #intro #skip_intro {
+.wrapper #intro button {
     background-color: #9c0a00;
     color: #FFFFFF;
     border: none;
@@ -119,14 +119,32 @@
     padding: 10px;
     font-size: 20px;
     position: fixed;
-    left: 50%;
     bottom: 10%;
+    margin: 0 auto;
+}
+.wrapper #intro #last_intro {
+    left: 33%;
     -webkit-transform: translate(-50%);
     -moz-transform: translate(-50%);
     -ms-transform: translate(-50%);
     -o-transform: translate(-50%);
     transform: translate(-50%);
-    margin: 0 auto;
+}
+.wrapper #intro #skip_intro {
+    left: 50%;
+    -webkit-transform: translate(-50%);
+    -moz-transform: translate(-50%);
+    -ms-transform: translate(-50%);
+    -o-transform: translate(-50%);
+    transform: translate(-50%);
+}
+.wrapper #intro #next_intro {
+    left: 66%;
+    -webkit-transform: translate(-50%);
+    -moz-transform: translate(-50%);
+    -ms-transform: translate(-50%);
+    -o-transform: translate(-50%);
+    transform: translate(-50%);
 }
 .wrapper #mainCanvas {
     position: absolute;
