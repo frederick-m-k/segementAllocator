@@ -57,7 +57,10 @@ export class Segment {
         } else {
             this.currentColor = this.allocationColor;
         }
-        canvas.drawImage(this.allDrawings.get(this.currentColor), this.pixelXStart, this.pixelYStart);
+        canvas.fillStyle = this.currentColor;
+        this.boundary(canvas)
+        this.fill(canvas);
+        //canvas.drawImage(this.allDrawings.get(this.currentColor), this.pixelXStart, this.pixelYStart);
     }
 
     /**
@@ -123,6 +126,10 @@ export class Segment {
         }
     }
 
+    /**
+     * Clear the segment with a possible selection arrow on the 2D-Context
+     * @param canvas 
+     */
     private clear = (canvas: CanvasRenderingContext2D): void => {
         canvas.clearRect(this.pixelXStart, this.pixelYStart, this.pixelWidth, this.pixelHeight);
 
@@ -136,6 +143,33 @@ export class Segment {
             clearYStart = this.pixelYEnd;
         }
         canvas.clearRect(clearXStart, clearYStart, clearWidth, clearHeight);
+    }
+    /**
+     * Fill the segment on the 2D-Context
+     * @param canvas 
+     */
+    private fill = (canvas: CanvasRenderingContext2D): void => {
+        canvas.fillRect(this.pixelXStart, this.pixelYStart, this.pixelWidth, this.pixelHeight);
+    }
+    /**
+     * Draw the boundaries of the segment on the 2D-Contect
+     * @param canvas 
+     */
+    private boundary = (canvas: CanvasRenderingContext2D): void => {
+        canvas.beginPath();
+        canvas.moveTo(this.pixelXStart, this.pixelYStart);
+        canvas.lineTo(this.pixelXStart, this.pixelYEnd);
+        canvas.moveTo(this.pixelXEnd, this.pixelYStart);
+        canvas.lineTo(this.pixelXEnd, this.pixelYEnd);
+        canvas.closePath();
+        canvas.stroke();
+    }
+    /**
+     * 
+     * @param canvas 
+     */
+    private text = (canvas: CanvasRenderingContext2D): void => {
+
     }
 
     /**
