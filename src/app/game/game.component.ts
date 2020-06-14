@@ -529,7 +529,7 @@ export class GameComponent {
       introDiv.classList.remove("hidden");
       introDiv.style.opacity = "1";
     }
-    introText.innerHTML = "<p>Welcome to <span style=\"color: #9c0a00\">Segment Allocater</span></p>" +
+    introText.innerHTML = "<p>Welcome to <span style=\"color: #9c0a00\">Segment</span> <span style=\"color:#009c27\">Allocater</span></p>" +
       "<br /><p>Here you have to assign the segments from two layers on each other</p>";
     this.transitionTimeout = setTimeout(() => {
       introText.innerHTML = "<p>Choose segments from the layers to establish links between them!<p>" +
