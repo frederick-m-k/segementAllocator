@@ -1,7 +1,7 @@
 
 import { Component, Input, SimpleChanges, HostListener, Output, EventEmitter } from '@angular/core';
 
-import { DrawingStandards, DrawingColors, AllocatedColors } from './../standards';
+import { DrawingStandards, DrawingColors, AllocatedColors, CanvasLayer } from './../standards';
 import { Segment } from './Segment';
 
 /**
@@ -106,7 +106,7 @@ export class GameComponent {
   private start = (): void => {
     this.init();
     this.drawBase();
-    this.setStartSegment();
+    //this.setStartSegment();
     this.makeVisible();
     this.startIntro();
     this.startPositionCanvas();
@@ -361,12 +361,18 @@ export class GameComponent {
           segment.setColor(DrawingColors.LIGHT_BACKGROUND, this.colors);
           colorCounter = 0;
         }
-        if (segment.getPixelXStart() < this.standards.middleThresholdLeft) {
 
-        } else if (segment.getPixelXStart() < this.standards.bigThresholdLeft) {
-
+        if (segment.getSmallPixelXEnd() < this.standards.middleThresholdLeft) {
+          segment.draw(this.drawingArea, CanvasLayer.SMALL);
+        } else if (segment.getMiddlePixelXEnd() < this.standards.bigThresholdLeft) {
+          segment.draw(this.drawingArea, CanvasLayer.MIDDLE);
+        } else if (segment.getPixelXEnd() < this.standards.bigThresholdRight) {
+          segment.draw(this.drawingArea, CanvasLayer.MAIN);
+        } else if (segment.getMiddlePixelXEnd() < this.standards.middleThresholdRight) {
+          segment.draw(this.drawingArea, CanvasLayer.MIDDLE);
+        } else {
+          segment.draw(this.drawingArea, CanvasLayer.SMALL);
         }
-        segment.draw(this.drawingArea);
         this.fillPixelRep(segment);
       });
     });
@@ -500,7 +506,7 @@ export class GameComponent {
     document.getElementById("intro").style.opacity = "0";
     setTimeout(() => {
       document.getElementById("intro").classList.add("hidden");
-      this.startMoving();
+      //this.startMoving();
     }, 3000);
   }
   /**

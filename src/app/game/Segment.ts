@@ -1,6 +1,5 @@
 
 import { DrawingColors, DrawingStandards, CanvasLayer, SelectPosition } from './../standards';
-import { NumberValueAccessor } from '@angular/forms';
 
 /**
  * Representation of a Segment with real segment boundaries and pixel-wise boundaries
@@ -80,14 +79,29 @@ export class Segment {
     /**
      * Draw the background of the segment with its content
      */
-    draw = (canvas: CanvasRenderingContext2D): void => {
+    draw = (canvas: CanvasRenderingContext2D, layer: CanvasLayer = CanvasLayer.SMALL): void => {
         this.clear(canvas);
         if (this.allocationColor == DrawingColors.NO_COLOR) {
             this.currentColor = this.base_color;
         } else {
             this.currentColor = this.allocationColor;
         }
-        canvas.drawImage(this.allDrawings.get(CanvasLayer.MAIN).get(this.currentColor), this.pixelXStart, this.pixelYStart);
+        let xPos: number, yPos: number;
+        switch (layer) {
+            case CanvasLayer.SMALL:
+                xPos = this.smallPixelXStart;
+                yPos = this.smallPixelYStart;
+                break;
+            case CanvasLayer.MIDDLE:
+                xPos = this.middlePixelXStart;
+                yPos = this.middlePixelYStart;
+                break;
+            case CanvasLayer.MAIN:
+                xPos = this.pixelXStart;
+                yPos = this.pixelYStart;
+                break;
+        }
+        canvas.drawImage(this.allDrawings.get(layer).get(this.currentColor), xPos, yPos);
     }
 
     /**
@@ -364,8 +378,24 @@ export class Segment {
     getAllocationIDs = (): Set<number> => { return this.allocatedIDs; }
     hasAllocation = (): boolean => { return this.allocatedIDs.size > 0; }
 
+    ////////////////
+    // Main sizes //
     getPixelXStart = (): number => { return this.pixelXStart; }
     getPixelXEnd = (): number => { return this.pixelXEnd; }
     getPixelYStart = (): number => { return this.pixelYStart; }
     getPixelYEnd = (): number => { return this.pixelYEnd; }
+
+    //////////////////
+    // Middle sizes //
+    getMiddlePixelXStart = (): number => { return this.middlePixelXStart; }
+    getMiddlePixelXEnd = (): number => { return this.middlePixelXEnd; }
+    getMiddlePixelYStart = (): number => { return this.middlePixelYStart; }
+    getMiddlePixelYEnd = (): number => { return this.middlePixelYEnd; }
+
+    /////////////////
+    // Small sizes //
+    getSmallPixelXStart = (): number => { return this.smallPixelXStart; }
+    getSmallPixelXEnd = (): number => { return this.smallPixelXEnd; }
+    getSmallPixelYStart = (): number => { return this.smallPixelYStart; }
+    getSmallPixelYEnd = (): number => { return this.smallPixelYEnd; }
 }

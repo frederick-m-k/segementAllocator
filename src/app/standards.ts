@@ -47,7 +47,7 @@ export class DrawingStandards {
 	////////////////////////////
 	readonly smallUpperLayerStart: number = 170;
 	readonly smallSegmentHeight: number = 60;
-	readonly smallHorizontalScaling: number = 100;
+	readonly smallHorizontalScaling: number = 200;
 
 	readonly smallTextFont: string = "10px Arial";
 
@@ -59,7 +59,7 @@ export class DrawingStandards {
 	/////////////////////////////////
 	readonly middleThresholdLeft: number = 100;
 	readonly bigThresholdLeft: number = 200;
-	readonly bigThresholdRight: number = 400;
+	readonly bigThresholdRight: number = 600;
 	readonly middleThresholdRight: number = 500;
 
 
