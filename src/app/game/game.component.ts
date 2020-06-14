@@ -243,6 +243,12 @@ export class GameComponent {
           }
           return;
         } else {
+          this.currentSegments.forEach((value: Segment) => {
+            if (value.getLayerBelonging() == segment.getLayerBelonging()) {
+              this.currentSegments.delete(value);
+              this.clearSegment(value);
+            }
+          });
           this.currentSegments.add(segment);
           this.clearAllocations();  // Clear old Allocations
           this.addAllocations(); // Add the new Allocations
