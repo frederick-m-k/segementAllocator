@@ -36,7 +36,7 @@ export class DrawingStandards {
 	readonly middleUpperLayerStart: number = 100;
 	readonly middleSegmentHeight: number = 130;
 
-	readonly middleTextFont: string = "15px Arial";
+	readonly middleTextFont: string = "15px Palatino";
 
 	readonly middleSelectBaseY: number = 10;
 	readonly middleSelectBaseX: number = 10;
@@ -48,7 +48,7 @@ export class DrawingStandards {
 	readonly smallUpperLayerStart: number = 170;
 	readonly smallSegmentHeight: number = 60;
 
-	readonly smallTextFont: string = "10px Arial";
+	readonly smallTextFont: string = "10px Palatino";
 
 	readonly smallSelectBaseY: number = 5;
 	readonly smallSelectBaseX: number = 5;

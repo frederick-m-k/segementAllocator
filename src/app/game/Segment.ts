@@ -28,12 +28,10 @@ export class Segment {
 
     private base_color: string;
     private currentColor: string;
-    private allColors: Map<number, string>;
 
     //////////////////////
     // Offscreen canvas //
     //////////////////////
-    private allDrawings: Map<string, HTMLCanvasElement>;
     private selections: Map<string, HTMLCanvasElement>;
 
     private standards: DrawingStandards;
@@ -58,7 +56,7 @@ export class Segment {
             this.currentColor = this.allocationColor;
         }
         canvas.fillStyle = this.currentColor;
-        this.boundary(canvas)
+        this.boundary(canvas);
         this.fill(canvas);
         this.text(canvas);
         //canvas.drawImage(this.allDrawings.get(this.currentColor), this.pixelXStart, this.pixelYStart);
@@ -80,8 +78,8 @@ export class Segment {
             canvas.drawImage(this.selections.get("lower"), startX, baseY);
         }
         canvas.fillStyle = this.currentColor;
-        this.boundary(canvas);
         this.fill(canvas);
+        this.boundary(canvas);
         this.text(canvas);
         //canvas.drawImage(this.allDrawings.get(this.currentColor), this.pixelXStart, this.pixelYStart);
     }
@@ -181,75 +179,19 @@ export class Segment {
     private text = (canvas: CanvasRenderingContext2D): void => {
         canvas.fillStyle = DrawingColors.TEXT;
         canvas.font = this.standards.mainTextFont;
-        canvas.font = this.standards.textAlign;
-        let textX: number = this.pixelWidth - (this.pixelWidth / 2);
-        let textY: number = this.pixelHeight - (this.pixelHeight / 2);
+        canvas.textAlign = this.standards.textAlign;
+        canvas.lineWidth = this.standards.lineWidth;
+        let textX: number = Math.floor(this.pixelXEnd - (this.pixelWidth / 2));
+        let textY: number = Math.floor(this.pixelYEnd - (this.pixelHeight / 2));
         canvas.fillText(this.content, textX, textY);
+        console.log(this.pixelWidth, textX);
+        console.log(this.pixelHeight, textY);
     }
 
     /**
      * 
      */
     private initOffscreenCanvas = (): void => {
-        // this.allDrawings = new Map();
-        // let baseCanvas: HTMLCanvasElement = document.createElement("canvas");
-        // baseCanvas.height = this.pixelHeight + this.standards.lineWidth;
-        // baseCanvas.width = this.pixelWidth + this.standards.lineWidth;
-
-        // let baseDrawing: CanvasRenderingContext2D = baseCanvas.getContext("2d");
-        // baseDrawing.lineWidth = this.standards.lineWidth;
-        // baseDrawing.fillStyle = this.base_color;
-        // baseDrawing.strokeStyle = DrawingColors.BOUNDARY_COLOR;
-
-        // baseDrawing.fillRect(0, 0, this.pixelWidth, this.pixelHeight);
-
-        // baseDrawing.beginPath();
-        // baseDrawing.moveTo(0, 0);
-        // baseDrawing.lineTo(0, this.pixelHeight);
-        // baseDrawing.moveTo(this.pixelWidth, 0);
-        // baseDrawing.lineTo(this.pixelWidth, this.pixelHeight);
-        // baseDrawing.closePath();
-        // baseDrawing.stroke();
-
-        // baseDrawing.fillStyle = DrawingColors.TEXT;
-        // baseDrawing.font = this.standards.mainTextFont;
-        // baseDrawing.textAlign = this.standards.textAlign;
-        // let textX: number = this.pixelWidth - (this.pixelWidth / 2);
-        // let textY: number = this.pixelHeight - (this.pixelHeight / 2);
-        // baseDrawing.fillText(this.content, textX, textY);
-
-        // this.allDrawings.set(this.base_color, baseCanvas);
-
-        // for (const [, color] of this.allColors) {
-        //     let canvas: HTMLCanvasElement = document.createElement("canvas");
-        //     canvas.width = this.pixelWidth + this.standards.lineWidth;
-        //     canvas.height = this.pixelHeight + this.standards.lineWidth;
-
-        //     let drawing: CanvasRenderingContext2D = canvas.getContext("2d");
-        //     drawing.lineWidth = this.standards.lineWidth;
-        //     drawing.fillStyle = color;
-        //     drawing.strokeStyle = DrawingColors.BOUNDARY_COLOR;
-
-        //     drawing.fillRect(0, 0, this.pixelWidth, this.pixelHeight);
-
-        //     drawing.beginPath();
-        //     drawing.moveTo(0, 0);
-        //     drawing.lineTo(0, this.pixelHeight);
-        //     drawing.moveTo(this.pixelWidth, 0);
-        //     drawing.lineTo(this.pixelWidth, this.pixelHeight);
-        //     drawing.closePath();
-        //     drawing.stroke();
-
-        //     drawing.fillStyle = DrawingColors.TEXT;
-        //     drawing.font = this.standards.mainTextFont;
-        //     drawing.textAlign = this.standards.textAlign;
-        //     let textX: number = this.pixelWidth - (this.pixelWidth / 2);
-        //     let textY: number = this.pixelHeight - (this.pixelHeight / 2);
-        //     drawing.fillText(this.content, textX, textY);
-
-        //     this.allDrawings.set(color, canvas);
-        // }
-
         // Init the two select images
         this.selections = new Map();
         let upperSelect: HTMLCanvasElement = document.createElement("canvas");
@@ -295,7 +237,6 @@ export class Segment {
         this.pixelYStart = Math.floor(yStart);
         this.pixelYEnd = Math.floor(this.pixelYStart + this.standards.mainSegmentHeight);
         this.pixelHeight = this.pixelYEnd - this.pixelYStart;
-        this.allColors = colors;
         this.initOffscreenCanvas();
     }
     setColor = (color: string): void => {
