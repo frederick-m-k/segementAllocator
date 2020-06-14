@@ -58,6 +58,8 @@ export class GameComponent {
 
   private startCounter: number = 0;
 
+  private date: Date = new Date();
+
   constructor() { }
 
   /**
@@ -104,12 +106,19 @@ export class GameComponent {
   // On start //
   //////////////
   private start = (): void => {
+    console.log("1", this.date.getTime());
     this.init();
+    console.log("2", this.date.getTime());
     this.drawBase();
+    console.log("2", this.date.getTime());
     this.setStartSegment();
+    console.log("3", this.date.getTime());
     this.makeVisible();
+    console.log("4", this.date.getTime());
     this.startIntro();
+    console.log("5", this.date.getTime());
     this.startPositionCanvas();
+    console.log("6", this.date.getTime());
   }
 
   private init = (): void => {
