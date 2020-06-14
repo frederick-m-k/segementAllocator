@@ -24,7 +24,7 @@ export class DrawingStandards {
 	readonly mainSegmentHeight: number = 200;
 	readonly mainHorizontalScaling: number = 500;
 
-	readonly mainTextFont: string = "20px Arial";
+	readonly mainTextFont: string = "20px Palatino";
 
 	readonly mainSelectBaseY: number = 20;
 	readonly mainSelectBaseX: number = 20;
@@ -144,7 +144,7 @@ export enum DrawingColors {
 	BORDERS = "#3b3c3d",
 	LIGHT_BACKGROUND = "#bfbfbf",
 	DARK_BACKGROUND = "#e8e8e8",
-	TEXT = "#FFFFFF",
+	TEXT = "#000000",
 	CURRENTLY_SELECTED = "#9c0a00",
 	BOUNDARY_COLOR = "#000000",
 	NO_COLOR = "no_color"

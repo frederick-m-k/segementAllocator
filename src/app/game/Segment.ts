@@ -60,6 +60,7 @@ export class Segment {
         canvas.fillStyle = this.currentColor;
         this.boundary(canvas)
         this.fill(canvas);
+        this.text(canvas);
         //canvas.drawImage(this.allDrawings.get(this.currentColor), this.pixelXStart, this.pixelYStart);
     }
 
@@ -78,7 +79,11 @@ export class Segment {
             baseY = this.pixelYEnd;
             canvas.drawImage(this.selections.get("lower"), startX, baseY);
         }
-        canvas.drawImage(this.allDrawings.get(this.currentColor), this.pixelXStart, this.pixelYStart);
+        canvas.fillStyle = this.currentColor;
+        this.boundary(canvas);
+        this.fill(canvas);
+        this.text(canvas);
+        //canvas.drawImage(this.allDrawings.get(this.currentColor), this.pixelXStart, this.pixelYStart);
     }
 
     /**
@@ -98,7 +103,11 @@ export class Segment {
         this.clear(canvas);
         this.allocationColor = color;
         this.currentColor = this.allocationColor;
-        canvas.drawImage(this.allDrawings.get(this.allocationColor), this.pixelXStart, this.pixelYStart);
+        canvas.fillStyle = this.currentColor;
+        this.boundary(canvas);
+        this.fill(canvas);
+        this.text(canvas);
+        //canvas.drawImage(this.allDrawings.get(this.allocationColor), this.pixelXStart, this.pixelYStart);
     }
 
     /**
@@ -156,6 +165,7 @@ export class Segment {
      * @param canvas 
      */
     private boundary = (canvas: CanvasRenderingContext2D): void => {
+        canvas.strokeStyle = DrawingColors.BOUNDARY_COLOR;
         canvas.beginPath();
         canvas.moveTo(this.pixelXStart, this.pixelYStart);
         canvas.lineTo(this.pixelXStart, this.pixelYEnd);
@@ -169,71 +179,76 @@ export class Segment {
      * @param canvas 
      */
     private text = (canvas: CanvasRenderingContext2D): void => {
-
+        canvas.fillStyle = DrawingColors.TEXT;
+        canvas.font = this.standards.mainTextFont;
+        canvas.font = this.standards.textAlign;
+        let textX: number = this.pixelWidth - (this.pixelWidth / 2);
+        let textY: number = this.pixelHeight - (this.pixelHeight / 2);
+        canvas.fillText(this.content, textX, textY);
     }
 
     /**
      * 
      */
     private initOffscreenCanvas = (): void => {
-        this.allDrawings = new Map();
-        let baseCanvas: HTMLCanvasElement = document.createElement("canvas");
-        baseCanvas.height = this.pixelHeight + this.standards.lineWidth;
-        baseCanvas.width = this.pixelWidth + this.standards.lineWidth;
+        // this.allDrawings = new Map();
+        // let baseCanvas: HTMLCanvasElement = document.createElement("canvas");
+        // baseCanvas.height = this.pixelHeight + this.standards.lineWidth;
+        // baseCanvas.width = this.pixelWidth + this.standards.lineWidth;
 
-        let baseDrawing: CanvasRenderingContext2D = baseCanvas.getContext("2d");
-        baseDrawing.lineWidth = this.standards.lineWidth;
-        baseDrawing.fillStyle = this.base_color;
-        baseDrawing.strokeStyle = DrawingColors.BOUNDARY_COLOR;
+        // let baseDrawing: CanvasRenderingContext2D = baseCanvas.getContext("2d");
+        // baseDrawing.lineWidth = this.standards.lineWidth;
+        // baseDrawing.fillStyle = this.base_color;
+        // baseDrawing.strokeStyle = DrawingColors.BOUNDARY_COLOR;
 
-        baseDrawing.fillRect(0, 0, this.pixelWidth, this.pixelHeight);
+        // baseDrawing.fillRect(0, 0, this.pixelWidth, this.pixelHeight);
 
-        baseDrawing.beginPath();
-        baseDrawing.moveTo(0, 0);
-        baseDrawing.lineTo(0, this.pixelHeight);
-        baseDrawing.moveTo(this.pixelWidth, 0);
-        baseDrawing.lineTo(this.pixelWidth, this.pixelHeight);
-        baseDrawing.closePath();
-        baseDrawing.stroke();
+        // baseDrawing.beginPath();
+        // baseDrawing.moveTo(0, 0);
+        // baseDrawing.lineTo(0, this.pixelHeight);
+        // baseDrawing.moveTo(this.pixelWidth, 0);
+        // baseDrawing.lineTo(this.pixelWidth, this.pixelHeight);
+        // baseDrawing.closePath();
+        // baseDrawing.stroke();
 
-        baseDrawing.fillStyle = DrawingColors.TEXT;
-        baseDrawing.font = this.standards.mainTextFont;
-        baseDrawing.textAlign = this.standards.textAlign;
-        let textX: number = this.pixelWidth - (this.pixelWidth / 2);
-        let textY: number = this.pixelHeight - (this.pixelHeight / 2);
-        baseDrawing.fillText(this.content, textX, textY);
+        // baseDrawing.fillStyle = DrawingColors.TEXT;
+        // baseDrawing.font = this.standards.mainTextFont;
+        // baseDrawing.textAlign = this.standards.textAlign;
+        // let textX: number = this.pixelWidth - (this.pixelWidth / 2);
+        // let textY: number = this.pixelHeight - (this.pixelHeight / 2);
+        // baseDrawing.fillText(this.content, textX, textY);
 
-        this.allDrawings.set(this.base_color, baseCanvas);
+        // this.allDrawings.set(this.base_color, baseCanvas);
 
-        for (const [, color] of this.allColors) {
-            let canvas: HTMLCanvasElement = document.createElement("canvas");
-            canvas.width = this.pixelWidth + this.standards.lineWidth;
-            canvas.height = this.pixelHeight + this.standards.lineWidth;
+        // for (const [, color] of this.allColors) {
+        //     let canvas: HTMLCanvasElement = document.createElement("canvas");
+        //     canvas.width = this.pixelWidth + this.standards.lineWidth;
+        //     canvas.height = this.pixelHeight + this.standards.lineWidth;
 
-            let drawing: CanvasRenderingContext2D = canvas.getContext("2d");
-            drawing.lineWidth = this.standards.lineWidth;
-            drawing.fillStyle = color;
-            drawing.strokeStyle = DrawingColors.BOUNDARY_COLOR;
+        //     let drawing: CanvasRenderingContext2D = canvas.getContext("2d");
+        //     drawing.lineWidth = this.standards.lineWidth;
+        //     drawing.fillStyle = color;
+        //     drawing.strokeStyle = DrawingColors.BOUNDARY_COLOR;
 
-            drawing.fillRect(0, 0, this.pixelWidth, this.pixelHeight);
+        //     drawing.fillRect(0, 0, this.pixelWidth, this.pixelHeight);
 
-            drawing.beginPath();
-            drawing.moveTo(0, 0);
-            drawing.lineTo(0, this.pixelHeight);
-            drawing.moveTo(this.pixelWidth, 0);
-            drawing.lineTo(this.pixelWidth, this.pixelHeight);
-            drawing.closePath();
-            drawing.stroke();
+        //     drawing.beginPath();
+        //     drawing.moveTo(0, 0);
+        //     drawing.lineTo(0, this.pixelHeight);
+        //     drawing.moveTo(this.pixelWidth, 0);
+        //     drawing.lineTo(this.pixelWidth, this.pixelHeight);
+        //     drawing.closePath();
+        //     drawing.stroke();
 
-            drawing.fillStyle = DrawingColors.TEXT;
-            drawing.font = this.standards.mainTextFont;
-            drawing.textAlign = this.standards.textAlign;
-            let textX: number = this.pixelWidth - (this.pixelWidth / 2);
-            let textY: number = this.pixelHeight - (this.pixelHeight / 2);
-            drawing.fillText(this.content, textX, textY);
+        //     drawing.fillStyle = DrawingColors.TEXT;
+        //     drawing.font = this.standards.mainTextFont;
+        //     drawing.textAlign = this.standards.textAlign;
+        //     let textX: number = this.pixelWidth - (this.pixelWidth / 2);
+        //     let textY: number = this.pixelHeight - (this.pixelHeight / 2);
+        //     drawing.fillText(this.content, textX, textY);
 
-            this.allDrawings.set(color, canvas);
-        }
+        //     this.allDrawings.set(color, canvas);
+        // }
 
         // Init the two select images
         this.selections = new Map();
