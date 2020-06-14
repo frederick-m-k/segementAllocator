@@ -88,13 +88,12 @@ export class DrawingStandards {
 
 	/**
 	 * Return the pixel start Y point of the lower layer
+	 * This is always the same whichever the height of the segment is
 	 */
 	lowerLayerStart = (): number => {
-		let returnVal: number =
-			this.mainUpperLayerStart +
+		return this.mainUpperLayerStart +
 			this.mainSegmentHeight +
 			this.verticalLayerMargin;
-		return returnVal;
 	}
 }
 

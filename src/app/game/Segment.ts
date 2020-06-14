@@ -1,5 +1,6 @@
 
 import { DrawingColors, DrawingStandards, CanvasLayer, SelectPosition } from './../standards';
+import { NumberValueAccessor } from '@angular/forms';
 
 /**
  * Representation of a Segment with real segment boundaries and pixel-wise boundaries
@@ -168,7 +169,7 @@ export class Segment {
     }
 
     /**
-     * Initialize all 
+     * Initialize all drawings on offscreen canvas
      */
     private initDrawings = (): void => {
         this.allDrawings = new Map();
@@ -176,67 +177,122 @@ export class Segment {
         this.allDrawings.set(CanvasLayer.MIDDLE, new Map<string, HTMLCanvasElement>());
         this.allDrawings.set(CanvasLayer.SMALL, new Map<string, HTMLCanvasElement>());
         this.allDrawings.forEach((value: Map<string, HTMLCanvasElement>, key: number) => {
+            let curYStart: number, curYEnd: number, curHeight: number;
+            let curXStart: number, curXEnd: number, curWidth: number;
+            let textFont: string;
+
             let baseCanvas: HTMLCanvasElement = document.createElement("canvas");
             switch (key) {
                 case CanvasLayer.MAIN:
+                    if (this.upperLayer) {
+                        this.pixelYStart = this.standards.mainUpperLayerStart;
+                        curYStart = this.pixelYStart;
+                    } else {
+                        this.pixelYStart = this.standards.lowerLayerStart();
+                        curYStart = this.pixelYStart;
+                    }
+                    this.pixelYEnd = this.pixelYStart + this.standards.mainSegmentHeight;
+                    curYEnd = this.pixelYEnd;
+                    this.pixelHeight = this.standards.mainSegmentHeight;
+                    curHeight = this.pixelHeight;
+
+                    curXStart = this.pixelXStart;
+                    curXEnd = this.pixelXEnd;
+                    curWidth = this.pixelWidth;
+
+                    textFont = this.standards.mainTextFont;
                     break;
                 case CanvasLayer.MIDDLE:
+                    if (this.upperLayer) {
+                        this.middlePixelYStart = this.standards.middleUpperLayerStart;
+                        curYStart = this.middlePixelYStart;
+                    } else {
+                        this.middlePixelYStart = this.standards.lowerLayerStart();
+                        curYStart = this.middlePixelYStart;
+                    }
+                    this.middlePixelYEnd = this.middlePixelYStart + this.standards.middleSegmentHeight;
+                    curYEnd = this.middlePixelYEnd;
+                    this.middlePixelHeight = this.standards.middleSegmentHeight;
+                    curHeight = this.middlePixelHeight;
+
+                    curXStart = this.middlePixelXStart;
+                    curXEnd = this.middlePixelXEnd;
+                    curWidth = this.middlePixelWidth;
+
+                    textFont = this.standards.middleTextFont;
                     break;
                 case CanvasLayer.SMALL:
+                    if (this.upperLayer) {
+                        this.smallPixelYStart = this.standards.smallUpperLayerStart;
+                        curYStart = this.smallPixelYStart;
+                    } else {
+                        this.smallPixelYStart = this.standards.lowerLayerStart();
+                        curYStart = this.smallPixelYStart;
+                    }
+                    this.smallPixelYEnd = this.smallPixelYStart + this.standards.smallSegmentHeight;
+                    curYEnd = this.smallPixelYEnd;
+                    this.smallPixelHeight = this.standards.smallSegmentHeight;
+                    curHeight = this.smallPixelHeight;
+
+                    curXStart = this.smallPixelXStart;
+                    curXEnd = this.smallPixelXEnd;
+                    curWidth = this.smallPixelWidth;
+
+                    textFont = this.standards.smallTextFont;
                     break;
             }
-            baseCanvas.height = this.pixelHeight + this.standards.lineWidth;
-            baseCanvas.width = this.pixelWidth + this.standards.lineWidth;
+            baseCanvas.height = curHeight + this.standards.lineWidth;
+            baseCanvas.width = curWidth + this.standards.lineWidth;
 
             let baseDrawing: CanvasRenderingContext2D = baseCanvas.getContext("2d");
             baseDrawing.lineWidth = this.standards.lineWidth;
             baseDrawing.fillStyle = this.base_color;
             baseDrawing.strokeStyle = DrawingColors.BOUNDARY_COLOR;
 
-            baseDrawing.fillRect(0, 0, this.pixelWidth, this.pixelHeight);
+            baseDrawing.fillRect(0, 0, curWidth, curHeight);
 
             baseDrawing.beginPath();
             baseDrawing.moveTo(0, 0);
-            baseDrawing.lineTo(0, this.pixelHeight);
-            baseDrawing.moveTo(this.pixelWidth, 0);
-            baseDrawing.lineTo(this.pixelWidth, this.pixelHeight);
+            baseDrawing.lineTo(0, curHeight);
+            baseDrawing.moveTo(curWidth, 0);
+            baseDrawing.lineTo(curWidth, curHeight);
             baseDrawing.closePath();
             baseDrawing.stroke();
 
             baseDrawing.fillStyle = DrawingColors.TEXT;
-            baseDrawing.font = this.standards.mainTextFont;
+            baseDrawing.font = textFont;
             baseDrawing.textAlign = this.standards.textAlign;
-            let textX: number = this.pixelWidth - (this.pixelWidth / 2);
-            let textY: number = this.pixelHeight - (this.pixelHeight / 2);
+            let textX: number = curWidth - (curWidth / 2);
+            let textY: number = curHeight - (curHeight / 2);
             baseDrawing.fillText(this.content, textX, textY);
 
             value.set(this.base_color, baseCanvas);
 
             for (const [, color] of this.allColors) {
                 let canvas: HTMLCanvasElement = document.createElement("canvas");
-                canvas.width = this.pixelWidth + this.standards.lineWidth;
-                canvas.height = this.pixelHeight + this.standards.lineWidth;
+                canvas.width = curWidth + this.standards.lineWidth;
+                canvas.height = curHeight + this.standards.lineWidth;
 
                 let drawing: CanvasRenderingContext2D = canvas.getContext("2d");
                 drawing.lineWidth = this.standards.lineWidth;
                 drawing.fillStyle = color;
                 drawing.strokeStyle = DrawingColors.BOUNDARY_COLOR;
 
-                drawing.fillRect(0, 0, this.pixelWidth, this.pixelHeight);
+                drawing.fillRect(0, 0, curWidth, curHeight);
 
                 drawing.beginPath();
                 drawing.moveTo(0, 0);
-                drawing.lineTo(0, this.pixelHeight);
-                drawing.moveTo(this.pixelWidth, 0);
-                drawing.lineTo(this.pixelWidth, this.pixelHeight);
+                drawing.lineTo(0, curHeight);
+                drawing.moveTo(curWidth, 0);
+                drawing.lineTo(curWidth, curHeight);
                 drawing.closePath();
                 drawing.stroke();
 
                 drawing.fillStyle = DrawingColors.TEXT;
-                drawing.font = this.standards.mainTextFont;
+                drawing.font = textFont;
                 drawing.textAlign = this.standards.textAlign;
-                let textX: number = this.pixelWidth - (this.pixelWidth / 2);
-                let textY: number = this.pixelHeight - (this.pixelHeight / 2);
+                let textX: number = curWidth - (curWidth / 2);
+                let textY: number = curHeight - (curHeight / 2);
                 drawing.fillText(this.content, textX, textY);
 
                 value.set(color, canvas);
@@ -285,13 +341,6 @@ export class Segment {
     // Setter //
     ////////////
     setID = (id: number): void => { this.id = id; }
-    setPixelYStart = (yStart: number, colors: Map<number, string>): void => {
-        this.pixelYStart = Math.floor(yStart);
-        this.pixelYEnd = Math.floor(this.pixelYStart + this.standards.mainSegmentHeight);
-        this.pixelHeight = this.pixelYEnd - this.pixelYStart;
-        this.allColors = colors;
-        this.initDrawings();
-    }
     setColor = (color: string, colors: Map<number, string>): void => {
         this.base_color = color;
         this.currentColor = this.base_color;

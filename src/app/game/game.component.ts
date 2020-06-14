@@ -366,7 +366,6 @@ export class GameComponent {
         } else if (segment.getPixelXStart() < this.standards.bigThresholdLeft) {
 
         }
-        //segment.setPixelYStart(startY, this.colors);
         segment.draw(this.drawingArea);
         this.fillPixelRep(segment);
       });
