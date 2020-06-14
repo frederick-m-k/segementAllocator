@@ -58,6 +58,13 @@ export class GameComponent {
 
   private startCounter: number = 0;
 
+  //////////////////////////////////////
+  // Sizes for drawing stepped canvas //
+  //////////////////////////////////////
+
+  // Changing
+  // smallXLeft, middleXLeft, middleXRight, smallXRight, smallWidthRight
+
   constructor() { }
 
   /**
@@ -106,7 +113,8 @@ export class GameComponent {
   private start = (): void => {
     this.init();
     this.drawBase();
-    this.setStartSegment();
+    this.drawSteps();
+    //this.setStartSegment();
     this.makeVisible();
     this.startIntro();
     this.startPositionCanvas();
@@ -293,7 +301,7 @@ export class GameComponent {
     });
   }
   /**
-   * 
+   * Add allocation IDs for all segments
    */
   private addAllocations = (): void => {
     let allocationSegment: Segment = this.findAllocationSegment();
@@ -377,6 +385,49 @@ export class GameComponent {
     });
   }
 
+  /**
+   * 
+   */
+  private drawSteps = (): void => {
+    let slider: HTMLElement = document.getElementById("movingCanvas");
+    let smallXLeft: number = slider.scrollLeft;
+    let middleXLeft: number = this.standards.widthSmall + smallXLeft;
+    let middleXRight: number = middleXLeft + this.standards.widthMiddle + this.standards.widthBig;
+    let smallXRight: number = middleXRight + this.standards.widthMiddle;
+    let smallRightWidth: number = this.mainCanvas.width - smallXRight;
+    let smallYLow: number = this.standards.lowerLayerStart() + this.standards.smallSegmentHeight;
+    let middleYLow: number = this.standards.lowerLayerStart() + this.standards.middleSegmentHeight;
+    console.log(smallRightWidth);
+
+    let upY: number = 0;
+
+    // Small left
+    this.drawingArea.clearRect(smallXLeft, upY, this.standards.widthSmall, this.standards.smallUpperLayerStart);
+
+    let middleHeight: number = this.standards.middleUpperLayerStart;
+    // Middle left
+    this.drawingArea.clearRect(middleXLeft, upY, this.standards.widthMiddle, middleHeight);
+
+    // Middle right
+    this.drawingArea.clearRect(middleXRight, upY, this.standards.widthMiddle, middleHeight);
+
+    // Left right
+    this.drawingArea.clearRect(smallXRight, upY, smallRightWidth, this.standards.smallUpperLayerStart);
+
+    // Small left lower
+    this.drawingArea.clearRect(smallXLeft, smallYLow, this.standards.widthSmall, this.standards.smallUpperLayerStart);
+
+    // Middle left lower
+    this.drawingArea.clearRect(middleXLeft, middleYLow, this.standards.widthMiddle, middleHeight);
+
+    // Middle right lower
+    this.drawingArea.clearRect(middleXRight, middleYLow, this.standards.widthMiddle, middleHeight);
+
+    // Small right lower
+    this.drawingArea.clearRect(smallXRight, smallYLow, smallRightWidth, this.standards.smallUpperLayerStart);
+
+  }
+
 
   /////////////////////////////////
   // Custom pixel representation //
@@ -431,6 +482,7 @@ export class GameComponent {
         this.stopMoving();
       }
       slidingElement.scrollLeft += this.moveBy;
+      this.drawSteps();
     }, this.movingSpeed);
     this.currentlyMoving = true;
   }
@@ -453,6 +505,7 @@ export class GameComponent {
     clearInterval(this.interval);
     this.interval = setInterval(() => {
       slidingElement.scrollLeft += this.moveBy;
+      this.drawSteps();
     }, this.movingSpeed);
     this.currentlyMoving = true;
   }
@@ -468,6 +521,7 @@ export class GameComponent {
     clearInterval(this.interval);
     this.interval = setInterval(() => {
       slidingElement.scrollLeft += this.moveBy;
+      this.drawSteps();
     }, this.movingSpeed);
     this.currentlyMoving = true;
   }
@@ -477,6 +531,7 @@ export class GameComponent {
   private moveRight = (): void => {
     let slidingElement: HTMLElement = document.getElementById("movingCanvas");
     slidingElement.scrollLeft += 50;
+    this.drawSteps();
   }
   /**
    * Move the canvas a bit to the left
@@ -484,12 +539,13 @@ export class GameComponent {
   private moveLeft = (): void => {
     let slidingElement: HTMLElement = document.getElementById("movingCanvas");
     slidingElement.scrollLeft -= 70;
+    this.drawSteps();
   }
   /**
    * Move the canvas to its starting position
    */
   private startPositionCanvas = (): void => {
-    document.getElementById("movingCanvas").scrollLeft -= document.getElementById("movingCanvas").scrollLeft;
+    document.getElementById("movingCanvas").scrollLeft = 0;
   }
 
 

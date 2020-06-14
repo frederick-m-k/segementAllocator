@@ -53,6 +53,12 @@ export class DrawingStandards {
 	readonly smallSelectBaseY: number = 5;
 	readonly smallSelectBaseX: number = 5;
 
+	//////////////////////////////
+	// Sizes for stepped canvas //
+	//////////////////////////////
+	readonly widthSmall: number = 200;
+	readonly widthMiddle: number = 200;
+	readonly widthBig: number = 400;
 
 	//////////////////
 	// Global sizes //
