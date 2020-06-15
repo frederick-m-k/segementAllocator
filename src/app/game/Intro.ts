@@ -16,8 +16,8 @@ export class Intro {
     private currentStage: number;
 
     private firstStageText: string = "<p>Welcome to " +
-        "<span style=\"color: #9c0a00\">Segment</span> " +
-        "<span style=\"color:#009c27\">Allocater</span></p>" +
+        "<span class=\"red\">Segment</span> " +
+        "<span class=\"green\">Allocater</span></p>" +
         "<br /><p>Here you have to assign the segments from two layers on each other</p>";
 
     private secondStageText: string = "<p>Choose segments from " +

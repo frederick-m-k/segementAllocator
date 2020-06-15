@@ -18,70 +18,44 @@
     height: 27px;
 }
 
-.config .legendWrapper {
+.config #legend {
+    width: 60vw;
     z-index: 30;
-    position: absolute;
+    position: fixed;
     text-align: center;
-    background-color: #e8e8e8;
+    background-color: #FFFFFF;
     left: 50%;
     -webkit-transform: translate(-50%);
     -moz-transform: translate(-50%);
     -ms-transform: translate(-50%);
     -o-transform: translate(-50%);
     transform: translate(-50%);
+    top: 7%;
+    padding: 10px;
 }
-/* .config #hoveringLegend {
-    z-index: 1;
+.config #legend h3 {
+    text-align: left;
+    padding-left: 10px;
 }
-.config #hoveringLegend:hover {
-    opacity: 0.3;
-    cursor: help;
+.config #legend button {
+    padding-bottom: 10px;
+    padding-left: 30px;
+    border: none;
+    background-color: #FFFFFF;
+    font-size: 30px;
 }
-.config h3 {
-    font-size: 25px;
+.config #legend table {
+    margin: 0 auto;
 }
-
-.config #legend .shortcuts {
-    margin: 30px 0;
-    position: relative;
+.config #legend .bordered_table, .config #legend .bordered_table tbody tr td {
+    border: 1px solid #000000;
+    border-collapse: collapse;
+    text-align: left;
 }
-.config #legend .shortcuts p {
-    padding: 0 5px;
-    font-size: 18px;
+.config #legend table thead tr td #close_shortcuts {
+    padding-left: 10px;
+    padding-top: 10px;
 }
-.config #legend .shortcuts p img {
-    width: 20px;
-    height: 20px;
-    padding: 4px;
-    border-radius: 3px;
-    vertical-align: middle;
-}
-.config #legend .shortcuts p .shortcut_definition {
-    font-size: 20px;
-}
-
-.config #legend .shortcuts p #play_pause #tab {
-    width: 18px;
-    height: 18px;
-}
-.config #legend .shortcuts p #move_segment #arrows {
-    width: 35px;
-    height: 35px;
-}
-.config #legend .shortcuts p #gather_segments #shift_key,
-.config #legend .shortcuts p #commit_segments #enter_key {
-    width: 25px;
-    height: 25px;
-}
-.config #legend .shortcuts p #gather_segments #shift_arrow_left,
-.config #legend .shortcuts p #gather_segments #shift_arrow_right {
-    width: 18px;
-    height: 18px;
-}
-
-.config #legend .shortcuts p .shortcut {
-    padding: 0 35px;
-} */
 
 .config #new_game {
     position: absolute;
@@ -94,19 +68,6 @@
     z-index: 2;
 }
 
-.text {
-    font-family: "Palatino", Times, serif;
-    color: #38424c;
-}
-.segAlloc_button {
-    background-color: #9c0a00;
-    color: #FFFFFF;
-    border: none;
-    border-radius: 4px;
-    padding: 8px;
-    font-size: 16px;
-    cursor: pointer;
-}
 
 
 .wrapper {
@@ -177,9 +138,6 @@
 }
 
 
-.hidden {
-    display: none;
-}
 
 .gamingArea {
     -webkit-transition: opacity 3s;

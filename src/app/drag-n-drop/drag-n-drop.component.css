@@ -1,7 +1,4 @@
 
-* {
-    outline: none;
-}
 #outerWrapper {
     position: relative;
 }
@@ -34,7 +31,7 @@
     padding: 8px 16px;
 }
 
-#dragWrapper #dropzone .text, .text {
+#dragWrapper #dropzone .text {
     font-family: "Palatino", Times, serif;
     font-size: 20px;
     font-weight: 600;
@@ -57,7 +54,6 @@
     border: none;
     background: none;
     font-size: 17px;
-    cursor: pointer;
 }
 #dragWrapper #supported_formats #file_info:hover {
     background: #f0f0f0;
@@ -92,23 +88,6 @@
     text-align: center;
     padding: 6px;
     display: block;
-}
-#dragWrapper .metaInformation .button {
-    display: none;
-    border: solid 2px #FFFFFF;
-    border-radius: 4px;;
-    background-color: #9c0a00;
-    color: #FFFFFF;
-    font-size: 18px;
-    font-weight: bold;
-    padding: 10px;
-    cursor: pointer;
-}
-#dragWrapper .metaInformation .visible {
-    display: inline;
-}
-.hidden {
-    display: none;
 }
 
 

@@ -1,0 +1,33 @@
+* {
+    outline: none;
+}
+
+.red {
+    color: #9c0a00;
+}
+.green {
+    color: #009c27;
+}
+
+.text {
+    font-family: "Palatino", Times, serif;
+    color: #38424c;
+}
+.segAlloc_button {
+    background-color: #9c0a00;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 16px;
+}
+.pull_right {
+    text-align: right;
+}
+.pointer {
+    cursor: pointer;
+}
+
+.hidden {
+    display: none;
+}

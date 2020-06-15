@@ -7,7 +7,7 @@ import { Component, HostListener, Output, EventEmitter, Input, SimpleChanges } f
 @Component({
   selector: 'app-drag-n-drop',
   templateUrl: './drag-n-drop.component.html',
-  styleUrls: ['./drag-n-drop.component.css']
+  styleUrls: ['../global/global.css', './drag-n-drop.component.css']
 })
 export class DragNDropComponent {
 
@@ -255,10 +255,10 @@ export class DragNDropComponent {
         }
         if (this.selectedLayers.size == 2) {
           this.enterPossible = true;
-          document.getElementById("startGame").classList.add("visible");
+          document.getElementById("startGame").classList.remove("hidden");
         } else {
           this.enterPossible = false;
-          document.getElementById("startGame").classList.remove("visible");
+          document.getElementById("startGame").classList.add("hidden");
         }
       };
       let text: HTMLParagraphElement = document.createElement("p");

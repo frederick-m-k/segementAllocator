@@ -1,131 +1,139 @@
 <div class="gamingArea hidden wrapper" id="movingCanvas">
-    <!-- Holds the biggest area of the layers, the working slot -->
     <canvas id="mainCanvas"></canvas>
-    <!-- <canvas id="middleCanvas"></canvas>
-    <canvas id="lowCanvas"></canvas> -->
     <div id="intro">
         <h2 class="text" id="intro_text"></h2>
-        <button id="last_intro" class="text segAlloc_button" type="button" (click)="introBack()">Back</button>
-        <button id="skip_intro" class="text segAlloc_button" type="button" (click)="skipIntro()">Skip</button>
-        <button id="next_intro" class="text segAlloc_button" type="button" (click)="introForward()">Forward</button>
+        <button id="last_intro" class="text segAlloc_button pointer" type="button" (click)="introBack()">Back</button>
+        <button id="skip_intro" class="text segAlloc_button pointer" type="button" (click)="skipIntro()">Skip</button>
+        <button id="next_intro" class="text segAlloc_button pointer" type="button"
+            (click)="introForward()">Forward</button>
     </div>
 </div>
-<div class="config gamingArea hidden" (mousedown)="toggleLegend()">
+<div class="config gamingArea hidden">
     <div id="button_ui" class="gamingArea hidden">
-        <span title="Play --- Tab"><img src="../../assets/images/play.png" id="play_button" alt="Play"></span>
-        <span title="Pause --- Tab"><img src="../../assets/images/pause.png" id="pause_button" alt="Pause"></span>
-        <span title="Speed up --- +"><img src="../../assets/images/fast-forward.png" id="fast_forward"
+        <span title="Play"><img src="../../assets/images/play.png" id="play_button" alt="Play"></span>
+        <span title="Pause"><img src="../../assets/images/pause.png" id="pause_button" alt="Pause"></span>
+        <span title="Speed up"><img src="../../assets/images/fast-forward.png" id="fast_forward"
                 alt="Fast forward"></span>
-        <span title="Slow down --- -"><img src="../../assets/images/slow-down.png" id="slow_down"
-                alt="Slow down"></span>
-        <span title="Move screen left --- D"><img src="../../assets/images/move-left.png" id="screen_left"
+        <span title="Slow down"><img src="../../assets/images/slow-down.png" id="slow_down" alt="Slow down"></span>
+        <span title="Move screen left"><img src="../../assets/images/move-left.png" id="screen_left"
                 alt="Move screen left"></span>
-        <span title="Move screen right --- A"><img src="../../assets/images/move-right.png" id="screen_right"
+        <span title="Move screen right"><img src="../../assets/images/move-right.png" id="screen_right"
                 alt="Move screen right"></span>
-        <span style="padding-right: 20px;" title="Move screen to start --- S"><img
-                src="../../assets/images/move-to-start.png" id="screen start" alt="Move screen to start"></span>
+        <span style="padding-right: 20px;" title="Move screen to start"><img src="../../assets/images/move-to-start.png"
+                id="screen_start" alt="Move screen to start"></span>
 
-        <span title="Move to left segment --- Left key"><img src="../../assets/images/arrow-left.png" id="arrow_left"
+        <span title="Move to left segment"><img src="../../assets/images/arrow-left.png" id="move_left"
                 alt="Move to left segment"></span>
-        <span title="Move one layer up --- Up key"><img src="../../assets/images/arrow-up.png" id="move_up"
+        <span title="Move one layer up"><img src="../../assets/images/arrow-up.png" id="move_up"
                 alt="Move one layer up"></span>
-        <span title="Move to right segment --- Right key"><img src="../../assets/images/arrow-right.png" id="move_right"
+        <span title="Move to right segment"><img src="../../assets/images/arrow-right.png" id="move_right"
                 alt="Move to right segment"></span>
-        <span title="Move one layer down --- Down key"><img src="../../assets/images/arrow-down.png" id="move_down"
+        <span title="Move one layer down"><img src="../../assets/images/arrow-down.png" id="move_down"
                 alt="Move one layer down"></span>
-        <span title="Reset --- R"><img src="../../assets/images/reset.png" id="reset" alt="Reset"></span>
+        <span title="Allocate gathered segments"><img src="../../assets/images/allocate.png" id="allocate_gathered"
+                alt="Allocate gathered segments"></span>
+        <span title="Reset"><img src="../../assets/images/reset.png" id="reset" alt="Reset"></span>
     </div>
-    <button id="new_game" class="text segAlloc_button" type="button" (click)="restart()">New Game</button>
-    <button id="shortcuts" class="text segAlloc_button" type="button">Shortcuts</button>
-    <div id="shortcutWrapper" class="hidden">
-        <h3 class="text">Shortcuts</h3>
-        <div id="legend">
-            <table class="bordered_table">
-                <tbody>
-                    <tr>
-                        <td>
-                            <p class="text">Play / Pause</p>
-                        </td>
-                        <td>
-                            <p class="text">TAB</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p class="text">Speed up</p>
-                        </td>
-                        <td>
-                            <p class="text">+</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p class="text">Slow down</p>
-                        </td>
-                        <td>
-                            <p class="text">-</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p class="text">Move screen left</p>
-                        </td>
-                        <td>
-                            <p class="text" p>D</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p class="text">Move screen right</p>
-                        </td>
-                        <td>
-                            <p class="text">A</p>
-                        </td>
-                    </tr>
-                    <tr></tr>
-                    <tr>
-                        <td>
-                            <p class="text">Move between segments</p>
-                        </td>
-                        <td>
-                            <p class="text">Arrow keys</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p class="text">Select multiple segments (in lower layer)</p>
-                        </td>
-                        <td>
-                            <p class="text">SHIFT + ARROWLEFT / ARROWRIGHT</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p class="text">Allocate the selected segments</p>
-                        </td>
-                        <td>
-                            <p class="text">ENTER</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p class="text">Reset all allocations of the selected segment</p>
-                        </td>
-                        <td>
-                            <p class="text">ARROWUP (if in upper layer) <br>
-                                ARROWDOWN (if in lower layer)</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p class="text">Reset all allocations of all segments</p>
-                        </td>
-                        <td>
-                            <p class="text">R</p>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+    <button id="new_game" class="text segAlloc_button pointer" type="button" (click)="restart()">New Game</button>
+    <button id="shortcuts" class="text segAlloc_button pointer" type="button"
+        (click)="toggleLegend()">Shortcuts</button>
+    <div id="legend" class="hidden">
+        <table class="bordered_table">
+            <thead>
+                <tr>
+                    <td>
+                        <h3 class="text">Shortcuts</h3>
+                    </td>
+                    <td class="pull_right">
+                        <button class="text pointer" id="close_shortcuts" type="button"
+                            (click)="toggleLegend()">x</button>
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <p class="text">Play / Pause</p>
+                    </td>
+                    <td>
+                        <p class="text">TAB</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p class="text">Speed up</p>
+                    </td>
+                    <td>
+                        <p class="text">+</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p class="text">Slow down</p>
+                    </td>
+                    <td>
+                        <p class="text">-</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p class="text">Move screen left</p>
+                    </td>
+                    <td>
+                        <p class="text" p>D</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p class="text">Move screen right</p>
+                    </td>
+                    <td>
+                        <p class="text">A</p>
+                    </td>
+                </tr>
+                <tr></tr>
+                <tr>
+                    <td>
+                        <p class="text">Move between segments</p>
+                    </td>
+                    <td>
+                        <p class="text">Arrow keys</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p class="text">Select multiple segments (in lower layer)</p>
+                    </td>
+                    <td>
+                        <p class="text">SHIFT + ARROWLEFT / ARROWRIGHT</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p class="text">Allocate the selected segments</p>
+                    </td>
+                    <td>
+                        <p class="text">ENTER</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p class="text">Reset all allocations of the selected segment</p>
+                    </td>
+                    <td>
+                        <p class="text">ARROWUP (if in upper layer) <br>
+                            ARROWDOWN (if in lower layer)</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p class="text">Reset all allocations of all segments</p>
+                    </td>
+                    <td>
+                        <p class="text">R</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>
