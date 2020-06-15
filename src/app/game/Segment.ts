@@ -140,16 +140,31 @@ export class Segment {
     private clear = (canvas: CanvasRenderingContext2D): void => {
         canvas.clearRect(this.pixelXStart, this.pixelYStart, this.pixelWidth, this.pixelHeight);
 
-        let clearXStart: number = ((this.pixelXEnd + this.pixelXStart) / 2) - this.standards.mainSelectBaseX;
-        let clearWidth: number = (this.standards.mainSelectBaseX * 2) + (canvas.lineWidth * 2);
-        let clearYStart: number;
-        let clearHeight: number = this.standards.mainSelectBaseY + (canvas.lineWidth * 2);
+        let startX: number = Math.floor((this.pixelXEnd + this.pixelXStart) / 2) - this.standards.mainSelectBaseX - (2 * this.standards.lineWidth);
+        let secondX: number = startX + (2 * this.standards.mainSelectBaseX) + (5 * this.standards.lineWidth);
+        let endX: number = startX + this.standards.mainSelectBaseX + (2 * this.standards.lineWidth);
+        let startY: number;
+        let secondY: number;
+        let endY: number;
         if (this.upperLayer) {
-            clearYStart = this.pixelYStart - clearHeight;
+            startY = this.pixelYStart - this.standards.mainSelectBaseY - (2 * this.standards.lineWidth);
+            secondY = startY;
+            endY = this.pixelYStart + (2 * this.standards.lineWidth);
         } else {
-            clearYStart = this.pixelYEnd;
+            startY = this.pixelYEnd + this.standards.mainSelectBaseY + (2 * this.standards.lineWidth);
+            secondY = startY;
+            endY = this.pixelYEnd - (2 * this.standards.lineWidth);
         }
-        canvas.clearRect(clearXStart, clearYStart, clearWidth, clearHeight);
+
+        canvas.fillStyle = DrawingColors.CLEAR_SELECTED;
+        canvas.strokeStyle = DrawingColors.CLEAR_SELECTED;
+        canvas.beginPath();
+        canvas.moveTo(startX, startY);
+        canvas.lineTo(secondX, secondY);
+        canvas.lineTo(endX, endY);
+        canvas.closePath();
+        canvas.stroke();
+        canvas.fill();
     }
     /**
      * Fill the segment on the 2D-Context

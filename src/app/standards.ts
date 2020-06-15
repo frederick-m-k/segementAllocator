@@ -131,6 +131,7 @@ export enum DrawingColors {
 	TEXT = "#000000",
 	CURRENTLY_SELECTED = "#9c0a00",
 	BOUNDARY_COLOR = "#000000",
+	CLEAR_SELECTED = "#FFFFFF",
 	NO_COLOR = "no_color"
 }
 /**
