@@ -268,12 +268,7 @@ export class GameComponent {
           }
           return;
         } else {
-          this.currentSegments.forEach((value: Segment) => {
-            if (value.getLayerBelonging() == segment.getLayerBelonging()) {
-              this.currentSegments.delete(value);
-              this.clearSegment(value);
-            }
-          });
+          this.removeDuplicatesInShortLayer(segment);
           this.currentSegments.add(segment);
           this.clearAllocations();  // Clear old Allocations
           this.addAllocations(); // Add the new Allocations
@@ -379,6 +374,7 @@ export class GameComponent {
   private upperSegment = (): void => {
     if (this.currentSegment.getLayerBelonging() == this.secondLayer) {
       let segment: Segment = this.findSegmentInOtherLayer(this.currentSegment);
+
       if (segment != null) {
         segment.select(this.drawingArea);
         this.currentSegment = segment;
@@ -418,6 +414,7 @@ export class GameComponent {
    * Allocate all gathered segments and reset the old allocations
    */
   private allocateGathered = (): void => {
+    this.removeDuplicatesInShortLayer(this.currentSegment);
     this.clearAllocations();  // Clear old Allocations
     this.addAllocations(); // Add the new Allocations
     this.currentSegments.clear();
@@ -756,6 +753,22 @@ export class GameComponent {
    */
   private compareLayers = (newSegment: Segment): boolean => {
     return this.currentLayer == newSegment.getLayerBelonging();
+  }
+  /**
+   * If the given segment is in the shortest layer,
+   * remove all other segments from this layer which are selected
+   */
+  private removeDuplicatesInShortLayer = (segment: Segment): void => {
+    if (segment.getLayerBelonging() == this.shortestLayer) {
+      this.currentSegments.forEach((value: Segment) => {
+        if (value !== segment) {
+          if (value.getLayerBelonging() == segment.getLayerBelonging()) {
+            this.currentSegments.delete(value);
+            this.clearSegment(value);
+          }
+        }
+      });
+    }
   }
 
   ///////////////
