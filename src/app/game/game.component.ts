@@ -250,9 +250,11 @@ export class GameComponent {
         if (this.currentSegments.has(segment)) {
           this.currentSegments.delete(segment);
           this.clearSegment(segment);
-          if (this.currentSegments.size == 0) {
-            this.segmentSelected = false;
-          }
+          this.currentSegments.forEach((value: Segment) => {
+            value.draw(this.drawingArea);
+            this.currentSegments.delete(value);
+          });
+          this.segmentSelected = false;
           return;
         } else if (this.compareLayers(segment)) {
           if (segment.getLayerBelonging() == this.shortestLayer) {
@@ -374,7 +376,6 @@ export class GameComponent {
   private upperSegment = (): void => {
     if (this.currentSegment.getLayerBelonging() == this.secondLayer) {
       let segment: Segment = this.findSegmentInOtherLayer(this.currentSegment);
-
       if (segment != null) {
         segment.select(this.drawingArea);
         this.currentSegment = segment;
