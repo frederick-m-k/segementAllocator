@@ -1,3 +1,4 @@
+import { TextGridParser } from './prep-file/parser/text-grid-parser';
 
 /**
  * Define some standards like the scope on which the program still thinks
@@ -94,20 +95,27 @@ export class AllocatedColors {
 
 	private allColors: Map<number, string>;
 
+	private red: string = "#9c0a00";
+	private green: string = "#009c27";
+	private blue: string = "#15009c";
+
+	private max: number = 3;
+
 	constructor(amount: number) {
 		this.allColors = new Map();
-		let step: number = Math.floor(255 / amount);
 		for (let i = 0; i < amount; i++) {
-			let partition: number = step * i;
-			this.allColors.set(i, this.rgbColor(partition));
+			switch (i % this.max) {
+				case 0:
+					this.allColors.set(i, this.red);
+					break;
+				case 1:
+					this.allColors.set(i, this.green);
+					break;
+				case 2:
+					this.allColors.set(i, this.blue);
+					break;
+			}
 		}
-	}
-
-	private rgbColor = (step: number): string => {
-		let r: number, g: number, b: number;
-		r = g = step;
-		b = 255 - step;
-		return "rgb(" + r + ", " + g + ", " + b + ")"
 	}
 
 	getColors = () => { return new Map<number, string>(this.allColors); }

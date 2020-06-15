@@ -670,6 +670,9 @@ export class GameComponent {
   skipIntro = (): void => {
     this.curIntro = false;
     this.intro.skip();
+    setTimeout(() => {
+      this.startMoving();
+    }, 3000);
   }
 
 
