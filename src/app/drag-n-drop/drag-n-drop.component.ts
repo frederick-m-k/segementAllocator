@@ -230,7 +230,7 @@ export class DragNDropComponent {
   }
 
   private showLayers = (): void => {
-    document.getElementById("layers").innerText = "Choose two layers";
+    document.getElementById("layers").innerText = "Choose two layers to align their segments";
     let wrapper: HTMLElement = document.getElementById("layerContainer");
     while (wrapper.firstChild) {
       wrapper.removeChild(wrapper.lastChild);
