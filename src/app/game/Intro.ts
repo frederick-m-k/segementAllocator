@@ -22,12 +22,17 @@ export class Intro {
 
     private secondStageText: string = "<p>Choose segments from " +
         "the layers to establish links between them!<p>" +
-        "<br /><p>Use the mouse or preferably the arrow keys</p>" +
-        "<br /><p>Check out the legend below to find shortcuts</p>";
+        "<br /><p>You can use the mouse or the arrow keys</p>" +
+        "<br /><p>Check out the button below to find Shortcuts</p>";
 
-    private thirdStageText: string = "<p>Ready? Then press Enter " +
+    private thirdStageText: string = "<p>A little tutorial is " +
+        "shown now behind this text.</p>" +
+        "<br />You can skip it by clicking on the Skip or Forward button <br /> or pressing ENTER</p>"
+
+    private fourthStageText: string = "<p>Ready? Then press ENTER " +
         "or click on the Start Button!</p>" +
         "<br /><p>Enjoy!!</p>";
+
 
     constructor() {
         this.introDiv = document.getElementById("intro");
@@ -55,12 +60,8 @@ export class Intro {
      */
     private secondStage = (): void => {
         this.introText.innerHTML = this.secondStageText;
-        this.startButton.innerText = "Skip";
-        this.introDiv.style.opacity = "0.6";
+        this.introDiv.style.opacity = "0.9";
         this.currentStage = 2;
-        if (this.forwardButton.classList.contains("hidden")) {
-            this.forwardButton.classList.remove("hidden");
-        }
         if (this.backButton.classList.contains("hidden")) {
             this.backButton.classList.remove("hidden");
         }
@@ -70,9 +71,21 @@ export class Intro {
      */
     private thirdStage = (): void => {
         this.introText.innerHTML = this.thirdStageText;
-        this.startButton.innerText = "Start";
-        this.introDiv.style.opacity = "0.3";
+        this.startButton.innerText = "Skip";
+        this.introDiv.style.opacity = "0.8";
         this.currentStage = 3;
+        if (this.forwardButton.classList.contains("hidden")) {
+            this.forwardButton.classList.remove("hidden");
+        }
+    }
+    /**
+     * Show the fourth stage of the intro
+     */
+    private fourthStage = (): void => {
+        this.introText.innerHTML = this.fourthStageText;
+        this.startButton.innerText = "Start";
+        this.introDiv.style.opacity = "0.7";
+        this.currentStage = 4;
         this.forwardButton.classList.add("hidden");
     }
     /**
@@ -99,6 +112,8 @@ export class Intro {
             case 2:
                 this.thirdStage();
                 break;
+            case 3:
+                this.fourthStage();
         }
     }
     /**
@@ -106,9 +121,11 @@ export class Intro {
      */
     lastStage = (): void => {
         switch (this.currentStage) {
+            case 4:
+                this.thirdStage();
+                break;
             case 3:
                 this.secondStage();
-                break;
             case 2:
                 this.firstStage();
                 break;
