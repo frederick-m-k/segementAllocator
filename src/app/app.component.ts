@@ -14,6 +14,8 @@ import { Segment } from './game/Segment';
 })
 export class AppComponent {
 
+  title: string = "SegmentAllocator";
+
   fileContent: string;
   fileType: string;
   firstLayer: string;
