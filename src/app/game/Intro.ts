@@ -1,3 +1,4 @@
+import { rawListeners } from 'process';
 
 /**
  * Representation of the intro
@@ -49,27 +50,30 @@ export class Intro {
     /**
      * Show the first stage of the intro
      */
-    private firstStage = (): void => {
+    private firstStage = (): boolean => {
         this.introDiv.style.opacity = "1";
         this.introText.innerHTML = this.firstStageText;
         this.currentStage = 1;
         this.backButton.classList.add("hidden");
+
+        return false;
     }
     /**
      * Show the second stage of the intro
      */
-    private secondStage = (): void => {
+    private secondStage = (): boolean => {
         this.introText.innerHTML = this.secondStageText;
         this.introDiv.style.opacity = "0.9";
         this.currentStage = 2;
         if (this.backButton.classList.contains("hidden")) {
             this.backButton.classList.remove("hidden");
         }
+        return false;
     }
     /**
      * Show the third stage of the intro
      */
-    private thirdStage = (): void => {
+    private thirdStage = (): boolean => {
         this.introText.innerHTML = this.thirdStageText;
         this.startButton.innerText = "Skip";
         this.introDiv.style.opacity = "0.8";
@@ -77,16 +81,20 @@ export class Intro {
         if (this.forwardButton.classList.contains("hidden")) {
             this.forwardButton.classList.remove("hidden");
         }
+        this.introDiv.style.opacity = "0.5";
+        return true;
     }
     /**
      * Show the fourth stage of the intro
      */
-    private fourthStage = (): void => {
+    private fourthStage = (): boolean => {
         this.introText.innerHTML = this.fourthStageText;
         this.startButton.innerText = "Start";
         this.introDiv.style.opacity = "0.7";
         this.currentStage = 4;
         this.forwardButton.classList.add("hidden");
+
+        return false;
     }
     /**
      * Skip the intro
@@ -104,31 +112,27 @@ export class Intro {
     /**
      * Go one stage forward
      */
-    nextStage = (): void => {
+    nextStage = (): boolean => {
         switch (this.currentStage) {
             case 1:
-                this.secondStage();
-                break;
+                return this.secondStage();
             case 2:
-                this.thirdStage();
-                break;
+                return this.thirdStage();
             case 3:
-                this.fourthStage();
+                return this.fourthStage();
         }
     }
     /**
      * Go one stage backward
      */
-    lastStage = (): void => {
+    lastStage = (): boolean => {
         switch (this.currentStage) {
             case 4:
-                this.thirdStage();
-                break;
+                return this.thirdStage();
             case 3:
-                this.secondStage();
+                return this.secondStage();
             case 2:
-                this.firstStage();
-                break;
+                return this.firstStage();
         }
     }
 }

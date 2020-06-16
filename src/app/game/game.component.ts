@@ -41,6 +41,7 @@ export class GameComponent {
   ///////////////////
   private curIntro: boolean;
   private intro: Intro;
+  private tutorialTimeouts: Array<number> = new Array();
 
   private mainCanvas: HTMLCanvasElement;
   private drawingArea: CanvasRenderingContext2D;
@@ -661,23 +662,71 @@ export class GameComponent {
    * Move one screen back in the intro
    */
   introBack = (): void => {
-    this.intro.lastStage();
+    if (this.intro.lastStage()) {
+      // Start tutorial
+      this.startTutorial();
+    } else {
+      this.stopTutorial();
+    }
   }
   /**
    * Move one screen forward in the intro
    */
   introForward = (): void => {
-    this.intro.nextStage();
+    if (this.intro.nextStage()) {
+      this.startTutorial();
+    } else {
+      this.stopTutorial();
+    }
   }
   /**
    * Skip the intro
    */
   skipIntro = (): void => {
     this.curIntro = false;
+    this.stopTutorial();
     this.intro.skip();
     setTimeout(() => {
       this.startMoving();
     }, 3000);
+  }
+
+  // Tutorial
+  private startTutorial = (): void => {
+    let text: HTMLElement = document.getElementById("intro_text");
+    this.tutorialTimeouts.push(window.setTimeout(() => {
+      text.innerHTML = "ARROWDOWN";
+      this.lowerSegment();
+    }, 4000));
+    this.tutorialTimeouts.push(window.setTimeout(() => {
+      text.innerHTML = "ARROWRIGHT";
+      this.rightSegment();
+    }, 6500));
+    this.tutorialTimeouts.push(window.setTimeout(() => {
+      text.innerHTML = "SHIFT + ARROW RIGHT";
+      this.rightSegmentShift();
+    }, 9000));
+    this.tutorialTimeouts.push(window.setTimeout(() => {
+      text.innerHTML = "ARROWUP";
+      this.upperSegment();
+    }, 11500));
+    this.tutorialTimeouts.push(window.setTimeout(() => {
+      text.innerHTML = "ENTER";
+      this.allocateGathered();
+    }, 13000));
+    setTimeout(() => {
+      this.introForward();
+    }, 16000);
+  }
+  /**
+   * 
+   */
+  private stopTutorial = (): void => {
+    while (this.tutorialTimeouts.length > 0) {
+      clearTimeout(this.tutorialTimeouts.pop());
+    }
+    this.clearEverything();
+    this.setStartSegment();
   }
 
 
