@@ -4,6 +4,7 @@ import { Component, Input, SimpleChanges, HostListener, Output, EventEmitter } f
 import { DrawingStandards, DrawingColors, AllocatedColors } from './../standards';
 import { Segment } from './Segment';
 import { Intro } from './Intro';
+import { ThrowStmt } from '@angular/compiler';
 
 /**
  * For playing the game
@@ -148,7 +149,6 @@ export class GameComponent {
     let amount: number = this.amountOfShortestLayer();
     let colorCreation: AllocatedColors = new AllocatedColors(amount);
     this.colors = colorCreation.getColors();
-    console.log(this.colors);
   }
   /**
    * Define the start segment as the first segment in the first layer
@@ -249,9 +249,6 @@ export class GameComponent {
     if (segment != null) {
       if (this.segmentSelected) {
         if (this.currentSegments.has(segment)) {
-          this.currentSegments.forEach((value: Segment) => {
-            console.log(value);
-          });
           this.currentSegments.delete(segment);
           this.clearSegment(segment);
           this.currentSegments.forEach((value: Segment) => {
@@ -320,7 +317,6 @@ export class GameComponent {
       this.currentSegments.add(segment);
       this.currentLayer = segment.getLayerBelonging();
       this.segmentSelected = true;
-      console.log(this.currentSegments);
     }
   }
   /**
@@ -338,7 +334,6 @@ export class GameComponent {
       this.currentSegments.add(segment);
       this.currentLayer = segment.getLayerBelonging();
       this.segmentSelected = true;
-      console.log(this.currentSegments);
     }
   }
   /**
@@ -356,7 +351,6 @@ export class GameComponent {
       this.currentSegments.add(segment);
       this.currentLayer = segment.getLayerBelonging();
       this.segmentSelected = true;
-      console.log(this.currentSegments);
     }
   }
   /**
@@ -364,7 +358,6 @@ export class GameComponent {
    */
   private leftSegment = (): void => {
     if (this.data.get(this.currentSegment.getLayerBelonging())[0].getID() != this.currentSegment.getID()) {
-      console.log("Jup");
       let segment: Segment = this.findSegment(this.currentSegment.getID() - 1);
       if (this.segmentSelected) {
         this.currentSegments.delete(this.currentSegment);
@@ -375,7 +368,6 @@ export class GameComponent {
       this.currentSegments.add(segment);
       this.currentLayer = segment.getLayerBelonging();
       this.segmentSelected = true;
-      console.log(this.currentSegments);
     }
   }
   /**
@@ -391,7 +383,6 @@ export class GameComponent {
         this.currentSegments.add(this.currentSegment);
         this.currentLayer = this.currentSegment.getLayerBelonging();
         this.segmentSelected = true;
-        console.log(this.currentSegments);
       } else {
         // error
         console.log("Couldn't find segment in arrowup");
@@ -413,7 +404,6 @@ export class GameComponent {
         this.currentSegments.add(this.currentSegment);
         this.currentLayer = this.currentSegment.getLayerBelonging();
         this.segmentSelected = true;
-        console.log(this.currentSegments);
       } else {
         // error
         console.log("Couldn't find segment in arrowup");
@@ -471,12 +461,10 @@ export class GameComponent {
     tempSet.forEach((segment: Segment) => {
       segment.addAllocation(this.drawingArea, allocationColor, allocationSegment.getID());
       idsToAllocate.add(segment.getID());
-      console.log(segment);
     });
     idsToAllocate.forEach((id: number) => {
       allocationSegment.addAllocation(this.drawingArea, allocationColor, id);
     });
-    console.log(allocationSegment);
   }
 
   /**
@@ -485,9 +473,13 @@ export class GameComponent {
   private clearEverything = (): void => {
     this.data.forEach((value: Array<Segment>) => {
       value.forEach((segment: Segment) => {
+        segment.reset();
+        segment.draw(this.drawingArea);
         segment.clearAllocation();
-      })
+      });
     });
+    this.currentSegments.clear();
+    this.segmentSelected = false;
   }
 
 

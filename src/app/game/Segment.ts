@@ -59,7 +59,6 @@ export class Segment {
         this.boundary(canvas);
         this.fill(canvas);
         this.text(canvas);
-        //canvas.drawImage(this.allDrawings.get(this.currentColor), this.pixelXStart, this.pixelYStart);
     }
 
     /**
@@ -81,7 +80,6 @@ export class Segment {
         this.fill(canvas);
         this.boundary(canvas);
         this.text(canvas);
-        //canvas.drawImage(this.allDrawings.get(this.currentColor), this.pixelXStart, this.pixelYStart);
     }
 
     /**
@@ -105,7 +103,6 @@ export class Segment {
         this.boundary(canvas);
         this.fill(canvas);
         this.text(canvas);
-        //canvas.drawImage(this.allDrawings.get(this.allocationColor), this.pixelXStart, this.pixelYStart);
     }
 
     /**
