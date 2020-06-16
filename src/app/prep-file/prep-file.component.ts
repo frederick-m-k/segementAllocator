@@ -95,6 +95,21 @@ export class PrepFileComponent {
     }
   }
 
+  /**
+   * Find the shortest layer
+   */
+  private findShortestLayer = (): string => {
+    let length: number = Number.MAX_SAFE_INTEGER;
+    let layer: string;
+    this.dataStructure.forEach((value: Array<Segment>, key: string) => {
+      if (value.length < length) {
+        length = value.length;
+        layer = key;
+      }
+    });
+    return layer;
+  }
+
 
   ////////////////////
   // Alter the data //
@@ -104,14 +119,26 @@ export class PrepFileComponent {
    */
   private addID = () => {
     let id = 0;
-    this.dataStructure.forEach((value: Array<Segment>, key: string) => {
-      for (let i = 0; i < value.length; i++) {
-        value[i].setID(id);    // The own id
-        this.links.set(id, new Array<number>());
-        id++;
+    let shortest: string = this.findShortestLayer();
+    this.dataStructure.get(shortest).forEach((value: Segment) => {
+      value.setID(id);
+      this.links.set(id, new Array<number>());
+      id++;
 
-        value[i].setLayerBelonging(key, key == this.firstLayer);
-      }
+      value.setLayerBelonging(shortest, shortest == this.firstLayer);
+    });
+    let longest: string;
+    if (shortest == this.firstLayer) {
+      longest = this.secondLayer;
+    } else {
+      longest = this.firstLayer;
+    }
+    this.dataStructure.get(longest).forEach((value: Segment) => {
+      value.setID(id);
+      this.links.set(id, new Array<number>());
+      id++;
+
+      value.setLayerBelonging(longest, longest == this.firstLayer);
     });
   }
 

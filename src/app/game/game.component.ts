@@ -249,6 +249,9 @@ export class GameComponent {
     if (segment != null) {
       if (this.segmentSelected) {
         if (this.currentSegments.has(segment)) {
+          this.currentSegments.forEach((value: Segment) => {
+            console.log(value);
+          });
           this.currentSegments.delete(segment);
           this.clearSegment(segment);
           this.currentSegments.forEach((value: Segment) => {
@@ -317,6 +320,7 @@ export class GameComponent {
       this.currentSegments.add(segment);
       this.currentLayer = segment.getLayerBelonging();
       this.segmentSelected = true;
+      console.log(this.currentSegments);
     }
   }
   /**
@@ -352,6 +356,7 @@ export class GameComponent {
       this.currentSegments.add(segment);
       this.currentLayer = segment.getLayerBelonging();
       this.segmentSelected = true;
+      console.log(this.currentSegments);
     }
   }
   /**
@@ -466,10 +471,12 @@ export class GameComponent {
     tempSet.forEach((segment: Segment) => {
       segment.addAllocation(this.drawingArea, allocationColor, allocationSegment.getID());
       idsToAllocate.add(segment.getID());
+      console.log(segment);
     });
     idsToAllocate.forEach((id: number) => {
       allocationSegment.addAllocation(this.drawingArea, allocationColor, id);
     });
+    console.log(allocationSegment);
   }
 
   /**
