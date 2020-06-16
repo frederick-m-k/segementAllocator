@@ -16,6 +16,16 @@ export class Segment {
     private pixelWidth: number;
     private pixelHeight: number;
 
+    private selectBaseX: number;
+    private selectBaseY: number;
+
+    private clearSelectStartX: number;
+    private clearSelectStartY: number;
+    private clearSelectSecondX: number;
+    private clearSelectSecondY: number;
+    private clearSelectEndX: number;
+    private clearSelectEndY: number;
+
     ////////////////
     // Allocation //
     ////////////////
@@ -42,6 +52,8 @@ export class Segment {
         this.pixelXEnd = Math.floor(this.xEnd * this.standards.mainHorizontalScaling);
         this.pixelWidth = this.pixelXEnd - this.pixelXStart;
 
+        this.selectBaseX = ((this.pixelXEnd + this.pixelXStart) / 2) - (this.standards.mainSelectBaseX);
+
         this.allocatedIDs = new Set<number>();
     }
 
@@ -66,15 +78,11 @@ export class Segment {
      */
     select = (canvas: CanvasRenderingContext2D): void => {
         this.clear(canvas);
-        let startX: number = ((this.pixelXEnd + this.pixelXStart) / 2) - (this.standards.mainSelectBaseX);
-        let baseY: number;
+
         if (this.upperLayer) {
-            baseY = this.pixelYStart - this.standards.mainSelectBaseY;
-            canvas.drawImage(this.selections.get(SelectStatus.UPPER), startX, baseY);
-        }
-        else {
-            baseY = this.pixelYEnd;
-            canvas.drawImage(this.selections.get(SelectStatus.LOWER), startX, baseY);
+            canvas.drawImage(this.selections.get(SelectStatus.UPPER), this.selectBaseX, this.selectBaseY);
+        } else {
+            canvas.drawImage(this.selections.get(SelectStatus.LOWER), this.selectBaseX, this.selectBaseY);
         }
         canvas.fillStyle = this.currentColor;
         this.fill(canvas);
@@ -86,15 +94,11 @@ export class Segment {
      */
     oldSelect = (canvas: CanvasRenderingContext2D): void => {
         this.clear(canvas);
-        let startX: number = ((this.pixelXEnd + this.pixelXStart) / 2) - (this.standards.mainSelectBaseX);
-        let baseY: number;
+
         if (this.upperLayer) {
-            baseY = this.pixelYStart - this.standards.mainSelectBaseY;
-            canvas.drawImage(this.selections.get(SelectStatus.LAST_UPPER), startX, baseY);
-        }
-        else {
-            baseY = this.pixelYEnd;
-            canvas.drawImage(this.selections.get(SelectStatus.LAST_LOWER), startX, baseY);
+            canvas.drawImage(this.selections.get(SelectStatus.LAST_UPPER), this.selectBaseX, this.selectBaseY);
+        } else {
+            canvas.drawImage(this.selections.get(SelectStatus.LAST_LOWER), this.selectBaseX, this.selectBaseY);
         }
         canvas.fillStyle = this.currentColor;
         this.fill(canvas);
@@ -164,28 +168,12 @@ export class Segment {
      * @param canvas 
      */
     private clearSelect = (canvas: CanvasRenderingContext2D): void => {
-        let startX: number = Math.floor((this.pixelXEnd + this.pixelXStart) / 2) - this.standards.mainSelectBaseX - (2 * this.standards.lineWidth);
-        let secondX: number = startX + (2 * this.standards.mainSelectBaseX) + (5 * this.standards.lineWidth);
-        let endX: number = startX + this.standards.mainSelectBaseX + (2 * this.standards.lineWidth);
-        let startY: number;
-        let secondY: number;
-        let endY: number;
-        if (this.upperLayer) {
-            startY = this.pixelYStart - this.standards.mainSelectBaseY - (2 * this.standards.lineWidth);
-            secondY = startY;
-            endY = this.pixelYStart + this.standards.lineWidth;
-        } else {
-            startY = this.pixelYEnd + this.standards.mainSelectBaseY + (2 * this.standards.lineWidth);
-            secondY = startY;
-            endY = this.pixelYEnd - this.standards.lineWidth;
-        }
-
         canvas.fillStyle = DrawingColors.CLEAR_SELECTED;
         canvas.strokeStyle = DrawingColors.CLEAR_SELECTED;
         canvas.beginPath();
-        canvas.moveTo(startX, startY);
-        canvas.lineTo(secondX, secondY);
-        canvas.lineTo(endX, endY);
+        canvas.moveTo(this.clearSelectStartX, this.clearSelectStartY);
+        canvas.lineTo(this.clearSelectSecondX, this.clearSelectSecondY);
+        canvas.lineTo(this.clearSelectEndX, this.clearSelectEndY);
         canvas.closePath();
         canvas.stroke();
         canvas.fill();
@@ -309,7 +297,28 @@ export class Segment {
         this.pixelYStart = Math.floor(yStart);
         this.pixelYEnd = Math.floor(this.pixelYStart + this.standards.mainSegmentHeight);
         this.pixelHeight = this.pixelYEnd - this.pixelYStart;
+        if (this.upperLayer) {
+            this.selectBaseY = this.pixelYStart - this.standards.mainSelectBaseY;
+        }
+        else {
+            this.selectBaseY = this.pixelYEnd;
+        }
         this.initOffscreenCanvas();
+
+        // Initialize values for clearing the select arrow
+        this.clearSelectStartX = Math.floor((this.pixelXEnd + this.pixelXStart) / 2) - this.standards.mainSelectBaseX - (2 * this.standards.lineWidth);
+        this.clearSelectSecondX = this.clearSelectStartX + (2 * this.standards.mainSelectBaseX) + (5 * this.standards.lineWidth);
+        this.clearSelectEndX = this.clearSelectStartX + this.standards.mainSelectBaseX + (2 * this.standards.lineWidth);
+
+        if (this.upperLayer) {
+            this.clearSelectStartY = this.pixelYStart - this.standards.mainSelectBaseY - (2 * this.standards.lineWidth);
+            this.clearSelectSecondY = this.clearSelectStartY;
+            this.clearSelectEndY = this.pixelYStart + this.standards.lineWidth;
+        } else {
+            this.clearSelectStartY = this.pixelYEnd + this.standards.mainSelectBaseY + (2 * this.standards.lineWidth);
+            this.clearSelectSecondY = this.clearSelectStartY;
+            this.clearSelectEndY = this.pixelYEnd - this.standards.lineWidth;
+        }
     }
     setColor = (color: string): void => {
         this.base_color = color;
