@@ -148,6 +148,7 @@ export class GameComponent {
     let amount: number = this.amountOfShortestLayer();
     let colorCreation: AllocatedColors = new AllocatedColors(amount);
     this.colors = colorCreation.getColors();
+    console.log(this.colors);
   }
   /**
    * Define the start segment as the first segment in the first layer
@@ -333,6 +334,7 @@ export class GameComponent {
       this.currentSegments.add(segment);
       this.currentLayer = segment.getLayerBelonging();
       this.segmentSelected = true;
+      console.log(this.currentSegments);
     }
   }
   /**
@@ -357,6 +359,7 @@ export class GameComponent {
    */
   private leftSegment = (): void => {
     if (this.data.get(this.currentSegment.getLayerBelonging())[0].getID() != this.currentSegment.getID()) {
+      console.log("Jup");
       let segment: Segment = this.findSegment(this.currentSegment.getID() - 1);
       if (this.segmentSelected) {
         this.currentSegments.delete(this.currentSegment);
@@ -367,6 +370,7 @@ export class GameComponent {
       this.currentSegments.add(segment);
       this.currentLayer = segment.getLayerBelonging();
       this.segmentSelected = true;
+      console.log(this.currentSegments);
     }
   }
   /**
@@ -382,6 +386,7 @@ export class GameComponent {
         this.currentSegments.add(this.currentSegment);
         this.currentLayer = this.currentSegment.getLayerBelonging();
         this.segmentSelected = true;
+        console.log(this.currentSegments);
       } else {
         // error
         console.log("Couldn't find segment in arrowup");
@@ -403,6 +408,7 @@ export class GameComponent {
         this.currentSegments.add(this.currentSegment);
         this.currentLayer = this.currentSegment.getLayerBelonging();
         this.segmentSelected = true;
+        console.log(this.currentSegments);
       } else {
         // error
         console.log("Couldn't find segment in arrowup");
@@ -415,11 +421,13 @@ export class GameComponent {
    * Allocate all gathered segments and reset the old allocations
    */
   private allocateGathered = (): void => {
-    this.removeDuplicatesInShortLayer(this.currentSegment);
-    this.clearAllocations();  // Clear old Allocations
-    this.addAllocations(); // Add the new Allocations
-    this.currentSegments.clear();
-    this.segmentSelected = false;
+    if (this.checkIfAllocatable()) {
+      this.removeDuplicatesInShortLayer(this.currentSegment);
+      this.clearAllocations();  // Clear old Allocations
+      this.addAllocations(); // Add the new Allocations
+      this.currentSegments.clear();
+      this.segmentSelected = false;
+    }
   }
 
   /////////////////
@@ -770,6 +778,21 @@ export class GameComponent {
         }
       });
     }
+  }
+  /**
+   * 
+   * @param event 
+   */
+  private checkIfAllocatable = (): boolean => {
+    let first: boolean = false, second: boolean = false;
+    this.currentSegments.forEach((value: Segment) => {
+      if (value.getLayerBelonging() == this.firstLayer) {
+        first = true;
+      } else if (value.getLayerBelonging() == this.secondLayer) {
+        second = true;
+      }
+    });
+    return (first && second);
   }
 
   ///////////////
