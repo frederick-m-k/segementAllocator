@@ -1,5 +1,5 @@
 
-import { DrawingColors, DrawingStandards } from './../standards';
+import { DrawingColors, DrawingStandards, SelectStatus } from './../standards';
 
 /**
  * Representation of a Segment with real segment boundaries and pixel-wise boundaries
@@ -70,11 +70,31 @@ export class Segment {
         let baseY: number;
         if (this.upperLayer) {
             baseY = this.pixelYStart - this.standards.mainSelectBaseY;
-            canvas.drawImage(this.selections.get("upper"), startX, baseY);
+            canvas.drawImage(this.selections.get(SelectStatus.UPPER), startX, baseY);
         }
         else {
             baseY = this.pixelYEnd;
-            canvas.drawImage(this.selections.get("lower"), startX, baseY);
+            canvas.drawImage(this.selections.get(SelectStatus.LOWER), startX, baseY);
+        }
+        canvas.fillStyle = this.currentColor;
+        this.fill(canvas);
+        this.boundary(canvas);
+        this.text(canvas);
+    }
+    /**
+     * Show that the segment is selected, but not the current segment
+     */
+    oldSelect = (canvas: CanvasRenderingContext2D): void => {
+        this.clear(canvas);
+        let startX: number = ((this.pixelXEnd + this.pixelXStart) / 2) - (this.standards.mainSelectBaseX);
+        let baseY: number;
+        if (this.upperLayer) {
+            baseY = this.pixelYStart - this.standards.mainSelectBaseY;
+            canvas.drawImage(this.selections.get(SelectStatus.LAST_UPPER), startX, baseY);
+        }
+        else {
+            baseY = this.pixelYEnd;
+            canvas.drawImage(this.selections.get(SelectStatus.LAST_LOWER), startX, baseY);
         }
         canvas.fillStyle = this.currentColor;
         this.fill(canvas);
@@ -137,6 +157,13 @@ export class Segment {
     private clear = (canvas: CanvasRenderingContext2D): void => {
         canvas.clearRect(this.pixelXStart, this.pixelYStart, this.pixelWidth, this.pixelHeight);
 
+        this.clearSelect(canvas);
+    }
+    /**
+     * Clear the selection status of a segment
+     * @param canvas 
+     */
+    private clearSelect = (canvas: CanvasRenderingContext2D): void => {
         let startX: number = Math.floor((this.pixelXEnd + this.pixelXStart) / 2) - this.standards.mainSelectBaseX - (2 * this.standards.lineWidth);
         let secondX: number = startX + (2 * this.standards.mainSelectBaseX) + (5 * this.standards.lineWidth);
         let endX: number = startX + this.standards.mainSelectBaseX + (2 * this.standards.lineWidth);
@@ -146,11 +173,11 @@ export class Segment {
         if (this.upperLayer) {
             startY = this.pixelYStart - this.standards.mainSelectBaseY - (2 * this.standards.lineWidth);
             secondY = startY;
-            endY = this.pixelYStart + (2 * this.standards.lineWidth);
+            endY = this.pixelYStart + this.standards.lineWidth;
         } else {
             startY = this.pixelYEnd + this.standards.mainSelectBaseY + (2 * this.standards.lineWidth);
             secondY = startY;
-            endY = this.pixelYEnd - (2 * this.standards.lineWidth);
+            endY = this.pixelYEnd - this.standards.lineWidth;
         }
 
         canvas.fillStyle = DrawingColors.CLEAR_SELECTED;
@@ -163,6 +190,7 @@ export class Segment {
         canvas.stroke();
         canvas.fill();
     }
+
     /**
      * Fill the segment on the 2D-Context
      * @param canvas 
@@ -219,7 +247,24 @@ export class Segment {
         upperDrawing.closePath();
         upperDrawing.stroke();
         upperDrawing.fill();
-        this.selections.set("upper", upperSelect);
+        this.selections.set(SelectStatus.UPPER, upperSelect);
+
+        let upperLastSelect: HTMLCanvasElement = document.createElement("canvas");
+        upperLastSelect.width = Math.floor((this.standards.mainSelectBaseX * 2) + (this.standards.lineWidth * 2));
+        upperLastSelect.height = Math.floor(this.standards.mainSelectBaseY + (this.standards.lineWidth * 2));
+        let upperLastDrawing: CanvasRenderingContext2D = upperLastSelect.getContext("2d");
+        upperLastDrawing.fillStyle = DrawingColors.LAST_SELECTED;
+        upperLastDrawing.strokeStyle = DrawingColors.LAST_SELECTED;
+        upperLastDrawing.lineWidth = this.standards.lineWidth;
+
+        upperLastDrawing.beginPath();
+        upperLastDrawing.moveTo(0, 0);
+        upperLastDrawing.lineTo(this.standards.mainSelectBaseX * 2, 0);
+        upperLastDrawing.lineTo(this.standards.mainSelectBaseX, this.standards.mainSelectBaseY);
+        upperLastDrawing.closePath();
+        upperLastDrawing.stroke();
+        upperLastDrawing.fill();
+        this.selections.set(SelectStatus.LAST_UPPER, upperLastSelect);
 
         let lowerSelect: HTMLCanvasElement = document.createElement("canvas");
         lowerSelect.width = Math.floor((this.standards.mainSelectBaseX * 2) + (this.standards.lineWidth * 2));
@@ -236,7 +281,24 @@ export class Segment {
         lowerDrawing.closePath();
         lowerDrawing.stroke();
         lowerDrawing.fill();
-        this.selections.set("lower", lowerSelect);
+        this.selections.set(SelectStatus.LOWER, lowerSelect);
+
+        let lowerLastSelect: HTMLCanvasElement = document.createElement("canvas");
+        lowerLastSelect.width = Math.floor((this.standards.mainSelectBaseX * 2) + (this.standards.lineWidth * 2));
+        lowerLastSelect.height = Math.floor(this.standards.mainSelectBaseY + (this.standards.lineWidth * 2));
+        let lowerLastDrawing: CanvasRenderingContext2D = lowerLastSelect.getContext("2d");
+        lowerLastDrawing.fillStyle = DrawingColors.LAST_SELECTED;
+        lowerLastDrawing.strokeStyle = DrawingColors.LAST_SELECTED;
+        lowerLastDrawing.lineWidth = this.standards.lineWidth;
+
+        lowerLastDrawing.beginPath();
+        lowerLastDrawing.moveTo(0, this.standards.mainSelectBaseY);
+        lowerLastDrawing.lineTo(this.standards.mainSelectBaseX * 2, this.standards.mainSelectBaseY);
+        lowerLastDrawing.lineTo(this.standards.mainSelectBaseX, 0);
+        lowerLastDrawing.closePath();
+        lowerLastDrawing.stroke();
+        lowerLastDrawing.fill();
+        this.selections.set(SelectStatus.LAST_LOWER, lowerLastSelect);
     }
 
     ////////////

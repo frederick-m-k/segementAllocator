@@ -261,13 +261,10 @@ export class GameComponent {
           if (segment.getLayerBelonging() == this.shortestLayer) {
             this.currentSegments.delete(this.currentSegment);
             this.clearSegment(this.currentSegment);
-            this.currentSegment = segment;
-            this.currentSegment.select(this.drawingArea);
-            this.currentSegments.add(this.currentSegment);
+            this.addNewSegment(segment);
           } else {
-            this.currentSegment = segment;
-            segment.select(this.drawingArea);
-            this.currentSegments.add(segment);
+            this.markOldSelectedSegments();
+            this.addNewSegment(segment);
           }
           return;
         } else {
@@ -280,12 +277,21 @@ export class GameComponent {
           return;
         }
       }
-      this.currentSegment = segment;
-      segment.select(this.drawingArea);
-      this.currentSegments.add(segment);
+      this.addNewSegment(segment);
       this.segmentSelected = true;
       this.currentLayer = segment.getLayerBelonging();
     }
+  }
+
+  private addNewSegment = (segment: Segment): void => {
+    this.currentSegment = segment;
+    segment.select(this.drawingArea);
+    this.currentSegments.add(segment);
+  }
+  private markOldSelectedSegments = (): void => {
+    this.currentSegments.forEach((value: Segment) => {
+      value.oldSelect(this.drawingArea);
+    });
   }
 
   /**
@@ -311,10 +317,10 @@ export class GameComponent {
       if (this.currentSegment.getLayerBelonging() == this.shortestLayer && this.segmentSelected) {
         this.currentSegments.delete(this.currentSegment);
         this.currentSegment.draw(this.drawingArea);
+      } else {
+        this.markOldSelectedSegments();
       }
-      this.currentSegment = segment;
-      segment.select(this.drawingArea);
-      this.currentSegments.add(segment);
+      this.addNewSegment(segment);
       this.currentLayer = segment.getLayerBelonging();
       this.segmentSelected = true;
     }
@@ -329,9 +335,7 @@ export class GameComponent {
         this.currentSegments.delete(this.currentSegment);
         this.currentSegment.draw(this.drawingArea);
       }
-      this.currentSegment = segment;
-      segment.select(this.drawingArea);
-      this.currentSegments.add(segment);
+      this.addNewSegment(segment);
       this.currentLayer = segment.getLayerBelonging();
       this.segmentSelected = true;
     }
@@ -345,10 +349,10 @@ export class GameComponent {
       if (this.currentSegment.getLayerBelonging() == this.shortestLayer && this.segmentSelected) {
         this.currentSegments.delete(this.currentSegment);
         this.currentSegment.draw(this.drawingArea);
+      } else {
+        this.markOldSelectedSegments();
       }
-      this.currentSegment = segment;
-      segment.select(this.drawingArea);
-      this.currentSegments.add(segment);
+      this.addNewSegment(segment);
       this.currentLayer = segment.getLayerBelonging();
       this.segmentSelected = true;
     }
@@ -363,9 +367,7 @@ export class GameComponent {
         this.currentSegments.delete(this.currentSegment);
         this.currentSegment.draw(this.drawingArea);
       }
-      this.currentSegment = segment;
-      segment.select(this.drawingArea);
-      this.currentSegments.add(segment);
+      this.addNewSegment(segment);
       this.currentLayer = segment.getLayerBelonging();
       this.segmentSelected = true;
     }
@@ -378,9 +380,8 @@ export class GameComponent {
     if (this.currentSegment.getLayerBelonging() == this.secondLayer) {
       let segment: Segment = this.findSegmentInOtherLayer(this.currentSegment);
       if (segment != null) {
-        segment.select(this.drawingArea);
-        this.currentSegment = segment;
-        this.currentSegments.add(this.currentSegment);
+        this.markOldSelectedSegments();
+        this.addNewSegment(segment);
         this.currentLayer = this.currentSegment.getLayerBelonging();
         this.segmentSelected = true;
       } else {
@@ -399,9 +400,8 @@ export class GameComponent {
     if (this.currentSegment.getLayerBelonging() == this.firstLayer) {
       let segment: Segment = this.findSegmentInOtherLayer(this.currentSegment);
       if (segment != null) {
-        segment.select(this.drawingArea);
-        this.currentSegment = segment;
-        this.currentSegments.add(this.currentSegment);
+        this.markOldSelectedSegments();
+        this.addNewSegment(segment);
         this.currentLayer = this.currentSegment.getLayerBelonging();
         this.segmentSelected = true;
       } else {

@@ -130,9 +130,19 @@ export enum DrawingColors {
 	DARK_BACKGROUND = "#e8e8e8",
 	TEXT = "#000000",
 	CURRENTLY_SELECTED = "#9c0a00",
+	LAST_SELECTED = "#bf5952",
 	BOUNDARY_COLOR = "#000000",
 	CLEAR_SELECTED = "#FFFFFF",
 	NO_COLOR = "no_color"
+}
+/**
+ * 
+ */
+export enum SelectStatus {
+	UPPER = "upper",
+	LOWER = "lower",
+	LAST_UPPER = "last-upper",
+	LAST_LOWER = "last-lower"
 }
 /**
  * Providing states for linking the 
